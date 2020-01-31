@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Counter
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-counter
+Exec=harbour-counter
