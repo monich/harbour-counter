@@ -6,7 +6,7 @@
     <message id="counter-app_name">
         <source>Counter</source>
         <extracomment>Application title</extracomment>
-        <translation>Counter</translation>
+        <translation>Räknare</translation>
     </message>
     <message id="counter-menu-delete_counter">
         <source>Delete this counter</source>
