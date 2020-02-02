@@ -66,7 +66,7 @@
     <message id="counter-label-reset">
         <source>Reset:</source>
         <extracomment>Label text (time and date of the last reset)</extracomment>
-        <translation>Reset:</translation>
+        <translation>Ostatni reset:</translation>
     </message>
 </context>
 </TS>
