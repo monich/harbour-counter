@@ -1,9 +1,9 @@
 Name:           harbour-counter
 Summary:        Counter
-Version:        1.0.0
+Version:        1.0.1
 Release:        1
 License:        BSD
-Group:          Applications/Utilities
+Group:          Applications/Productivity
 URL:            https://github.com/monich/harbour-counter
 Source0:        %{name}-%{version}.tar.gz
 
