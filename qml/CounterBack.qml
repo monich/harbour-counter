@@ -100,7 +100,7 @@ Item {
 
         Button {
             anchors.centerIn: parent
-            //: Button label (resets counter to zeto)
+            //: Button label (resets counter to zero)
             //% "Reset"
             text: qsTrId("counter-button-reset")
             onClicked: {
