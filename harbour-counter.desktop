@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Counter
+Name[ru]=Счётчик
 X-Nemo-Application-Type=silica-qt5
 Icon=harbour-counter
 Exec=harbour-counter
