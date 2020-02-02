@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Counter
+Name[pl]=Licznik
 Name[ru]=Счётчик
 Name[sv]=Räknare
 Name[zh_CN]=计数器

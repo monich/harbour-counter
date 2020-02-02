@@ -6,7 +6,7 @@
     <message id="counter-app_name">
         <source>Counter</source>
         <extracomment>Application title</extracomment>
-        <translation>Counter</translation>
+        <translation>Licznik</translation>
     </message>
     <message id="counter-menu-delete_counter">
         <source>Delete this counter</source>
@@ -55,7 +55,7 @@
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>
-        <extracomment>Button label (resets counter to zeto)</extracomment>
+        <extracomment>Button label (resets counter to zero)</extracomment>
         <translation>Resetuj licznik</translation>
     </message>
     <message id="counter-label-last_change">
