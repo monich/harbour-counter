@@ -56,7 +56,7 @@
     <message id="counter-button-reset">
         <source>Reset</source>
         <extracomment>Button label (resets counter to zeto)</extracomment>
-        <translation>Reset</translation>
+        <translation>Resetuj licznik</translation>
     </message>
     <message id="counter-label-last_change">
         <source>Last change:</source>
