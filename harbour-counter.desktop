@@ -2,6 +2,7 @@
 Type=Application
 Name=Counter
 Name[ru]=Счётчик
+Name[sv]=Räknare
 X-Nemo-Application-Type=silica-qt5
 Icon=harbour-counter
 Exec=harbour-counter
