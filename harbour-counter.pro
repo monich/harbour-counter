@@ -133,3 +133,6 @@ qm.CONFIG += no_check_exist
 INSTALLS += qm
 
 OTHER_FILES += LICENSE
+
+DISTFILES += \
+    translations/harbour-counter-hu.ts
