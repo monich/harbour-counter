@@ -121,7 +121,7 @@ defineTest(addTrFile) {
     export(qm.files)
 }
 
-LANGUAGES = pl ru sv zh_CN
+LANGUAGES = hu pl ru sv zh_CN
 
 addTrFile($${NAME})
 for(l, LANGUAGES) {
@@ -133,6 +133,3 @@ qm.CONFIG += no_check_exist
 INSTALLS += qm
 
 OTHER_FILES += LICENSE
-
-DISTFILES += \
-    translations/harbour-counter-hu.ts
