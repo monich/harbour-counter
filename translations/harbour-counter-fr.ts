@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1"  language="fr">
+<TS version="2.1" language="fr">
 <context>
     <name></name>
     <message id="counter-app_name">
         <source>Counter</source>
         <extracomment>Application title</extracomment>
-        <translation>Counter</translation>
+        <translation>Compteur</translation>
     </message>
     <message id="counter-menu-delete_counter">
         <source>Delete this counter</source>
