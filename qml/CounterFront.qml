@@ -61,7 +61,7 @@ Item {
     NumberPanel {
         id: spinners
 
-        y: (parent.height/2 - plus.height/2)/2 - height/2
+        y: Math.max(titleLabel.y + titleLabel.height + Theme.paddingLarge, Math.floor((plus.y - height)/2))
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 2 * Theme.fontSizeHuge
         horizontalMargins: Theme.paddingLarge
