@@ -1,6 +1,9 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
+import org.nemomobile.configuration 1.0
+
+import "../js/Utils.js" as Utils
 
 Page {
     id: page
@@ -13,6 +16,13 @@ Page {
 
     readonly property int maxCounters: Math.floor(list.width/Theme.itemSizeExtraSmall)
     readonly property bool remorsePopupVisible: remorsePopup ? remorsePopup.visible : false
+
+    ConfigurationValue {
+        id: configSounds
+
+        key: Utils.configKeySounds
+        defaultValue: Utils.configDefaultSounds
+    }
 
     SilicaFlickable {
         anchors.fill: parent
@@ -33,6 +43,12 @@ Page {
                 }
             }
 
+            MenuItem {
+                //: Pulley menu item
+                //% "Settings"
+                text: qsTrId("counter-menu-settings")
+                onClicked: pageStack.push("../settings/SettingsPage.qml", { "title" : text })
+            }
             MenuItem {
                 id: removeCounterMenuItem
 
@@ -132,6 +148,7 @@ Page {
             highlightRangeMode: ListView.StrictlyEnforceRange
             flickDeceleration: maximumFlickVelocity
             interactive: !scrollAnimation.running
+            clip: !currentItem || !currentItem.flipping
             model: CounterListModel
             delegate: CounterItem {
                 width: list.width
@@ -141,14 +158,13 @@ Page {
                 favorite: model.favorite
                 canChangeFavorite: list.count > 1
                 title: model.title
-                sounds: model.sounds
+                sounds: configSounds.value
                 changeTime: model.changeTime
                 resetTime: model.resetTime
                 onFlip: page.flipped = !page.flipped
                 onUpdateCounter: model.value = value
                 onUpdateTitle: model.title = value
                 onToggleFavorite: model.favorite = !model.favorite
-                onToggleSounds: model.sounds = !model.sounds
                 flipDuration: ListView.isCurrentItem ? 500 : 0
                 onResetCounter: CounterListModel.resetCounter(model.index)
             }

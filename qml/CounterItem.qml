@@ -13,11 +13,11 @@ Item {
     property alias flipDuration: flipAnimation.duration
     property string title
     property bool sounds
+    property bool flipping
 
     signal flip()
     signal resetCounter()
     signal toggleFavorite()
-    signal toggleSounds()
     signal updateCounter(var value)
     signal updateTitle(var value)
 
@@ -27,7 +27,6 @@ Item {
         backPanel.flip.connect(flip)
         backPanel.updateTitle.connect(updateTitle)
         backPanel.toggleFavorite.connect(toggleFavorite)
-        backPanel.toggleSounds.connect(toggleSounds)
     }
 
     Flipable {
@@ -79,12 +78,16 @@ Item {
             when: flipable.flipped
         }
         transitions: Transition {
-            NumberAnimation {
-                id: flipAnimation
+            SequentialAnimation {
+                ScriptAction { script: flipping = true; }
+                NumberAnimation {
+                    id: flipAnimation
 
-                target: rotation
-                property: "angle"
-                duration: 500
+                    target: rotation
+                    property: "angle"
+                    duration: 500
+                }
+                ScriptAction { script: flipping = false; }
             }
         }
     }

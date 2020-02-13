@@ -32,6 +32,8 @@ OTHER_FILES += \
     README.md \
     rpm/*.spec \
     *.desktop \
+    js/*.js \
+    settings/*.qml \
     qml/*.qml \
     qml/images/*.svg \
     qml/sounds/*.wav \
@@ -77,7 +79,18 @@ SOURCES += \
     src/CounterFavoritesModel.cpp \
     src/CounterListModel.cpp
 
+app_js.files = js/*.js
+app_js.path = /usr/share/$${TARGET}/js/
+INSTALLS += app_js
+
+# Settings
+
+settings_qml.files = settings/*.qml
+settings_qml.path = /usr/share/$${TARGET}/settings/
+INSTALLS += settings_qml
+
 # Icons
+
 ICON_SIZES = 86 108 128 256
 for(s, ICON_SIZES) {
     icon_target = icon_$${s}
@@ -90,6 +103,7 @@ for(s, ICON_SIZES) {
 # Translations
 TRANSLATION_SOURCES = \
   $${_PRO_FILE_PWD_}/qml \
+  $${_PRO_FILE_PWD_}/settings \
   $${_PRO_FILE_PWD_}/src
 
 defineTest(addTrFile) {

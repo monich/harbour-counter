@@ -47,7 +47,6 @@
     role(Title,title) \
     role(ResetTime,resetTime) \
     role(ChangeTime,changeTime) \
-    role(Sounds,sounds) \
     last(Favorite,favorite)
 
 #define MODEL_ROLES(role) \
@@ -90,7 +89,6 @@ public:
     static const QString KEY_ID;
     static const QString KEY_VALUE;
     static const QString KEY_FAVORITE;
-    static const QString KEY_SOUNDS;
     static const QString KEY_TITLE;
     static const QString KEY_RESET_TIME;
     static const QString KEY_CHANGE_TIME;
@@ -98,7 +96,6 @@ public:
 public:
     int iValue;
     bool iFavorite;
-    bool iSounds;
     QString iId;
     QString iTitle;
     QDateTime iResetTime;
@@ -112,7 +109,6 @@ MODEL_ROLES(ROLE)
 const QString CounterListModel::ModelData::KEY_ID("id");
 const QString CounterListModel::ModelData::KEY_VALUE("value");
 const QString CounterListModel::ModelData::KEY_FAVORITE("favorite");
-const QString CounterListModel::ModelData::KEY_SOUNDS("sounds");
 const QString CounterListModel::ModelData::KEY_TITLE("title");
 const QString CounterListModel::ModelData::KEY_RESET_TIME("resetTime");
 const QString CounterListModel::ModelData::KEY_CHANGE_TIME("changeTime");
@@ -131,7 +127,6 @@ inline QString CounterListModel::ModelData::toString(const QDateTime& aTime)
 CounterListModel::ModelData::ModelData(QString aId, bool aFavorite) :
     iValue(0),
     iFavorite(aFavorite),
-    iSounds(false),
     iId(aId),
     //: Default title for a new counter
     //% "Counter"
@@ -149,7 +144,6 @@ QVariant CounterListModel::ModelData::get(Role aRole) const
     switch (aRole) {
     case ValueRole: return iValue;
     case FavoriteRole: return iFavorite;
-    case SoundsRole: return iSounds;
     case ModelIdRole: return iId;
     case TitleRole: return iTitle;
     case ResetTimeRole: return iResetTime;
@@ -163,7 +157,6 @@ QVariantMap CounterListModel::ModelData::toVariantMap() const
     QVariantMap map;
     map.insert(KEY_VALUE, iValue);
     map.insert(KEY_FAVORITE, iFavorite);
-    map.insert(KEY_SOUNDS, iSounds);
     map.insert(KEY_ID, iId);
     map.insert(KEY_TITLE, iTitle);
     if (iResetTime.isValid()) {
@@ -179,7 +172,6 @@ void CounterListModel::ModelData::set(QVariantMap aData)
 {
     iValue = aData.value(KEY_VALUE).toInt();
     iFavorite = aData.value(KEY_FAVORITE).toBool();
-    iSounds = aData.value(KEY_SOUNDS).toBool();
     iId = aData.value(KEY_ID).toString();
     iTitle = aData.value(KEY_TITLE).toString();
     iResetTime = dateTimeValue(aData, KEY_RESET_TIME);
@@ -625,18 +617,6 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
                 }
             }
             break;
-        case ModelData::SoundsRole:
-            {
-                const bool value = aValue.toBool();
-                if (data->iSounds != value) {
-                    HDEBUG(row << "sounds" << value);
-                    data->iSounds = value;
-                    roles.append(aRole);
-                    Q_EMIT dataChanged(aIndex, aIndex, roles);
-                    iPrivate->save();
-                }
-            }
-            return true;
         case ModelData::FavoriteRole:
             {
                 const bool favorite = aValue.toBool();

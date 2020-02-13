@@ -92,7 +92,7 @@ Item {
         Loader {
             id: plusSound
 
-            active: model.sounds
+            active: panel.sounds
             sourceComponent: Component {
                 SoundEffect {
                     source: "sounds/plus.wav"
@@ -122,7 +122,7 @@ Item {
         Loader {
             id: minusSound
 
-            active: model.sounds
+            active: panel.sounds
             sourceComponent: Component {
                 SoundEffect {
                     source: "sounds/minus.wav"

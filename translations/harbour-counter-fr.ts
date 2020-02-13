@@ -8,6 +8,11 @@
         <extracomment>Application title</extracomment>
         <translation>Compteur</translation>
     </message>
+    <message id="counter-menu-settings">
+        <source>Settings</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation type="unfinished">Paramètres</translation>
+    </message>
     <message id="counter-menu-delete_counter">
         <source>Delete this counter</source>
         <extracomment>Pulley menu item</extracomment>
@@ -61,12 +66,12 @@
     <message id="counter-label-last_change">
         <source>Last change:</source>
         <extracomment>Label text (time and date of the last change)</extracomment>
-        <translation>Dernière modification :</translation>
+        <translation>Dernière modification:</translation>
     </message>
     <message id="counter-label-reset">
         <source>Reset:</source>
         <extracomment>Label text (time and date of the last reset)</extracomment>
-        <translation>Mise à zéro :</translation>
+        <translation>Mise à zéro:</translation>
     </message>
 </context>
 </TS>

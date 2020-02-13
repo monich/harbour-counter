@@ -1,8 +1,10 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
+import org.nemomobile.configuration 1.0
 import harbour.counter 1.0
 
+import "../js/Utils.js" as Utils
 import "harbour"
 
 CoverBackground {
@@ -10,6 +12,13 @@ CoverBackground {
 
     readonly property string plusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
     readonly property string minusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
+
+    ConfigurationValue {
+        id: configSounds
+
+        key: Utils.configKeySounds
+        defaultValue: Utils.configDefaultSounds
+    }
 
     Row {
         id: row
@@ -37,13 +46,13 @@ CoverBackground {
                 Loader {
                     id: plusSound
 
-                    active: model.sounds
+                    active: configSounds.value
                     sourceComponent: Component { SoundEffect { source: "sounds/plus.wav" } }
                 }
                 Loader {
                     id: minusSound
 
-                    active: model.sounds
+                    active: configSounds.value
                     sourceComponent: Component { SoundEffect { source: "sounds/minus.wav" } }
                 }
                 Label {

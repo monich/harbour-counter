@@ -8,6 +8,11 @@
         <extracomment>Application title</extracomment>
         <translation>Counter</translation>
     </message>
+    <message id="counter-menu-settings">
+        <source>Settings</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation>Settings</translation>
+    </message>
     <message id="counter-menu-delete_counter">
         <source>Delete this counter</source>
         <extracomment>Pulley menu item</extracomment>

@@ -10,13 +10,12 @@ Item {
     property date changeTime
     property date resetTime
     property alias favorite: favoriteSwitch.checked
-    property alias sounds: soundsSwitch.checked
+    property alias sounds: resetSound.active
     property alias canChangeFavorite: favoriteSwitch.enabled
 
     signal flip()
     signal reset()
     signal toggleFavorite()
-    signal toggleSounds()
     signal updateTitle(var value)
 
     onTitleChanged: titleField.text = title
@@ -76,18 +75,6 @@ Item {
             automaticCheck: false
             onClicked: panel.toggleFavorite()
         }
-
-        TextSwitch {
-            id: soundsSwitch
-
-            x: Theme.paddingLarge
-            width: parent.width - x
-            //: Text switch label
-            //% "Play sounds"
-            text: qsTrId("counter-switch-sounds")
-            automaticCheck: false
-            onClicked: panel.toggleSounds()
-        }
     }
 
     Item {
@@ -113,7 +100,6 @@ Item {
             Loader {
                 id: resetSound
 
-                active: model.sounds
                 sourceComponent: Component {
                     SoundEffect {
                         source: "sounds/reset.wav"
