@@ -1,7 +1,10 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
+import org.nemomobile.configuration 1.0
 import harbour.counter 1.0
+
+import "../js/Utils.js" as Utils
 
 Item {
     id: panel
@@ -9,6 +12,7 @@ Item {
     property int value
     property alias title: titleLabel.text
     property bool sounds
+    property bool active
 
     signal flip()
     signal updateCounter(var value)
@@ -61,7 +65,7 @@ Item {
     NumberPanel {
         id: spinners
 
-        y: Math.max(titleLabel.y + titleLabel.height + Theme.paddingLarge, Math.floor((plus.y - height)/2))
+        y: Math.max(titleLabel.y + titleLabel.height + Theme.paddingLarge, Math.floor((plusButton.y - height)/2))
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 2 * Theme.fontSizeHuge
         horizontalMargins: Theme.paddingLarge
@@ -76,59 +80,25 @@ Item {
     }
 
     RoundButton {
-        id: plus
+        id: plusButton
 
         text: "+"
         font: spinners.font
         anchors.centerIn: parent
         preferredWidth: parent.width/2
-        onClicked: {
-            panel.updateCounter(value + 1)
-            if (plusSound.item) {
-                plusSound.item.play()
-            }
-        }
-
-        Loader {
-            id: plusSound
-
-            active: panel.sounds
-            sourceComponent: Component {
-                SoundEffect {
-                    source: "sounds/plus.wav"
-                }
-            }
-        }
+        onClicked: plus()
     }
 
     RoundButton {
         text: "-"
         font: spinners.font
-        readonly property real y1: plus.y + plus.height + Math.round(height/2)
-        readonly property real y2: Math.round((plus.y + plus.height + parent.height - height)/2)
+        readonly property real y1: plusButton.y + plusButton.height + Math.round(height/2)
+        readonly property real y2: Math.round((plusButton.y + plusButton.height + parent.height - height)/2)
         y: Math.min(y1, y2)
         preferredWidth: Math.round(panel.width/3)
         textOffset: -Theme.paddingSmall
         anchors.horizontalCenter: parent.horizontalCenter
-        onClicked: {
-            if (value > 0) {
-                panel.updateCounter(value - 1)
-                if (minusSound.item) {
-                    minusSound.item.play()
-                }
-            }
-        }
-
-        Loader {
-            id: minusSound
-
-            active: panel.sounds
-            sourceComponent: Component {
-                SoundEffect {
-                    source: "sounds/minus.wav"
-                }
-            }
-        }
+        onClicked: minus()
     }
 
     IconButton {
@@ -139,5 +109,75 @@ Item {
         }
         icon.source: "image://theme/icon-m-about"
         onClicked: panel.flip()
+    }
+
+    function plus() {
+        panel.updateCounter(value + 1)
+        if (plusSound.item) {
+            plusSound.item.play()
+        }
+    }
+
+    function minus() {
+        if (value > 0) {
+            panel.updateCounter(value - 1)
+            if (minusSound.item) {
+                minusSound.item.play()
+            }
+        }
+    }
+
+    Loader {
+        id: plusSound
+
+        active: panel.sounds
+        sourceComponent: Component {
+            SoundEffect {
+                source: "sounds/plus.wav"
+            }
+        }
+    }
+    Loader {
+        id: minusSound
+
+        active: panel.sounds
+        sourceComponent: Component {
+            SoundEffect {
+                source: "sounds/minus.wav"
+            }
+        }
+    }
+
+    ConfigurationValue {
+        id: configUseVolumeKeys
+
+        key: Utils.configKeyUseVolumeKeys
+        defaultValue: Utils.configDefaultUseVolumeKeys
+    }
+
+    MediaKey {
+        enabled: panel.active && configUseVolumeKeys.value
+        key: Qt.Key_VolumeUp
+        onPressed: plus()
+        onRepeat: plus()
+    }
+
+    MediaKey {
+        enabled: panel.active && configUseVolumeKeys.value
+        key: Qt.Key_VolumeDown
+        onPressed: minus()
+        onRepeat: minus()
+    }
+
+    Permissions {
+        enabled: panel.active && configUseVolumeKeys.value
+        autoRelease: true
+        applicationClass: "camera"
+
+        Resource {
+            id: volumeKeysResource
+            type: Resource.ScaleButton
+            optional: true
+        }
     }
 }

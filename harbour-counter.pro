@@ -52,10 +52,12 @@ INCLUDEPATH += \
 HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourJson.h \
+    $${HARBOUR_LIB_INCLUDE}/HarbourPluginLoader.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
 
 SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourJson.cpp \
+    $${HARBOUR_LIB_SRC}/HarbourPluginLoader.cpp \
     $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
 
 HARBOUR_QML_COMPONENTS = \
@@ -72,12 +74,16 @@ INSTALLS += qml_components
 HEADERS += \
     src/CounterDefs.h \
     src/CounterFavoritesModel.h \
-    src/CounterListModel.h
+    src/CounterListModel.h \
+    src/CounterMediaPlugin.h \
+    src/CounterPolicyPlugin.h
 
 SOURCES += \
     src/main.cpp \
     src/CounterFavoritesModel.cpp \
-    src/CounterListModel.cpp
+    src/CounterListModel.cpp \
+    src/CounterMediaPlugin.cpp \
+    src/CounterPolicyPlugin.cpp
 
 app_js.files = js/*.js
 app_js.path = /usr/share/$${TARGET}/js/

@@ -156,6 +156,7 @@ Page {
                 flipped: page.flipped
                 value: model.value
                 favorite: model.favorite
+                currentItem: ListView.isCurrentItem
                 canChangeFavorite: list.count > 1
                 title: model.title
                 sounds: configSounds.value
@@ -165,7 +166,6 @@ Page {
                 onUpdateCounter: model.value = value
                 onUpdateTitle: model.title = value
                 onToggleFavorite: model.favorite = !model.favorite
-                flipDuration: ListView.isCurrentItem ? 500 : 0
                 onResetCounter: CounterListModel.resetCounter(model.index)
             }
             onCurrentIndexChanged: {

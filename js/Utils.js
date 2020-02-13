@@ -1,8 +1,12 @@
 .pragma library
 
 var configRoot = "/apps/" + appName() + "/"
+
 var configKeySounds = configRoot + "sounds"
 var configDefaultSounds = false
+
+var configKeyUseVolumeKeys = configRoot + "useVolumeKeys"
+var configDefaultUseVolumeKeys = true
 
 // Deduce package name from the path
 function appName() {

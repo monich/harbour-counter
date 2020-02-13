@@ -58,6 +58,11 @@
         <extracomment>Text switch label</extracomment>
         <translation>显示秒数</translation>
     </message>
+    <message id="counter-switch-use_volume_keys">
+        <source>Use volume keys</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">使用音量键</translation>
+    </message>
     <message id="counter-button-reset">
         <source>Reset</source>
         <extracomment>Button label (resets counter to zero)</extracomment>

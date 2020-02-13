@@ -39,8 +39,10 @@
 #include "HarbourTheme.h"
 
 #include "CounterDefs.h"
-#include "CounterListModel.h"
 #include "CounterFavoritesModel.h"
+#include "CounterListModel.h"
+#include "CounterMediaPlugin.h"
+#include "CounterPolicyPlugin.h"
 
 #include <sailfishapp.h>
 
@@ -48,12 +50,20 @@
 #include <QtQuick>
 
 #define APP_QML_IMPORT  "harbour.counter"
+#define APP_QML_IMPORT_V1 1
+#define APP_QML_IMPORT_V2 0
 
-static void register_types(const char* uri, int v1 = 1, int v2 = 0)
+static void register_types(const char* uri, int v1, int v2)
 {
     qmlRegisterSingletonType<HarbourTheme>(uri, v1, v2, "HarbourTheme", HarbourTheme::createSingleton);
     qmlRegisterSingletonType<CounterListModel>(uri, v1, v2, "CounterListModel", CounterListModel::createSingleton);
     qmlRegisterType<CounterFavoritesModel>(uri, v1, v2, "CounterFavoritesModel");
+}
+
+static void register_plugins(QQmlEngine* aEngine, const char* uri, int v1, int v2)
+{
+    CounterMediaPlugin::registerTypes(aEngine, uri, v1, v2);
+    CounterPolicyPlugin::registerTypes(aEngine, uri, v1, v2);
 }
 
 int main(int argc, char *argv[])
@@ -61,7 +71,7 @@ int main(int argc, char *argv[])
     QGuiApplication* app = SailfishApp::application(argc, argv);
 
     app->setApplicationName(APP_NAME);
-    register_types(APP_QML_IMPORT, 1, 0);
+    register_types(APP_QML_IMPORT, APP_QML_IMPORT_V1, APP_QML_IMPORT_V2);
 
     // Load translations
     QLocale locale;
@@ -83,6 +93,11 @@ int main(int argc, char *argv[])
 
     // Create the view
     QQuickView* view = SailfishApp::createView();
+    QQmlContext* root = view->rootContext();
+    QQmlEngine* engine = root->engine();
+
+    // Register plugins with QML engine
+    register_plugins(engine, APP_QML_IMPORT, APP_QML_IMPORT_V1, APP_QML_IMPORT_V2);
 
     // Initialize the view and show it
     //: Application title

@@ -58,6 +58,11 @@
         <extracomment>Text switch label</extracomment>
         <translation>Звуковые эффекты</translation>
     </message>
+    <message id="counter-switch-use_volume_keys">
+        <source>Use volume keys</source>
+        <extracomment>Text switch label</extracomment>
+        <translation>Использовать кнопки громкости</translation>
+    </message>
     <message id="counter-button-reset">
         <source>Reset</source>
         <extracomment>Button label (resets counter to zero)</extracomment>

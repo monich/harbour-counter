@@ -10,10 +10,10 @@ Item {
     property alias changeTime: backPanel.changeTime
     property alias resetTime: backPanel.resetTime
     property alias flipped: flipable.flipped
-    property alias flipDuration: flipAnimation.duration
     property string title
     property bool sounds
     property bool flipping
+    property bool currentItem
 
     signal flip()
     signal resetCounter()
@@ -43,6 +43,7 @@ Item {
 
             anchors.fill: parent
             visible: rotation.angle < 90
+            active: visible && Qt.application.active && currentItem
             sounds: panel.sounds
             title: panel.title
         }
@@ -85,7 +86,7 @@ Item {
 
                     target: rotation
                     property: "angle"
-                    duration: 500
+                    duration: currentItem ? 500 : 0
                 }
                 ScriptAction { script: flipping = false; }
             }

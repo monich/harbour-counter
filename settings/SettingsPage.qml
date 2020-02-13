@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import org.nemomobile.configuration 1.0
+
 import "../js/Utils.js" as Utils
 
 Page {
@@ -32,6 +33,24 @@ Page {
 
                 key: Utils.configKeySounds
                 defaultValue: Utils.configDefaultSounds
+            }
+        }
+
+        TextSwitch {
+            x: Theme.horizontalPageMargin
+            width: parent.width - 2 * x
+            //: Text switch label
+            //% "Use volume keys"
+            text: qsTrId("counter-switch-use_volume_keys")
+            automaticCheck: false
+            checked: configUseVolumeKeys.value
+            onClicked: configUseVolumeKeys.value = !configUseVolumeKeys.value
+
+            ConfigurationValue {
+                id: configUseVolumeKeys
+
+                key: Utils.configKeyUseVolumeKeys
+                defaultValue: Utils.configDefaultUseVolumeKeys
             }
         }
     }
