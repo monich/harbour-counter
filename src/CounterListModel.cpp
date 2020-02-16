@@ -529,8 +529,11 @@ void CounterListModel::resetCounter(int aRow)
         HDEBUG(aRow);
         roles.reserve(3);
         roles.append(ModelData::ResetTimeRole);
-        roles.append(ModelData::ChangeTimeRole);
-        data->iResetTime = data->iChangeTime = QDateTime::currentDateTime();
+        data->iResetTime = QDateTime::currentDateTime();
+        if (data->iChangeTime.isValid()) {
+            data->iChangeTime = QDateTime();
+            roles.append(ModelData::ChangeTimeRole);
+        }
         if (data->iValue) {
             data->iValue = 0;
             roles.append(ModelData::ValueRole);
@@ -603,13 +606,9 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
                         HDEBUG(row << "value" << value);
                         data->iValue = value;
                         data->iChangeTime = QDateTime::currentDateTime();
-                        roles.reserve(3);
+                        roles.reserve(2);
                         roles.append(aRole);
                         roles.append(ModelData::ChangeTimeRole);
-                        if (!data->iResetTime.isValid()) {
-                            data->iResetTime = data->iChangeTime;
-                            roles.append(ModelData::ResetTimeRole);
-                        }
                         Q_EMIT dataChanged(aIndex, aIndex, roles);
                         iPrivate->save();
                     }
