@@ -3,8 +3,8 @@ PREFIX = harbour
 
 TARGET = $${PREFIX}-$${NAME}
 CONFIG += sailfishapp link_pkgconfig
-PKGCONFIG += sailfishapp
-QT += qml quick
+PKGCONFIG += sailfishapp glib-2.0 gobject-2.0
+QT += qml quick dbus
 LIBS += -ldl
 
 QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-psabi
@@ -26,6 +26,7 @@ CONFIG(debug, debug|release) {
 # Directories
 
 HARBOUR_LIB_DIR = $${_PRO_FILE_PWD_}/harbour-lib
+LIBGLIBUTIL_DIR = $${_PRO_FILE_PWD_}/libglibutil
 
 OTHER_FILES += \
     LICENSE \
@@ -40,6 +41,21 @@ OTHER_FILES += \
     icons/*.svg \
     translations/*.ts
 
+# libglibutil
+
+LIBGLIBUTIL_SRC = $${LIBGLIBUTIL_DIR}/src
+LIBGLIBUTIL_INCLUDE = $${LIBGLIBUTIL_DIR}/include
+
+INCLUDEPATH += \
+    $${LIBGLIBUTIL_INCLUDE}
+
+HEADERS += \
+    $${LIBGLIBUTIL_INCLUDE}/*.h
+
+SOURCES += \
+    $${LIBGLIBUTIL_SRC}/gutil_log.c \
+    $${LIBGLIBUTIL_SRC}/gutil_timenotify.c
+
 # harbour-lib
 
 HARBOUR_LIB_INCLUDE = $${HARBOUR_LIB_DIR}/include
@@ -53,11 +69,13 @@ HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourJson.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourPluginLoader.h \
+    $${HARBOUR_LIB_INCLUDE}/HarbourSystemTime.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
 
 SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourJson.cpp \
     $${HARBOUR_LIB_SRC}/HarbourPluginLoader.cpp \
+    $${HARBOUR_LIB_SRC}/HarbourSystemTime.cpp \
     $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
 
 HARBOUR_QML_COMPONENTS = \

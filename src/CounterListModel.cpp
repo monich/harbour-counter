@@ -565,6 +565,30 @@ void CounterListModel::deleteCounter(int aRow)
     }
 }
 
+void CounterListModel::timeChanged()
+{
+    const int n = iPrivate->rowCount();
+    if (n > 0) {
+        QVector<int> roles;
+        roles.reserve(2);
+        for (int i = 0; i < n; i++) {
+            ModelData* data = iPrivate->dataAt(i);
+            roles.resize(0);
+            if (data->iResetTime.isValid()) {
+                roles.append(ModelData::ResetTimeRole);
+            }
+            if (data->iChangeTime.isValid()) {
+                roles.append(ModelData::ChangeTimeRole);
+            }
+            if (!roles.isEmpty()) {
+                HDEBUG(i << roles);
+                const QModelIndex idx(index(i));
+                Q_EMIT dataChanged(idx, idx, roles);
+            }
+        }
+    }
+}
+
 Qt::ItemFlags CounterListModel::flags(const QModelIndex& aIndex) const
 {
     return SUPER::flags(aIndex) | Qt::ItemIsEditable;

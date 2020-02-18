@@ -11,4 +11,10 @@ ApplicationWindow {
 
     initialPage: Component { MainPage { } }
     cover: Component { CoverPage { } }
+
+    Connections {
+        target: HarbourSystemTime
+        onPreNotify: Date.timeZoneUpdated()
+        onNotify: CounterListModel.timeChanged()
+    }
 }

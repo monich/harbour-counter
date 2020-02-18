@@ -64,6 +64,7 @@ public:
     void setCurrentIndex(int aIndex);
 
     Q_INVOKABLE int addCounter();
+    Q_INVOKABLE void timeChanged();
     Q_INVOKABLE void resetCounter(int aRow);
     Q_INVOKABLE void deleteCounter(int aRow);
 

@@ -36,6 +36,7 @@
  */
 
 #include "HarbourDebug.h"
+#include "HarbourSystemTime.h"
 #include "HarbourTheme.h"
 
 #include "CounterDefs.h"
@@ -56,6 +57,7 @@
 static void register_types(const char* uri, int v1, int v2)
 {
     qmlRegisterSingletonType<HarbourTheme>(uri, v1, v2, "HarbourTheme", HarbourTheme::createSingleton);
+    qmlRegisterSingletonType<HarbourSystemTime>(uri, v1, v2, "HarbourSystemTime", HarbourSystemTime::createSingleton);
     qmlRegisterSingletonType<CounterListModel>(uri, v1, v2, "CounterListModel", CounterListModel::createSingleton);
     qmlRegisterType<CounterFavoritesModel>(uri, v1, v2, "CounterFavoritesModel");
 }
