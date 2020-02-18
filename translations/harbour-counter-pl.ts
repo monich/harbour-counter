@@ -30,8 +30,13 @@
     </message>
     <message id="counter-default_title">
         <source>Counter</source>
-        <extracomment>Default title for a new counter</extracomment>
+        <extracomment>Default title for the first counter</extracomment>
         <translation>Licznik</translation>
+    </message>
+    <message id="counter-default_title_n">
+        <source>Counter %1</source>
+        <extracomment>Default title for a new counter</extracomment>
+        <translation>Licznik %1</translation>
     </message>
     <message id="counter-title">
         <source>Label</source>

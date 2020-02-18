@@ -76,7 +76,7 @@ public:
 
 public:
     ModelData(QVariantMap aData);
-    ModelData(QString aId, bool aFavorite);
+    ModelData(QString aId, QString aTitle, bool aFavorite);
 
     void set(QVariantMap aData);
     QVariant get(Role aRole) const;
@@ -124,13 +124,11 @@ inline QString CounterListModel::ModelData::toString(const QDateTime& aTime)
     return aTime.toUTC().toString(Qt::ISODate);
 }
 
-CounterListModel::ModelData::ModelData(QString aId, bool aFavorite) :
+CounterListModel::ModelData::ModelData(QString aId, QString aTitle, bool aFavorite) :
     iValue(0),
     iFavorite(aFavorite),
     iId(aId),
-    //: Default title for a new counter
-    //% "Counter"
-    iTitle(qtTrId("counter-default_title"))
+    iTitle(aTitle)
 {
 }
 
@@ -193,13 +191,15 @@ public:
     int rowCount() const;
     int favoriteCount() const;
     QString newId() const;
+    QString newTitle() const;
     void setCount(int aCount);
     void setSaveFile(QString aFileName);
     void save() const;
     void newCounter();
     int oneFavoriteOff(int aIndexToIgnore);
     int oneFavoriteOn(int aIndexToIgnore);
-    ModelData* find(QString aId) const;
+    ModelData* findId(QString aId) const;
+    ModelData* findTitle(QString aId) const;
     ModelData* dataAt(int aIndex) const;
 
 private:
@@ -275,16 +275,43 @@ QString CounterListModel::Private::newId() const
 {
     int i = 0;
     QString id;
-    do { id.sprintf("%03d", i++); } while (find(id));
+    do { id.sprintf("%03d", i++); } while (findId(id));
     return id;
 }
 
-CounterListModel::ModelData* CounterListModel::Private::find(QString aId) const
+QString CounterListModel::Private::newTitle() const
+{
+    //: Default title for the first counter
+    //% "Counter"
+    QString title(qtTrId("counter-default_title"));
+    if (findTitle(title)) {
+        int i = 2;
+        //: Default title for a new counter
+        //% "Counter %1"
+        do { title = qtTrId("counter-default_title_n").arg(i++); }
+        while (findTitle(title));
+    }
+    return title;
+}
+
+CounterListModel::ModelData* CounterListModel::Private::findId(QString aId) const
 {
     const int n = iData.count();
     for (int i = 0; i < n; i++) {
         ModelData* data = iData.at(i);
         if (data->iId == aId) {
+            return data;
+        }
+    }
+    return NULL;
+}
+
+CounterListModel::ModelData* CounterListModel::Private::findTitle(QString aTitle) const
+{
+    const int n = iData.count();
+    for (int i = 0; i < n; i++) {
+        ModelData* data = iData.at(i);
+        if (data->iTitle == aTitle) {
             return data;
         }
     }
@@ -302,7 +329,7 @@ CounterListModel::ModelData* CounterListModel::Private::dataAt(int aIndex) const
 
 void CounterListModel::Private::newCounter()
 {
-    iData.append(new ModelData(newId(), iData.isEmpty()));
+    iData.append(new ModelData(newId(), newTitle(), iData.isEmpty()));
 }
 
 int CounterListModel::Private::oneFavoriteOff(int aIndexToIgnore)
