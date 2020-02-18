@@ -65,7 +65,6 @@ CoverBackground {
                     width: Math.min(implicitWidth, parent.width)
                     truncationMode: TruncationMode.Fade
                     horizontalAlignment: Text.AlignLeft
-                    color: Theme.highlightColor
                     textFormat: Text.PlainText
                 }
                 Rectangle {
