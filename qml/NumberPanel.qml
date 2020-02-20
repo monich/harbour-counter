@@ -76,7 +76,7 @@ Row {
                         n += repeater.itemAt(i).number * k
                         k *= 10
                     }
-                    if (number != n) {
+                    if (panel.number != n) {
                         panel.updateNumber(n)
                     }
                 }
