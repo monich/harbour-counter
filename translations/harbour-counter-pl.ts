@@ -6,7 +6,7 @@
     <message id="counter-app_name">
         <source>Counter</source>
         <extracomment>Application title</extracomment>
-        <translation>Licznik</translation>
+        <translation>Counter</translation>
     </message>
     <message id="counter-menu-settings">
         <source>Settings</source>
