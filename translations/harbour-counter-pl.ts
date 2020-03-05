@@ -11,7 +11,7 @@
     <message id="counter-menu-settings">
         <source>Settings</source>
         <extracomment>Pulley menu item</extracomment>
-        <translation type="unfinished">Ustawienia</translation>
+        <translation>Ustawienia</translation>
     </message>
     <message id="counter-menu-delete_counter">
         <source>Delete this counter</source>
@@ -66,7 +66,7 @@
     <message id="counter-switch-use_volume_keys">
         <source>Use volume keys</source>
         <extracomment>Text switch label</extracomment>
-        <translation type="unfinished">Użyj klawiszy głośności</translation>
+        <translation>Użyj klawiszy głośności</translation>
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>
