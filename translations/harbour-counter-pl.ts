@@ -51,7 +51,7 @@
     <message id="counter-switch-favorite">
         <source>Show on cover</source>
         <extracomment>Text switch label</extracomment>
-        <translation>Pokaż na etykiecie</translation>
+        <translation>Pokaż na okładce</translation>
     </message>
     <message id="counter-switch-favorite-description">
         <source>No more than two counters can be shown on cover at the same time.</source>
