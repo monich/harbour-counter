@@ -17,9 +17,11 @@ Row {
     property bool sounds
     property alias color: sample.color
     property alias font: sample.font
+    property bool completed
 
     signal updateNumber(var newValue)
 
+    Component.onCompleted: completed = true
     onNumberChanged: repeater.updateSpinners()
 
     Text {
@@ -61,7 +63,7 @@ Row {
         NumberSpinner {
             font: sample.font
             color: sample.color
-            animated: panel.animated
+            animated: panel.animated && panel.completed
             interactive: panel.interactive
             hasBackground: panel.hasBackground
             backgroundColor: panel.backgroundColor

@@ -119,13 +119,11 @@ CoverBackground {
                     anchors.centerIn: parent
                     number: model.value
                     interactive: false
-                    animated: false
                     hasBackground: false
                     color: HarbourTheme.invertedColor(Theme.primaryColor)
                     horizontalMargins: 0
                     count: numberLabel.text.length
                     font: numberLabel.font
-                    Component.onCompleted: animated = true
                 }
                 function inc() {
                     model.value++
