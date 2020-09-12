@@ -11,6 +11,9 @@ var configDefaultVibra = true
 var configKeyUseVolumeKeys = configRoot + "useVolumeKeys"
 var configDefaultUseVolumeKeys = true
 
+var configKeyReorderHintCount = configRoot + "reorderHintCount"
+var maxReorderHintCount = 4
+
 // Deduce package name from the path
 function appName() {
     var parts = Qt.resolvedUrl("dummy").split('/')

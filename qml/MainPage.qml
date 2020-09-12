@@ -14,6 +14,7 @@ Page {
     property bool flipped
     property var remorsePopup
     property var buzz
+    property Item reorderHint
 
     readonly property int maxCounters: Math.floor(list.width/Theme.itemSizeExtraSmall)
     readonly property bool remorsePopupVisible: remorsePopup ? remorsePopup.visible : false
@@ -32,10 +33,59 @@ Page {
         defaultValue: Utils.configDefaultVibra
     }
 
+    ConfigurationValue {
+        id: configReorderHintCount
+
+        key: Utils.configKeyReorderHintCount
+        defaultValue: 0
+    }
+
     Component {
         id: buzzComponent
 
         Buzz { }
+    }
+
+    Component {
+        id: hintComponent
+
+        InteractionHintLabel {
+            id: hintLabel
+
+            width: parent.width - 2 * Theme.paddingMedium
+            radius: Theme.paddingMedium
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: Theme.paddingMedium
+            }
+
+            function show() { hintAnimation.start() }
+
+            SequentialAnimation {
+                id: hintAnimation
+
+                alwaysRunToEnd: true
+                FadeAnimation { duration: 1000; target: hintLabel; to: 1.0 }
+                PauseAnimation { duration: 2000 } // Long text, give the user time to read it
+                FadeAnimation { duration: 1000; target: hintLabel; to: 0.0 }
+            }
+        }
+    }
+
+    function considerShowingReorderHint() {
+        if (configReorderHintCount.value < Utils.maxReorderHintCount) {
+            if (!reorderHint) {
+                reorderHint = hintComponent.createObject(list, {
+                    //: Hint text
+                    //% "To move this counter to a different position in the list, press and hold the desired position in the switcher below"
+                    text: qsTrId("counter-hint-how_to_reorder"),
+                    opacity: 0.0
+                })
+            }
+            reorderHint.show()
+            configReorderHintCount.value++
+        }
     }
 
     Connections {
@@ -44,6 +94,7 @@ Page {
             if (!buzz) buzz = buzzComponent.createObject(page)
             buzz.play()
         }
+        onRowsInserted: considerShowingReorderHint()
     }
 
     SilicaFlickable {
@@ -126,8 +177,19 @@ Page {
                         automaticCheck: false
                         checked: model.index === list.currentIndex
                         highlighted: down || !model.favorite
-                        onClicked: if (!checked) scrollAnimation.animateTo(index)
-                        onPressAndHold: CounterListModel.moveCounter(list.currentIndex, model.index)
+                        onClicked: {
+                            if (!checked) scrollAnimation.animateTo(index)
+                            considerShowingReorderHint()
+                        }
+                        onPressAndHold: {
+                            var newIndex = model.index
+                            if (list.currentIndex !== newIndex) {
+                                CounterListModel.moveCounter(list.currentIndex, newIndex)
+                                list.positionViewAtIndex(newIndex, ListView.Center)
+                                // And don't show any more hints:
+                                configReorderHintCount.value = Utils.maxReorderHintCount
+                            }
+                        }
                     }
                     // Cover action selects the corresponding counter in the list.
                     // Note that these switches always exist, while list delegates
@@ -171,6 +233,7 @@ Page {
             highlightRangeMode: ListView.StrictlyEnforceRange
             flickDeceleration: maximumFlickVelocity
             interactive: !scrollAnimation.running
+            quickScrollEnabled: false
             clip: !currentItem || !currentItem.flipping
             model: CounterListModel
             delegate: CounterItem {

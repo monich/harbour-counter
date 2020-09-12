@@ -88,5 +88,10 @@
         <extracomment>Label text (time and date of the last reset)</extracomment>
         <translation>Mise à zéro:</translation>
     </message>
+    <message id="counter-hint-how_to_reorder">
+        <source>To move this counter to a different position in the list, press and hold the desired position in the switcher below</source>
+        <extracomment>Hint text</extracomment>
+        <translation type="unfinished">Pour déplacer ce compteur vers une autre position dans la liste, appuyez et maintenez la position souhaitée dans le sélecteur ci-dessous</translation>
+    </message>
 </context>
 </TS>

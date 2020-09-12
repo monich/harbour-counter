@@ -88,5 +88,10 @@
         <extracomment>Label text (time and date of the last reset)</extracomment>
         <translation>Återställd:</translation>
     </message>
+    <message id="counter-hint-how_to_reorder">
+        <source>To move this counter to a different position in the list, press and hold the desired position in the switcher below</source>
+        <extracomment>Hint text</extracomment>
+        <translation type="unfinished">För att flytta denna räknare till en annan position i listan, håll ned önskad position i växlarna nedan</translation>
+    </message>
 </context>
 </TS>
