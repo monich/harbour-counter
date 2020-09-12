@@ -12,6 +12,7 @@ Item {
     property alias flipped: flipable.flipped
     property string title
     property bool sounds
+    property bool vibra
     property bool flipping
     property bool currentItem
 
@@ -45,6 +46,7 @@ Item {
             visible: rotation.angle < 90
             active: visible && Qt.application.active && currentItem
             sounds: panel.sounds
+            vibra: panel.vibra
             title: panel.title
         }
         back: CounterBack {

@@ -5,6 +5,9 @@ var configRoot = "/apps/" + appName() + "/"
 var configKeySounds = configRoot + "sounds"
 var configDefaultSounds = false
 
+var configKeyVibra = configRoot + "vibra"
+var configDefaultVibra = true
+
 var configKeyUseVolumeKeys = configRoot + "useVolumeKeys"
 var configDefaultUseVolumeKeys = true
 

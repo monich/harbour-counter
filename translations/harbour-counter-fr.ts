@@ -63,6 +63,11 @@
         <extracomment>Text switch label</extracomment>
         <translation>Jouer les sons</translation>
     </message>
+    <message id="counter-switch-vibra">
+        <source>Vibrate</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">Vibrer</translation>
+    </message>
     <message id="counter-switch-use_volume_keys">
         <source>Use volume keys</source>
         <extracomment>Text switch label</extracomment>

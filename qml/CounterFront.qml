@@ -12,6 +12,7 @@ Item {
     property int value
     property alias title: titleLabel.text
     property bool sounds
+    property bool vibra
     property bool active
 
     signal flip()
@@ -116,6 +117,9 @@ Item {
         if (plusSound.item) {
             plusSound.item.play()
         }
+        if (buzz.item) {
+            buzz.item.play()
+        }
     }
 
     function minus() {
@@ -123,6 +127,9 @@ Item {
             panel.updateCounter(value - 1)
             if (minusSound.item) {
                 minusSound.item.play()
+            }
+            if (buzz.item) {
+                buzz.item.play()
             }
         }
     }
@@ -137,6 +144,7 @@ Item {
             }
         }
     }
+
     Loader {
         id: minusSound
 
@@ -146,6 +154,13 @@ Item {
                 source: "sounds/minus.wav"
             }
         }
+    }
+
+    Loader {
+        id: buzz
+
+        active: panel.vibra
+        source: "Buzz.qml"
     }
 
     ConfigurationValue {

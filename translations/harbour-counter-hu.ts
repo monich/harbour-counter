@@ -63,6 +63,11 @@
         <extracomment>Text switch label</extracomment>
         <translation>Hangjelzés</translation>
     </message>
+    <message id="counter-switch-vibra">
+        <source>Vibrate</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">Rezeg</translation>
+    </message>
     <message id="counter-switch-use_volume_keys">
         <source>Use volume keys</source>
         <extracomment>Text switch label</extracomment>

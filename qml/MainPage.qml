@@ -24,6 +24,13 @@ Page {
         defaultValue: Utils.configDefaultSounds
     }
 
+    ConfigurationValue {
+        id: configVibra
+
+        key: Utils.configKeyVibra
+        defaultValue: Utils.configDefaultVibra
+    }
+
     SilicaFlickable {
         anchors.fill: parent
 
@@ -160,6 +167,7 @@ Page {
                 canChangeFavorite: list.count > 1
                 title: model.title
                 sounds: configSounds.value
+                vibra: configVibra.value
                 changeTime: model.changeTime
                 resetTime: model.resetTime
                 onFlip: page.flipped = !page.flipped

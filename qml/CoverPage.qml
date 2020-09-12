@@ -20,6 +20,38 @@ CoverBackground {
         defaultValue: Utils.configDefaultSounds
     }
 
+    ConfigurationValue {
+        id: configVibra
+
+        key: Utils.configKeyVibra
+        defaultValue: Utils.configDefaultVibra
+    }
+
+    Loader {
+        id: buzz
+
+        active: configVibra.value
+        source: "Buzz.qml"
+    }
+
+    Loader {
+        id: plusSound
+
+        active: configSounds.value
+        sourceComponent: Component {
+            SoundEffect { source: "sounds/plus.wav" }
+        }
+    }
+
+    Loader {
+        id: minusSound
+
+        active: configSounds.value
+        sourceComponent: Component {
+            SoundEffect { source: "sounds/minus.wav" }
+        }
+    }
+
     Row {
         id: row
 
@@ -43,18 +75,6 @@ CoverBackground {
 
                 readonly property real maxWidth: Math.floor((cover.width - 2 * Theme.paddingMedium - (repeater.visibleCount - 1) * row.spacing)/repeater.visibleCount)
 
-                Loader {
-                    id: plusSound
-
-                    active: configSounds.value
-                    sourceComponent: Component { SoundEffect { source: "sounds/plus.wav" } }
-                }
-                Loader {
-                    id: minusSound
-
-                    active: configSounds.value
-                    sourceComponent: Component { SoundEffect { source: "sounds/minus.wav" } }
-                }
                 Label {
                     anchors {
                         top: parent.top
@@ -112,12 +132,18 @@ CoverBackground {
                     if (plusSound.item) {
                         plusSound.item.play()
                     }
+                    if (buzz.item) {
+                        buzz.item.play()
+                    }
                 }
                 function dec() {
                     if (model.value > 0) {
                         model.value--
                         if (minusSound.item) {
                             minusSound.item.play()
+                        }
+                        if (buzz.item) {
+                            buzz.item.play()
                         }
                     }
                 }
