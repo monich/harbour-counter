@@ -11,8 +11,8 @@
  *   1. Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
  *   2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
+ *      notice, this list of conditions and the following disclaimer
+ *      in the documentation and/or other materials provided with the
  *      distribution.
  *   3. Neither the names of the copyright holders nor the names of its
  *      contributors may be used to endorse or promote products derived
@@ -206,7 +206,7 @@ private:
     void writeState() const;
 
 private Q_SLOTS:
-    void onHoldoffTimerExpired();
+    void flushChanges();
     void onSaveTimerExpired();
 
 public:
@@ -242,15 +242,12 @@ CounterListModel::Private::Private(QObject* aParent) :
     // And not more often than every second
     iHoldoffTimer->setInterval(1000);
     iHoldoffTimer->setSingleShot(true);
-    connect(iHoldoffTimer, SIGNAL(timeout()), SLOT(onHoldoffTimerExpired()));
+    connect(iHoldoffTimer, SIGNAL(timeout()), SLOT(flushChanges()));
 }
 
 CounterListModel::Private::~Private()
 {
-    if (iSaveTimer->isActive()) {
-        // There are unsaved changes
-        writeState();
-    }
+    flushChanges();
     qDeleteAll(iData);
 }
 
@@ -371,6 +368,7 @@ void CounterListModel::Private::setCount(int aCount)
 
 void CounterListModel::Private::setSaveFile(QString aFileName)
 {
+    flushChanges();
     iSaveFile = aFileName;
     if (aFileName.isEmpty()) {
         iSaveFilePath.clear();
@@ -435,7 +433,7 @@ void CounterListModel::Private::save() const
     }
 }
 
-void CounterListModel::Private::onHoldoffTimerExpired()
+void CounterListModel::Private::flushChanges()
 {
     if (iSaveTimer->isActive()) {
         iSaveTimer->stop();
