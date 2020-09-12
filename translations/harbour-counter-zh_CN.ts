@@ -36,7 +36,7 @@
     <message id="counter-default_title_n">
         <source>Counter %1</source>
         <extracomment>Default title for a new counter</extracomment>
-        <translation type="unfinished">计数器 %1</translation>
+        <translation>计数器 %1</translation>
     </message>
     <message id="counter-title">
         <source>Label</source>
@@ -66,7 +66,7 @@
     <message id="counter-switch-vibra">
         <source>Vibrate</source>
         <extracomment>Text switch label</extracomment>
-        <translation type="unfinished">颤动</translation>
+        <translation>振动</translation>
     </message>
     <message id="counter-switch-use_volume_keys">
         <source>Use volume keys</source>
