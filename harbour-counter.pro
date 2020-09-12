@@ -70,12 +70,14 @@ HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourJson.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourPluginLoader.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourSystemTime.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
+    $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h \
+    $${HARBOUR_LIB_SRC}/HarbourSystem.h
 
 SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourJson.cpp \
     $${HARBOUR_LIB_SRC}/HarbourPluginLoader.cpp \
     $${HARBOUR_LIB_SRC}/HarbourSystemTime.cpp \
+    $${HARBOUR_LIB_SRC}/HarbourSystem.cpp \
     $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
 
 HARBOUR_QML_COMPONENTS = \
