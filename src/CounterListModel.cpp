@@ -725,23 +725,18 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
     return false;
 }
 
-bool CounterListModel::moveRows(const QModelIndex &aSrcParent, int aSrcRow,
-    int aCount, const QModelIndex &aDestParent, int aDestRow)
+void CounterListModel::moveCounter(int aSrcRow, int aDestRow)
 {
     const int size = iPrivate->rowCount();
-    if (aSrcParent == aDestParent &&
-        aSrcRow != aDestRow &&
+    if (aSrcRow != aDestRow &&
         aSrcRow >= 0 && aSrcRow < size &&
         aDestRow >= 0 && aDestRow < size) {
         HDEBUG(aSrcRow << "->" << aDestRow);
-        beginMoveRows(aSrcParent, aSrcRow, aSrcRow, aDestParent,
+        beginMoveRows(QModelIndex(), aSrcRow, aSrcRow, QModelIndex(),
            (aDestRow < aSrcRow) ? aDestRow : (aDestRow + 1));
         iPrivate->iData.move(aSrcRow, aDestRow);
         iPrivate->save();
         endMoveRows();
-        return true;
-    } else {
-        return false;
     }
 }
 

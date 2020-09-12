@@ -11,8 +11,8 @@
  *   1. Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
  *   2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
+ *      notice, this list of conditions and the following disclaimer
+ *      in the documentation and/or other materials provided with the
  *      distribution.
  *   3. Neither the names of the copyright holders nor the names of its
  *      contributors may be used to endorse or promote products derived
@@ -67,6 +67,7 @@ public:
     Q_INVOKABLE void timeChanged();
     Q_INVOKABLE void resetCounter(int aRow);
     Q_INVOKABLE void deleteCounter(int aRow);
+    Q_INVOKABLE void moveCounter(int aSrcRow, int aDestRow);
 
     // QAbstractItemModel
     Qt::ItemFlags flags(const QModelIndex& aIndex) const Q_DECL_OVERRIDE;
@@ -74,8 +75,6 @@ public:
     int rowCount(const QModelIndex& aParent = QModelIndex()) const Q_DECL_OVERRIDE;
     QVariant data(const QModelIndex& aIndex, int aRole) const Q_DECL_OVERRIDE;
     bool setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole) Q_DECL_OVERRIDE;
-    bool moveRows(const QModelIndex &aSrcParent, int aSrcRow, int aCount,
-        const QModelIndex &aDestParent, int aDestRow) Q_DECL_OVERRIDE;
 
     // Callback for qmlRegisterSingletonType<CounterListModel>
     static QObject* createSingleton(QQmlEngine* aEngine, QJSEngine* aScript);

@@ -13,6 +13,7 @@ Page {
 
     property bool flipped
     property var remorsePopup
+    property var buzz
 
     readonly property int maxCounters: Math.floor(list.width/Theme.itemSizeExtraSmall)
     readonly property bool remorsePopupVisible: remorsePopup ? remorsePopup.visible : false
@@ -29,6 +30,20 @@ Page {
 
         key: Utils.configKeyVibra
         defaultValue: Utils.configDefaultVibra
+    }
+
+    Component {
+        id: buzzComponent
+
+        Buzz { }
+    }
+
+    Connections {
+        target: CounterListModel
+        onRowsMoved: {
+            if (!buzz) buzz = buzzComponent.createObject(page)
+            buzz.play()
+        }
     }
 
     SilicaFlickable {
@@ -112,6 +127,7 @@ Page {
                         checked: model.index === list.currentIndex
                         highlighted: down || !model.favorite
                         onClicked: if (!checked) scrollAnimation.animateTo(index)
+                        onPressAndHold: CounterListModel.moveCounter(list.currentIndex, model.index)
                     }
                     // Cover action selects the corresponding counter in the list.
                     // Note that these switches always exist, while list delegates
