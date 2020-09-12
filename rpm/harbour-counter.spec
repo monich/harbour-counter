@@ -1,6 +1,6 @@
 Name:           harbour-counter
 Summary:        Counter
-Version:        1.0.7
+Version:        1.0.8
 Release:        1
 License:        BSD
 Group:          Applications/Productivity
@@ -23,7 +23,7 @@ BuildRequires:  qt5-qttools-linguist
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 
 %description
-Application to count whatever.
+Application for counting whatever.
 
 %prep
 %setup -q -n %{name}-%{version}
