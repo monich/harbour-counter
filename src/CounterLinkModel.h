@@ -35,65 +35,39 @@
  * any official policies, either expressed or implied.
  */
 
-#ifndef COUNTER_LIST_MODEL_H
-#define COUNTER_LIST_MODEL_H
-
-#include <QAbstractListModel>
+#ifndef COUNTER_LINK_MODEL_H
+#define COUNTER_LINK_MODEL_H
 
 #include <QtQml>
+#include <QSortFilterProxyModel>
 
-class CounterListModel : public QAbstractListModel {
+class CounterLinkModel : public QSortFilterProxyModel {
     Q_OBJECT
-    Q_PROPERTY(QString saveFile READ saveFile WRITE setSaveFile NOTIFY saveFileChanged)
-    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
-    Q_PROPERTY(bool updatingLinkedCounter READ updatingLinkedCounter NOTIFY updatingLinkedCounterChanged)
-    Q_DISABLE_COPY(CounterListModel)
-
-    class Private;
-    class ModelData;
+    Q_PROPERTY(QObject* sourceModel READ sourceModel WRITE setSourceModelObject NOTIFY sourceModelObjectChanged)
+    Q_PROPERTY(QString sourceId READ sourceId WRITE setSourceId NOTIFY sourceIdChanged)
+    Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
 
 public:
+    CounterLinkModel(QObject* aParent = Q_NULLPTR);
+    ~CounterLinkModel();
 
-    CounterListModel(QObject* aParent = NULL);
+    void setSourceModelObject(QObject* aModel);
+    void setSourceId(QString aValue);
+    QString sourceId() const;
 
-    static int favoriteRole();
-    static int modelIdRole();
-
-    QString saveFile() const;
-    void setSaveFile(QString aFileName);
-
-    int currentIndex() const;
-    void setCurrentIndex(int aIndex);
-
-    bool updatingLinkedCounter() const;
-
-    Q_INVOKABLE int addCounter();
-    Q_INVOKABLE void timeChanged();
-    Q_INVOKABLE void resetCounter(int aRow);
-    Q_INVOKABLE void deleteCounter(int aRow);
-    Q_INVOKABLE void moveCounter(int aSrcRow, int aDestRow);
-    Q_INVOKABLE int findCounter(QString aModelId);
-
-    // QAbstractItemModel
-    Qt::ItemFlags flags(const QModelIndex& aIndex) const Q_DECL_OVERRIDE;
-    QHash<int,QByteArray> roleNames() const Q_DECL_OVERRIDE;
-    int rowCount(const QModelIndex& aParent = QModelIndex()) const Q_DECL_OVERRIDE;
-    QVariant data(const QModelIndex& aIndex, int aRole) const Q_DECL_OVERRIDE;
-    bool setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole) Q_DECL_OVERRIDE;
-
-    // Callback for qmlRegisterSingletonType<CounterListModel>
-    static QObject* createSingleton(QQmlEngine* aEngine, QJSEngine* aScript);
+protected:
+    bool filterAcceptsRow(int aSourceRow, const QModelIndex& aParent) const Q_DECL_OVERRIDE;
 
 Q_SIGNALS:
-    void saveFileChanged();
-    void currentIndexChanged();
-    void updatingLinkedCounterChanged();
-    void stateLoaded();
+    void sourceModelObjectChanged();
+    void sourceIdChanged();
+    void countChanged();
 
 private:
+    class Private;
     Private* iPrivate;
 };
 
-QML_DECLARE_TYPE(CounterListModel)
+QML_DECLARE_TYPE(CounterLinkModel)
 
-#endif // COUNTER_LIST_MODEL_H
+#endif // COUNTER_LINK_MODEL_H

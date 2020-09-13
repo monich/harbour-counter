@@ -58,6 +58,21 @@
         <extracomment>Text switch description</extracomment>
         <translation>Nie można jednocześnie wyświetlać więcej niż dwóch liczników na okładce.</translation>
     </message>
+    <message id="counter-switch-linked">
+        <source>Linked counter</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">Powiązany licznik</translation>
+    </message>
+    <message id="counter-switch-linked-description">
+        <source>Linked counters change synchronously but can reset be independently.</source>
+        <extracomment>Text switch description</extracomment>
+        <translation type="unfinished">Powiązane liczniki zmieniają się synchronicznie, ale można je resetować niezależnie.</translation>
+    </message>
+    <message id="counter-combo-link_to">
+        <source>Link with</source>
+        <extracomment>Combo box label</extracomment>
+        <translation type="unfinished">Połącz z</translation>
+    </message>
     <message id="counter-switch-sounds">
         <source>Play sounds</source>
         <extracomment>Text switch label</extracomment>

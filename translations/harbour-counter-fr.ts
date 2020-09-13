@@ -58,6 +58,21 @@
         <extracomment>Text switch description</extracomment>
         <translation>Pas plus de deux compteurs en même temps sur la miniature.</translation>
     </message>
+    <message id="counter-switch-linked">
+        <source>Linked counter</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">Compteur lié</translation>
+    </message>
+    <message id="counter-switch-linked-description">
+        <source>Linked counters change synchronously but can reset be independently.</source>
+        <extracomment>Text switch description</extracomment>
+        <translation type="unfinished">Les compteurs liés changent de manière synchrone mais peuvent être réinitialisés indépendamment.</translation>
+    </message>
+    <message id="counter-combo-link_to">
+        <source>Link with</source>
+        <extracomment>Combo box label</extracomment>
+        <translation type="unfinished">Lier avec</translation>
+    </message>
     <message id="counter-switch-sounds">
         <source>Play sounds</source>
         <extracomment>Text switch label</extracomment>

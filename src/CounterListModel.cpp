@@ -43,6 +43,7 @@
 
 #define MODEL_ROLES_(first,role,last) \
     first(ModelId,modelId) \
+    role(Link,link) \
     role(Value,value) \
     role(Title,title) \
     role(ResetTime,resetTime) \
@@ -77,7 +78,9 @@ public:
 public:
     ModelData(QVariantMap aData);
     ModelData(QString aId, QString aTitle, bool aFavorite);
+    ~ModelData();
 
+    void clearLink();
     void set(QVariantMap aData);
     QVariant get(Role aRole) const;
     QVariantMap toVariantMap() const;
@@ -87,6 +90,7 @@ public:
 
 public:
     static const QString KEY_ID;
+    static const QString KEY_LINK;
     static const QString KEY_VALUE;
     static const QString KEY_FAVORITE;
     static const QString KEY_TITLE;
@@ -100,6 +104,7 @@ public:
     QString iTitle;
     QDateTime iResetTime;
     QDateTime iChangeTime;
+    ModelData* iLink;
 };
 
 #define ROLE(X,x) const QString CounterListModel::ModelData::RoleName##X(#x);
@@ -107,6 +112,7 @@ MODEL_ROLES(ROLE)
 #undef ROLE
 
 const QString CounterListModel::ModelData::KEY_ID("id");
+const QString CounterListModel::ModelData::KEY_LINK("link");
 const QString CounterListModel::ModelData::KEY_VALUE("value");
 const QString CounterListModel::ModelData::KEY_FAVORITE("favorite");
 const QString CounterListModel::ModelData::KEY_TITLE("title");
@@ -128,13 +134,28 @@ CounterListModel::ModelData::ModelData(QString aId, QString aTitle, bool aFavori
     iValue(0),
     iFavorite(aFavorite),
     iId(aId),
-    iTitle(aTitle)
+    iTitle(aTitle),
+    iLink(Q_NULLPTR)
 {
 }
 
-CounterListModel::ModelData::ModelData(QVariantMap aData)
+CounterListModel::ModelData::ModelData(QVariantMap aData) :
+    iLink(Q_NULLPTR)
 {
     set(aData);
+}
+
+CounterListModel::ModelData::~ModelData()
+{
+    clearLink();
+}
+
+void CounterListModel::ModelData::clearLink()
+{
+    if (iLink) {
+        iLink->iLink = Q_NULLPTR;
+        iLink = Q_NULLPTR;
+    }
 }
 
 QVariant CounterListModel::ModelData::get(Role aRole) const
@@ -143,6 +164,7 @@ QVariant CounterListModel::ModelData::get(Role aRole) const
     case ValueRole: return iValue;
     case FavoriteRole: return iFavorite;
     case ModelIdRole: return iId;
+    case LinkRole: return iLink ? iLink->iId : QString();
     case TitleRole: return iTitle;
     case ResetTimeRole: return iResetTime;
     case ChangeTimeRole: return iChangeTime;
@@ -157,6 +179,9 @@ QVariantMap CounterListModel::ModelData::toVariantMap() const
     map.insert(KEY_FAVORITE, iFavorite);
     map.insert(KEY_ID, iId);
     map.insert(KEY_TITLE, iTitle);
+    if (iLink) {
+        map.insert(KEY_LINK, iLink->iId);
+    }
     if (iResetTime.isValid()) {
         map.insert(KEY_RESET_TIME, toString(iResetTime));
     }
@@ -168,6 +193,7 @@ QVariantMap CounterListModel::ModelData::toVariantMap() const
 
 void CounterListModel::ModelData::set(QVariantMap aData)
 {
+    clearLink();
     iValue = aData.value(KEY_VALUE).toInt();
     iFavorite = aData.value(KEY_FAVORITE).toBool();
     iId = aData.value(KEY_ID).toString();
@@ -189,6 +215,7 @@ public:
     ~Private();
 
     int rowCount() const;
+    int indexOf(ModelData* aData) const;
     int favoriteCount() const;
     QString newId() const;
     QString newTitle() const;
@@ -198,7 +225,7 @@ public:
     void newCounter();
     int oneFavoriteOff(int aIndexToIgnore);
     int oneFavoriteOn(int aIndexToIgnore);
-    ModelData* findId(QString aId) const;
+    int findId(QString aId) const;
     ModelData* findTitle(QString aId) const;
     ModelData* dataAt(int aIndex) const;
 
@@ -218,6 +245,7 @@ public:
     ModelData::List iData;
     int iCurrentIndex;
     int iSavingSuspended;
+    int iUpdatingLinkedCounter;
     QString iSaveFile;
     QString iSaveFilePath;
     QTimer* iSaveTimer;
@@ -231,9 +259,11 @@ CounterListModel::Private::Private(QObject* aParent) :
     QObject(aParent),
     iCurrentIndex(0),
     iSavingSuspended(0),
+    iUpdatingLinkedCounter(0),
     iSaveTimer(new QTimer(this)),
     iHoldoffTimer(new QTimer(this))
 {
+    // There's always at least one counter
     newCounter();
     // Current state is saved at least every 10 seconds
     iSaveTimer->setInterval(10000);
@@ -256,6 +286,11 @@ inline int CounterListModel::Private::rowCount() const
     return iData.count();
 }
 
+inline int CounterListModel::Private::indexOf(ModelData* aData) const
+{
+    return iData.indexOf(aData);
+}
+
 int CounterListModel::Private::favoriteCount() const
 {
     const int n = iData.count();
@@ -272,7 +307,7 @@ QString CounterListModel::Private::newId() const
 {
     int i = 0;
     QString id;
-    do { id.sprintf("%03d", i++); } while (findId(id));
+    do { id.sprintf("%03d", i++); } while (findId(id) >= 0);
     return id;
 }
 
@@ -291,16 +326,18 @@ QString CounterListModel::Private::newTitle() const
     return title;
 }
 
-CounterListModel::ModelData* CounterListModel::Private::findId(QString aId) const
+int CounterListModel::Private::findId(QString aId) const
 {
-    const int n = iData.count();
-    for (int i = 0; i < n; i++) {
-        ModelData* data = iData.at(i);
-        if (data->iId == aId) {
-            return data;
+    if (!aId.isEmpty()) {
+        const int n = iData.count();
+        for (int i = 0; i < n; i++) {
+            const ModelData* data = iData.at(i);
+            if (data->iId == aId) {
+                return i;
+            }
         }
     }
-    return NULL;
+    return -1;
 }
 
 CounterListModel::ModelData* CounterListModel::Private::findTitle(QString aTitle) const
@@ -373,9 +410,7 @@ void CounterListModel::Private::setSaveFile(QString aFileName)
     if (aFileName.isEmpty()) {
         iSaveFilePath.clear();
         setCount(1);
-        if (iCurrentIndex != 0) {
-            iCurrentIndex = 0;
-        }
+        iCurrentIndex = 0;
     } else {
         iSaveFilePath = QStandardPaths::writableLocation(
             QStandardPaths::GenericDataLocation) +
@@ -388,15 +423,33 @@ void CounterListModel::Private::setSaveFile(QString aFileName)
             if (n > 0) {
                 int i;
                 const int k = qMin(n, iData.count());
+                QHash<ModelData*,QString> linkMap;
                 for (i = 0; i < k; i++) {
-                    iData.at(i)->set(counters.at(i).toMap());
+                    const QVariantMap entry(counters.at(i).toMap());
+                    const QString link(entry.value(ModelData::KEY_LINK).toString());
+                    ModelData* data = iData.at(i);
+                    data->set(entry);
+                    if (!link.isEmpty()) linkMap.insert(data, link);
                 }
                 while (i < n) {
-                    iData.append(new ModelData(counters.at(i++).toMap()));
+                    const QVariantMap entry(counters.at(i++).toMap());
+                    const QString link(entry.value(ModelData::KEY_LINK).toString());
+                    ModelData* data = new ModelData(entry);
+                    iData.append(data);
+                    if (!link.isEmpty()) linkMap.insert(data, link);
                 }
-                while (iData.count() > n) {
-                    delete iData.last();
-                    iData.removeLast();
+                setCount(n);
+                // Restore links
+                for (i = 0; i < k; i++) {
+                    ModelData* data = iData.at(i);
+                    if (!data->iLink) {
+                        const QString link(linkMap.value(data));
+                        const int linked = findId(link);
+                        if (linked >= 0 && linked != i) {
+                            data->iLink = iData.at(linked);
+                            data->iLink->iLink = data;
+                        }
+                    }
                 }
             } else {
                 setCount(1);
@@ -484,6 +537,11 @@ int CounterListModel::favoriteRole()
     return ModelData::FavoriteRole;
 }
 
+int CounterListModel::modelIdRole()
+{
+    return ModelData::ModelIdRole;
+}
+
 QString CounterListModel::saveFile() const
 {
     return iPrivate->iSaveFile;
@@ -535,6 +593,12 @@ void CounterListModel::setCurrentIndex(int aIndex)
     }
 }
 
+bool CounterListModel::updatingLinkedCounter() const
+{
+    HASSERT(iPrivate->iUpdatingLinkedCounter >= 0);
+    return iPrivate->iUpdatingLinkedCounter > 0;
+}
+
 int CounterListModel::addCounter()
 {
     const int pos = iPrivate->iData.count();
@@ -573,9 +637,26 @@ void CounterListModel::deleteCounter(int aRow)
 {
     if (iPrivate->rowCount() && aRow >= 0 && aRow <= iPrivate->rowCount()) {
         HDEBUG(aRow);
+        QModelIndex unlinkIndex;
+
+        // Remove the row deom the model
         beginRemoveRows(QModelIndex(), aRow, aRow);
-        delete iPrivate->iData.takeAt(aRow);
+        ModelData* data = iPrivate->iData.takeAt(aRow);
+        if (data->iLink) {
+            HDEBUG("clearing link" << data->iLink->iId << "=>" << data->iId);
+            unlinkIndex = index(iPrivate->indexOf(data->iLink));
+            // Link will be cleared when we delete ModelData
+        }
+        delete data;
         endRemoveRows();
+
+        if (unlinkIndex.isValid()) {
+            // Signal link change
+            QVector<int> roles;
+            roles.append(ModelData::LinkRole);
+            Q_EMIT dataChanged(unlinkIndex, unlinkIndex, roles);
+        }
+
         if (!iPrivate->favoriteCount()) {
             // Looks like we have just deleted the last favorite
             const int on = iPrivate->oneFavoriteOn(-1);
@@ -587,7 +668,15 @@ void CounterListModel::deleteCounter(int aRow)
                 Q_EMIT dataChanged(idx, idx, roles);
             }
         }
+
+        // Save the model
+        iPrivate->save();
     }
+}
+
+int CounterListModel::findCounter(QString aLink)
+{
+    return iPrivate->findId(aLink);
 }
 
 void CounterListModel::timeChanged()
@@ -650,14 +739,36 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
             {
                 bool ok;
                 const int value = aValue.toInt(&ok);
-                if (ok) {
+                if (ok && value >= 0) {
                     if (data->iValue != value) {
-                        HDEBUG(row << "value" << value);
+                        const int change = value - data->iValue;
+                        HDEBUG(row << "value" << data->iValue << "->" << value);
                         data->iValue = value;
                         data->iChangeTime = QDateTime::currentDateTime();
                         roles.reserve(2);
                         roles.append(aRole);
                         roles.append(ModelData::ChangeTimeRole);
+
+                        // Update the linked counter if there is one
+                        ModelData* data2 = data->iLink;
+                        if (data2) {
+                            const int value2 = qMax(data2->iValue + change, 0);
+                            if (data2->iValue != value2) {
+                                const int row2 = iPrivate->findId(data2->iId);
+                                HDEBUG(row2 << "value" << data2->iValue << "->" << value2);
+                                if (!(iPrivate->iUpdatingLinkedCounter)++) {
+                                    Q_EMIT updatingLinkedCounterChanged();
+                                }
+                                data2->iValue = value2;
+                                data2->iChangeTime = data->iChangeTime;
+                                const QModelIndex index2(index(row2));
+                                Q_EMIT dataChanged(index2, index2, roles);
+                                if (!--(iPrivate->iUpdatingLinkedCounter)) {
+                                    Q_EMIT updatingLinkedCounterChanged();
+                                }
+                            }
+                        }
+
                         Q_EMIT dataChanged(aIndex, aIndex, roles);
                         iPrivate->save();
                     }
@@ -703,13 +814,58 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
             return true;
         case ModelData::TitleRole:
             {
-                const QString title = aValue.toString();
+                const QString title(aValue.toString());
                 if (data->iTitle != title) {
                     data->iTitle = title;
                     roles.append(aRole);
                     HDEBUG(row << "title" << title);
                     Q_EMIT dataChanged(aIndex, aIndex, roles);
                     iPrivate->save();
+                }
+            }
+            return true;
+        case ModelData::LinkRole:
+            {
+                const QString link(aValue.toString());
+                if (link != data->iId) {
+                    roles.append(aRole);
+                    if (link.isEmpty()) {
+                        // Clearing the link
+                        if (data->iLink) {
+                            HDEBUG(row << "clearing link" << data->iId << "=>" << link);
+                            int unlinkPos = iPrivate->indexOf(data->iLink);
+                            data->clearLink();
+                            const QModelIndex unlinkIdx(index(unlinkPos));
+                            Q_EMIT dataChanged(unlinkIdx, unlinkIdx, roles);
+                            Q_EMIT dataChanged(aIndex, aIndex, roles);
+                            iPrivate->save();
+                        }
+                    } else {
+                        const int linkPos = iPrivate->findId(link);
+                        if (linkPos >= 0) {
+                            ModelData* linkData = iPrivate->dataAt(linkPos);
+                            if (linkData != data->iLink) {
+                                // New (and valid) link
+                                ModelData* unlinkData = linkData->iLink;
+                                linkData->iLink = data;
+                                data->iLink = linkData;
+                                HDEBUG(row << "link" << data->iId << "<=>" << link);
+                                if (unlinkData) {
+                                    unlinkData->iLink = Q_NULLPTR;
+                                    int unlinkPos = iPrivate->indexOf(unlinkData);
+                                    const QModelIndex unlinkIdx(index(unlinkPos));
+                                    Q_EMIT dataChanged(unlinkIdx, unlinkIdx, roles);
+                                }
+                                const QModelIndex linkIdx(index(linkPos));
+                                Q_EMIT dataChanged(linkIdx, linkIdx, roles);
+                                Q_EMIT dataChanged(aIndex, aIndex, roles);
+                                iPrivate->save();
+                            }
+                        } else {
+                            // Invalid link was passed in
+                            HWARN(row << "invalid link" << link);
+                        }
+                    }
                 }
             }
             return true;

@@ -58,6 +58,21 @@
         <extracomment>Text switch description</extracomment>
         <translation>No more than two counters can be shown on cover at the same time.</translation>
     </message>
+    <message id="counter-switch-linked">
+        <source>Linked counter</source>
+        <extracomment>Text switch label</extracomment>
+        <translation>Linked counter</translation>
+    </message>
+    <message id="counter-switch-linked-description">
+        <source>Linked counters change synchronously but can reset be independently.</source>
+        <extracomment>Text switch description</extracomment>
+        <translation>Linked counters change synchronously but can reset be independently.</translation>
+    </message>
+    <message id="counter-combo-link_to">
+        <source>Link with</source>
+        <extracomment>Combo box label</extracomment>
+        <translation>Link with</translation>
+    </message>
     <message id="counter-switch-sounds">
         <source>Play sounds</source>
         <extracomment>Text switch label</extracomment>

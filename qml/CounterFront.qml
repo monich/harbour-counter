@@ -11,12 +11,14 @@ Item {
 
     property int value
     property alias title: titleLabel.text
+    property alias hasLink: linkIcon.visible
     property bool sounds
     property bool vibra
     property bool active
 
     signal flip()
     signal updateCounter(var value)
+    signal switchToLinked()
 
     Rectangle {
         id: panelBorder
@@ -100,6 +102,18 @@ Item {
         textOffset: -Theme.paddingSmall
         anchors.horizontalCenter: parent.horizontalCenter
         onClicked: minus()
+    }
+
+    IconButton {
+        id: linkIcon
+
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            margins: Theme.paddingMedium
+        }
+        icon.source: "image://theme/icon-m-link"
+        onClicked: panel.switchToLinked()
     }
 
     IconButton {

@@ -195,7 +195,11 @@ Page {
                     // Note that these switches always exist, while list delegates
                     // may be destroyed and re-created on demand. That's why the
                     // value is tracked here rather than in the list.
-                    onModelValueChanged: list.positionViewAtIndex(model.index, ListView.Center)
+                    onModelValueChanged: {
+                        if (!CounterListModel.updatingLinkedCounter) {
+                            list.positionViewAtIndex(model.index, ListView.Center)
+                        }
+                    }
                 }
             }
         }
@@ -240,11 +244,13 @@ Page {
                 width: list.width
                 height: list.height
                 flipped: page.flipped
+                counterId: model.modelId
                 value: model.value
                 favorite: model.favorite
                 currentItem: ListView.isCurrentItem
                 canChangeFavorite: list.count > 1
                 title: model.title
+                link: model.link
                 sounds: configSounds.value
                 vibra: configVibra.value
                 changeTime: model.changeTime
@@ -252,8 +258,15 @@ Page {
                 onFlip: page.flipped = !page.flipped
                 onUpdateCounter: model.value = value
                 onUpdateTitle: model.title = value
+                onClearLink: model.link = ""
                 onToggleFavorite: model.favorite = !model.favorite
                 onResetCounter: CounterListModel.resetCounter(model.index)
+                onSwitchToLinked: {
+                    var index = CounterListModel.findCounter(model.link)
+                    if (index >= 0) {
+                        scrollAnimation.animateTo(index)
+                    }
+                }
             }
             onCurrentIndexChanged: {
                 model.currentIndex = currentIndex

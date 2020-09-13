@@ -58,6 +58,21 @@
         <extracomment>Text switch description</extracomment>
         <translation>封面最多只能同时显示两个计时器。</translation>
     </message>
+    <message id="counter-switch-linked">
+        <source>Linked counter</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">链接柜台</translation>
+    </message>
+    <message id="counter-switch-linked-description">
+        <source>Linked counters change synchronously but can reset be independently.</source>
+        <extracomment>Text switch description</extracomment>
+        <translation type="unfinished">链接的计数器同步更改，但可以独立重置。</translation>
+    </message>
+    <message id="counter-combo-link_to">
+        <source>Link with</source>
+        <extracomment>Combo box label</extracomment>
+        <translation type="unfinished">连结</translation>
+    </message>
     <message id="counter-switch-sounds">
         <source>Play sounds</source>
         <extracomment>Text switch label</extracomment>

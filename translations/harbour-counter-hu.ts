@@ -58,6 +58,21 @@
         <extracomment>Text switch description</extracomment>
         <translation>Kettőnél több számláló nem jeleníthető meg a borítón.</translation>
     </message>
+    <message id="counter-switch-linked">
+        <source>Linked counter</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">Összekapcsolt számláló</translation>
+    </message>
+    <message id="counter-switch-linked-description">
+        <source>Linked counters change synchronously but can reset be independently.</source>
+        <extracomment>Text switch description</extracomment>
+        <translation type="unfinished">Az összekapcsolt számlálók szinkronban változnak, de visszaállíthatók függetlenül.</translation>
+    </message>
+    <message id="counter-combo-link_to">
+        <source>Link with</source>
+        <extracomment>Combo box label</extracomment>
+        <translation type="unfinished">Kapcsolat</translation>
+    </message>
     <message id="counter-switch-sounds">
         <source>Play sounds</source>
         <extracomment>Text switch label</extracomment>

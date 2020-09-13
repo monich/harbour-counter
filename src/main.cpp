@@ -11,8 +11,8 @@
  *   1. Redistributions of source code must retain the above copyright
  *      notice, this list of conditions and the following disclaimer.
  *   2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
+ *      notice, this list of conditions and the following disclaimer
+ *      in the documentation and/or other materials provided with the
  *      distribution.
  *   3. Neither the names of the copyright holders nor the names of its
  *      contributors may be used to endorse or promote products derived
@@ -41,6 +41,7 @@
 
 #include "CounterDefs.h"
 #include "CounterFavoritesModel.h"
+#include "CounterLinkModel.h"
 #include "CounterListModel.h"
 #include "CounterMediaPlugin.h"
 #include "CounterPolicyPlugin.h"
@@ -60,6 +61,7 @@ static void register_types(const char* uri, int v1, int v2)
     qmlRegisterSingletonType<HarbourSystemTime>(uri, v1, v2, "HarbourSystemTime", HarbourSystemTime::createSingleton);
     qmlRegisterSingletonType<CounterListModel>(uri, v1, v2, "CounterListModel", CounterListModel::createSingleton);
     qmlRegisterType<CounterFavoritesModel>(uri, v1, v2, "CounterFavoritesModel");
+    qmlRegisterType<CounterLinkModel>(uri, v1, v2, "CounterLinkModel");
 }
 
 static void register_plugins(QQmlEngine* aEngine, const char* uri, int v1, int v2)

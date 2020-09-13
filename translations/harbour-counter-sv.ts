@@ -58,6 +58,21 @@
         <extracomment>Text switch description</extracomment>
         <translation>Inte mer än två räknare kan visas samtidigt på programminiatyren.</translation>
     </message>
+    <message id="counter-switch-linked">
+        <source>Linked counter</source>
+        <extracomment>Text switch label</extracomment>
+        <translation type="unfinished">Länkad räknare</translation>
+    </message>
+    <message id="counter-switch-linked-description">
+        <source>Linked counters change synchronously but can reset be independently.</source>
+        <extracomment>Text switch description</extracomment>
+        <translation type="unfinished">Länkade räknare ändras synkront men kan återställas oberoende.</translation>
+    </message>
+    <message id="counter-combo-link_to">
+        <source>Link with</source>
+        <extracomment>Combo box label</extracomment>
+        <translation type="unfinished">Länka med</translation>
+    </message>
     <message id="counter-switch-sounds">
         <source>Play sounds</source>
         <extracomment>Text switch label</extracomment>

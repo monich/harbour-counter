@@ -3,22 +3,45 @@ import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
 
-Item {
+SilicaFlickable {
     id: panel
 
     property string title
+    property string link
     property date changeTime
     property date resetTime
+    property alias counterId: linkModel.sourceId
     property alias favorite: favoriteSwitch.checked
     property alias sounds: resetSound.active
     property alias canChangeFavorite: favoriteSwitch.enabled
 
     signal flip()
     signal reset()
+    signal clearLink()
     signal toggleFavorite()
     signal updateTitle(var value)
 
+    quickScrollEnabled: false
+
     onTitleChanged: titleField.text = title
+    onLinkChanged: showCurrentLink()
+    Component.onCompleted: showCurrentLink()
+
+    function showCurrentLink() {
+        if (link) {
+            linkSwitch.checked = true
+            linkSelector.updateValue()
+        } else {
+            linkSwitch.checked = false
+            linkSelector.currentItem = null
+        }
+    }
+
+    CounterLinkModel {
+        id: linkModel
+
+        sourceModel: CounterListModel
+    }
 
     Rectangle {
         id: panelBorder
@@ -37,7 +60,6 @@ Item {
 
         y: Theme.paddingMedium
         width: parent.width
-        spacing: Theme.paddingMedium
 
         TextField {
             id: titleField
@@ -75,35 +97,103 @@ Item {
             automaticCheck: false
             onClicked: panel.toggleFavorite()
         }
-    }
 
-    Item {
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: options.bottom
-            bottom: timestamps.top
-        }
+        TextSwitch {
+            id: linkSwitch
 
-        Button {
-            anchors.centerIn: parent
-            //: Button label (resets counter to zero)
-            //% "Reset"
-            text: qsTrId("counter-button-reset")
+            x: Theme.paddingLarge
+            width: parent.width - x
+            enabled: linkModel.count > 0
+            opacity: enabled ? 1.0 : 0.0
+            //: Text switch label
+            //% "Linked counter"
+            text: qsTrId("counter-switch-linked")
+            //: Text switch description
+            //% "Linked counters change synchronously but can reset be independently."
+            description: qsTrId("counter-switch-linked-description")
+            automaticCheck: false
             onClicked: {
-                panel.reset()
-                if (resetSound.item) {
-                    resetSound.item.play()
+                if (checked) {
+                    panel.clearLink()
+                    if (checked) {
+                        // Could be still checked if no link was selected
+                        checked = false
+                    }
+                } else {
+                    linkSelector.currentItem = null
+                    checked = true // Force-check it
                 }
             }
+        }
 
-            Loader {
-                id: resetSound
+        ComboBox {
+            id: linkSelector
 
-                sourceComponent: Component {
-                    SoundEffect {
-                        source: "sounds/reset.wav"
+            x: Theme.paddingLarge + Theme.itemSizeExtraSmall
+            width: parent.width - x - Theme.paddingLarge
+            enabled: linkSwitch.visible && linkSwitch.checked
+            opacity: enabled ? 1.0 : 0.0
+            //: Combo box label
+            //% "Link with"
+            label: qsTrId("counter-combo-link_to")
+            menu: ContextMenu {
+                id: linkMenu
+
+                x: 0
+                width: linkSelector.width
+                Repeater {
+                    model: linkModel
+                    MenuItem {
+                        text: model.title
+                        readonly property string modelId: model.modelId
+                        function linkCounters() { model.link = panel.counterId }
                     }
+                }
+            }
+            onCurrentItemChanged: {
+                if (enabled && currentItem && currentItem.modelId !== panel.link) {
+                    currentItem.linkCounters()
+                }
+            }
+            function updateValue() {
+                var itemFound = null
+                var items = linkMenu.children
+                if (items) {
+                    for (var i=0; i<items.length; i++) {
+                        if (items[i].modelId === panel.link) {
+                            itemFound = items[i]
+                            break;
+                        }
+                    }
+                }
+                currentItem = itemFound
+            }
+            Behavior on opacity { FadeAnimation { } }
+        }
+    }
+
+    Button {
+        // Hide the button so that it doesn't overlap with the menu
+        visible: opacity > 0
+        opacity: linkMenu.active ? 0.0 : 1.0
+        y: Math.round(Math.max((parent.height - height)/2.0, options.y + options.height + Theme.paddingLarge))
+        anchors.horizontalCenter: parent.horizontalCenter
+        //: Button label (resets counter to zero)
+        //% "Reset"
+        text: qsTrId("counter-button-reset")
+        onClicked: {
+            panel.reset()
+            if (resetSound.item) {
+                resetSound.item.play()
+            }
+        }
+        Behavior on opacity { FadeAnimation { } }
+        Loader {
+            id: resetSound
+
+            sourceComponent: Component {
+                SoundEffect {
+                    source: "sounds/reset.wav"
                 }
             }
         }

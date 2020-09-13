@@ -94,6 +94,7 @@ INSTALLS += qml_components
 HEADERS += \
     src/CounterDefs.h \
     src/CounterFavoritesModel.h \
+    src/CounterLinkModel.h \
     src/CounterListModel.h \
     src/CounterMediaPlugin.h \
     src/CounterPolicyPlugin.h
@@ -101,6 +102,7 @@ HEADERS += \
 SOURCES += \
     src/main.cpp \
     src/CounterFavoritesModel.cpp \
+    src/CounterLinkModel.cpp \
     src/CounterListModel.cpp \
     src/CounterMediaPlugin.cpp \
     src/CounterPolicyPlugin.cpp

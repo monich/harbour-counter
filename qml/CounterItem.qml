@@ -9,7 +9,9 @@ Item {
     property alias canChangeFavorite: backPanel.canChangeFavorite
     property alias changeTime: backPanel.changeTime
     property alias resetTime: backPanel.resetTime
+    property alias counterId: backPanel.counterId
     property alias flipped: flipable.flipped
+    property string link
     property string title
     property bool sounds
     property bool vibra
@@ -17,18 +19,12 @@ Item {
     property bool currentItem
 
     signal flip()
+    signal clearLink()
     signal resetCounter()
     signal toggleFavorite()
+    signal switchToLinked()
     signal updateCounter(var value)
     signal updateTitle(var value)
-
-    Component.onCompleted: {
-        frontPanel.flip.connect(flip)
-        frontPanel.updateCounter.connect(updateCounter)
-        backPanel.flip.connect(flip)
-        backPanel.updateTitle.connect(updateTitle)
-        backPanel.toggleFavorite.connect(toggleFavorite)
-    }
 
     Flipable {
         id: flipable
@@ -48,6 +44,11 @@ Item {
             sounds: panel.sounds
             vibra: panel.vibra
             title: panel.title
+            hasLink: panel.link.length > 0
+
+            onFlip: panel.flip()
+            onUpdateCounter: panel.updateCounter(value)
+            onSwitchToLinked: panel.switchToLinked()
         }
         back: CounterBack {
             id: backPanel
@@ -56,6 +57,12 @@ Item {
             visible: rotation.angle >= 90
             sounds: panel.sounds
             title: panel.title
+            link: panel.link
+
+            onFlip: panel.flip()
+            onUpdateTitle: panel.updateTitle(value)
+            onClearLink: panel.clearLink()
+            onToggleFavorite: panel.toggleFavorite()
             onReset: {
                 panel.flip()
                 panel.resetCounter()
