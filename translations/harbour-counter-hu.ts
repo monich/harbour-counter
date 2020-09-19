@@ -64,9 +64,9 @@
         <translation type="unfinished">Összekapcsolt számláló</translation>
     </message>
     <message id="counter-switch-linked-description">
-        <source>Linked counters change synchronously but can reset be independently.</source>
+        <source>Linked counters change synchronously but can be reset independently.</source>
         <extracomment>Text switch description</extracomment>
-        <translation type="unfinished">Az összekapcsolt számlálók szinkronban változnak, de visszaállíthatók függetlenül.</translation>
+        <translation type="unfinished">Az összekapcsolt számlálók szinkron módon változnak, de függetlenül visszaállíthatók.</translation>
     </message>
     <message id="counter-combo-link_to">
         <source>Link with</source>

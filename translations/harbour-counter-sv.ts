@@ -64,7 +64,7 @@
         <translation type="unfinished">Länkad räknare</translation>
     </message>
     <message id="counter-switch-linked-description">
-        <source>Linked counters change synchronously but can reset be independently.</source>
+        <source>Linked counters change synchronously but can be reset independently.</source>
         <extracomment>Text switch description</extracomment>
         <translation type="unfinished">Länkade räknare ändras synkront men kan återställas oberoende.</translation>
     </message>

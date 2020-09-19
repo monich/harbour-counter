@@ -64,7 +64,7 @@
         <translation type="unfinished">Powiązany licznik</translation>
     </message>
     <message id="counter-switch-linked-description">
-        <source>Linked counters change synchronously but can reset be independently.</source>
+        <source>Linked counters change synchronously but can be reset independently.</source>
         <extracomment>Text switch description</extracomment>
         <translation type="unfinished">Powiązane liczniki zmieniają się synchronicznie, ale można je resetować niezależnie.</translation>
     </message>

@@ -64,7 +64,7 @@
         <translation>关联计数器</translation>
     </message>
     <message id="counter-switch-linked-description">
-        <source>Linked counters change synchronously but can reset be independently.</source>
+        <source>Linked counters change synchronously but can be reset independently.</source>
         <extracomment>Text switch description</extracomment>
         <translation>自动同步修改关联计数器，但可以独立重置。</translation>
     </message>

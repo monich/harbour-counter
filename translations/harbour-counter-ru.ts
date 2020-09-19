@@ -64,7 +64,7 @@
         <translation>Связанный счётчик</translation>
     </message>
     <message id="counter-switch-linked-description">
-        <source>Linked counters change synchronously but can reset be independently.</source>
+        <source>Linked counters change synchronously but can be reset independently.</source>
         <extracomment>Text switch description</extracomment>
         <translation>Связанные счётчики меняются синхронно, но могут быть сброшены независимо друг от друга.</translation>
     </message>

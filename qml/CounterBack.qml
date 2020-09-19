@@ -109,7 +109,7 @@ SilicaFlickable {
             //% "Linked counter"
             text: qsTrId("counter-switch-linked")
             //: Text switch description
-            //% "Linked counters change synchronously but can reset be independently."
+            //% "Linked counters change synchronously but can be reset independently."
             description: qsTrId("counter-switch-linked-description")
             automaticCheck: false
             onClicked: {
