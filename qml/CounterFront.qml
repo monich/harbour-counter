@@ -89,7 +89,7 @@ Item {
         font: spinners.font
         anchors.centerIn: parent
         preferredWidth: parent.width/2
-        onClicked: plus()
+        onClicked: plus(true)
     }
 
     RoundButton {
@@ -101,7 +101,7 @@ Item {
         preferredWidth: Math.round(panel.width/3)
         textOffset: -Theme.paddingSmall
         anchors.horizontalCenter: parent.horizontalCenter
-        onClicked: minus()
+        onClicked: minus(true)
     }
 
     IconButton {
@@ -126,23 +126,23 @@ Item {
         onClicked: panel.flip()
     }
 
-    function plus() {
+    function plus(feedback) {
         panel.updateCounter(value + 1)
         if (plusSound.item) {
             plusSound.item.play()
         }
-        if (buzz.item) {
+        if (feedback && buzz.item) {
             buzz.item.play()
         }
     }
 
-    function minus() {
+    function minus(feedback) {
         if (value > 0) {
             panel.updateCounter(value - 1)
             if (minusSound.item) {
                 minusSound.item.play()
             }
-            if (buzz.item) {
+            if (feedback && buzz.item) {
                 buzz.item.play()
             }
         }
@@ -187,15 +187,15 @@ Item {
     MediaKey {
         enabled: panel.active && configUseVolumeKeys.value
         key: Qt.Key_VolumeUp
-        onPressed: plus()
-        onRepeat: plus()
+        onPressed: plus(false)
+        onRepeat: plus(false)
     }
 
     MediaKey {
         enabled: panel.active && configUseVolumeKeys.value
         key: Qt.Key_VolumeDown
-        onPressed: minus()
-        onRepeat: minus()
+        onPressed: minus(false)
+        onRepeat: minus(false)
     }
 
     Permissions {
