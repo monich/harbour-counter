@@ -52,7 +52,11 @@ Page {
         InteractionHintLabel {
             id: hintLabel
 
+            visible: opacity > 0.0
+            opacity: (hintTimer.running || hintMouseArea.pressed) ? 1.0 : 0.0
             width: parent.width - 2 * Theme.paddingMedium
+            height: Math.max(parent.height/2, width)
+            z: parent.z + 1
             radius: Theme.paddingMedium
             anchors {
                 horizontalCenter: parent.horizontalCenter
@@ -60,16 +64,27 @@ Page {
                 bottomMargin: Theme.paddingMedium
             }
 
-            function show() { hintAnimation.start() }
+            // This mouse area serves two purposes - 1) allowing the user
+            // to prevent the hint from disappearing by pressing it; and
+            // 2) consuming mouse event to stop QtQuick from dying of stack
+            // overflow when hint is tapped.
+            MouseArea {
+                id: hintMouseArea
 
-            SequentialAnimation {
-                id: hintAnimation
-
-                alwaysRunToEnd: true
-                FadeAnimation { duration: 1000; target: hintLabel; to: 1.0 }
-                PauseAnimation { duration: 2000 } // Long text, give the user time to read it
-                FadeAnimation { duration: 1000; target: hintLabel; to: 0.0 }
+                anchors.fill: parent
             }
+
+            // 1 sec to fade in, 3 sec to show (= 4000 ms), then 1 sec
+            // to fade out unless the user is pressing the hint
+            Timer {
+                id: hintTimer
+
+                interval: 4000
+            }
+
+            Behavior on opacity { FadeAnimation { duration: 1000 } }
+
+            function show() { hintTimer.restart() }
         }
     }
 
@@ -79,8 +94,7 @@ Page {
                 reorderHint = hintComponent.createObject(list, {
                     //: Hint text
                     //% "To move this counter to a different position in the list, press and hold the desired position in the switcher below"
-                    text: qsTrId("counter-hint-how_to_reorder"),
-                    opacity: 0.0
+                    text: qsTrId("counter-hint-how_to_reorder")
                 })
             }
             reorderHint.show()
