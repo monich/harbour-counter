@@ -440,7 +440,7 @@ void CounterListModel::Private::setSaveFile(QString aFileName)
                 }
                 setCount(n);
                 // Restore links
-                for (i = 0; i < k; i++) {
+                for (i = 0; i < n; i++) {
                     ModelData* data = iData.at(i);
                     if (!data->iLink) {
                         const QString link(linkMap.value(data));
@@ -448,6 +448,7 @@ void CounterListModel::Private::setSaveFile(QString aFileName)
                         if (linked >= 0 && linked != i) {
                             data->iLink = iData.at(linked);
                             data->iLink->iLink = data;
+                            HDEBUG("link" << link << "<=>" << data->iId);
                         }
                     }
                 }
