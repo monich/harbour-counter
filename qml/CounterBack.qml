@@ -41,6 +41,7 @@ SilicaFlickable {
         id: linkModel
 
         sourceModel: CounterListModel
+        onLayoutChanged: showCurrentLink()
     }
 
     Rectangle {
@@ -146,28 +147,39 @@ SilicaFlickable {
                     MenuItem {
                         text: model.title
                         readonly property string modelId: model.modelId
-                        function linkCounters() { model.link = panel.counterId }
+                        onClicked: model.link = panel.counterId
                     }
                 }
             }
+
+            property int ignoreCurrentItemChange
+
             onCurrentItemChanged: {
-                if (enabled && currentItem && currentItem.modelId !== panel.link) {
-                    currentItem.linkCounters()
+                if (!ignoreCurrentItemChange) {
+                    // Handle the case when ComboBox decides to update
+                    // currentItem to a wrong value (which it sometimes
+                    // does after the model has been reset)
+                    updateValue()
                 }
             }
+
             function updateValue() {
                 var itemFound = null
                 var items = linkMenu.children
                 if (items) {
                     for (var i=0; i<items.length; i++) {
-                        if (items[i].modelId === panel.link) {
+                        if (items[i].modelId === link) {
                             itemFound = items[i]
                             break;
                         }
                     }
                 }
+                // Prevent recursion
+                ignoreCurrentItemChange++
                 currentItem = itemFound
+                ignoreCurrentItemChange--
             }
+
             Behavior on opacity { FadeAnimation { } }
         }
     }
