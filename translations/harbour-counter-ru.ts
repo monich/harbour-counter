@@ -56,7 +56,7 @@
     <message id="counter-switch-favorite-description">
         <source>No more than two counters can be shown on cover at the same time.</source>
         <extracomment>Text switch description</extracomment>
-        <translation>Не более двух счётчиков помещаются на обложку одновременно.</translation>
+        <translation>На обложке помещается не более двух счётчиков одновременно.</translation>
     </message>
     <message id="counter-switch-linked">
         <source>Linked counter</source>
@@ -91,7 +91,7 @@
     <message id="counter-button-reset">
         <source>Reset</source>
         <extracomment>Button label (resets counter to zero)</extracomment>
-        <translation>Сброс</translation>
+        <translation>Сбросить</translation>
     </message>
     <message id="counter-label-last_change">
         <source>Last change:</source>
