@@ -69,9 +69,9 @@ HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourJson.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourPluginLoader.h \
+    $${HARBOUR_LIB_INCLUDE}/HarbourSystem.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourSystemTime.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h \
-    $${HARBOUR_LIB_SRC}/HarbourSystem.h
+    $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
 
 SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourJson.cpp \
