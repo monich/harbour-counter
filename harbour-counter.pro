@@ -68,14 +68,18 @@ INCLUDEPATH += \
 HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourJson.h \
+    $${HARBOUR_LIB_INCLUDE}/HarbourMediaPlugin.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourPluginLoader.h \
+    $${HARBOUR_LIB_INCLUDE}/HarbourPolicyPlugin.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourSystem.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourSystemTime.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
 
 SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourJson.cpp \
+    $${HARBOUR_LIB_SRC}/HarbourMediaPlugin.cpp \
     $${HARBOUR_LIB_SRC}/HarbourPluginLoader.cpp \
+    $${HARBOUR_LIB_SRC}/HarbourPolicyPlugin.cpp \
     $${HARBOUR_LIB_SRC}/HarbourSystemTime.cpp \
     $${HARBOUR_LIB_SRC}/HarbourSystem.cpp \
     $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
@@ -95,17 +99,13 @@ HEADERS += \
     src/CounterDefs.h \
     src/CounterFavoritesModel.h \
     src/CounterLinkModel.h \
-    src/CounterListModel.h \
-    src/CounterMediaPlugin.h \
-    src/CounterPolicyPlugin.h
+    src/CounterListModel.h
 
 SOURCES += \
     src/main.cpp \
     src/CounterFavoritesModel.cpp \
     src/CounterLinkModel.cpp \
-    src/CounterListModel.cpp \
-    src/CounterMediaPlugin.cpp \
-    src/CounterPolicyPlugin.cpp
+    src/CounterListModel.cpp
 
 app_js.files = js/*.js
 app_js.path = /usr/share/$${TARGET}/js/

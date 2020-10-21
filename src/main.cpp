@@ -22,7 +22,7 @@
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
@@ -37,14 +37,14 @@
 
 #include "HarbourDebug.h"
 #include "HarbourSystemTime.h"
+#include "HarbourMediaPlugin.h"
+#include "HarbourPolicyPlugin.h"
 #include "HarbourTheme.h"
 
 #include "CounterDefs.h"
 #include "CounterFavoritesModel.h"
 #include "CounterLinkModel.h"
 #include "CounterListModel.h"
-#include "CounterMediaPlugin.h"
-#include "CounterPolicyPlugin.h"
 
 #include <sailfishapp.h>
 
@@ -66,8 +66,8 @@ static void register_types(const char* uri, int v1, int v2)
 
 static void register_plugins(QQmlEngine* aEngine, const char* uri, int v1, int v2)
 {
-    CounterMediaPlugin::registerTypes(aEngine, uri, v1, v2);
-    CounterPolicyPlugin::registerTypes(aEngine, uri, v1, v2);
+    HarbourMediaPlugin::registerTypes(aEngine, uri, v1, v2);
+    HarbourPolicyPlugin::registerTypes(aEngine, uri, v1, v2);
 }
 
 int main(int argc, char *argv[])
