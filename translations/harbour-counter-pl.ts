@@ -11,7 +11,7 @@
     <message id="counter-menu-settings">
         <source>Settings</source>
         <extracomment>Pulley menu item</extracomment>
-        <translation type="unfinished">Ustawienia</translation>
+        <translation>Ustawienia</translation>
     </message>
     <message id="counter-menu-delete_counter">
         <source>Delete this counter</source>
@@ -61,17 +61,17 @@
     <message id="counter-switch-linked">
         <source>Linked counter</source>
         <extracomment>Text switch label</extracomment>
-        <translation type="unfinished">Powiązany licznik</translation>
+        <translation>Powiązany licznik</translation>
     </message>
     <message id="counter-switch-linked-description">
         <source>Linked counters change synchronously but can be reset independently.</source>
         <extracomment>Text switch description</extracomment>
-        <translation type="unfinished">Powiązane liczniki zmieniają się synchronicznie, ale można je resetować niezależnie.</translation>
+        <translation>Powiązane liczniki zmieniają się synchronicznie, ale można je resetować niezależnie.</translation>
     </message>
     <message id="counter-combo-link_to">
         <source>Link with</source>
         <extracomment>Combo box label</extracomment>
-        <translation type="unfinished">Połącz z</translation>
+        <translation>Powiąż z</translation>
     </message>
     <message id="counter-switch-sounds">
         <source>Play sounds</source>
@@ -81,12 +81,12 @@
     <message id="counter-switch-vibra">
         <source>Vibrate</source>
         <extracomment>Text switch label</extracomment>
-        <translation type="unfinished">Wibrować</translation>
+        <translation>Wibruj</translation>
     </message>
     <message id="counter-switch-use_volume_keys">
         <source>Use volume keys</source>
         <extracomment>Text switch label</extracomment>
-        <translation type="unfinished">Użyj klawiszy głośności</translation>
+        <translation>Użyj klawiszy głośności</translation>
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>
@@ -106,7 +106,7 @@
     <message id="counter-hint-how_to_reorder">
         <source>To move this counter to a different position in the list, press and hold the desired position in the switcher below</source>
         <extracomment>Hint text</extracomment>
-        <translation type="unfinished">Aby zmienić pozycję licznika na liście, naciśnij i przytrzymaj żądaną pozycję na przełączniku poniżej</translation>
+        <translation>Aby zmienić pozycję licznika na liście, naciśnij i przytrzymaj żądaną pozycję na przełączniku poniżej</translation>
     </message>
 </context>
 </TS>
