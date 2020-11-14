@@ -176,33 +176,30 @@ Page {
         Row {
             id: switcher
 
-            y : Screen.height - height - Theme.paddingSmall
+            y : Screen.height - height
             anchors.horizontalCenter: parent.horizontalCenter
             visible: list.count > 1
 
             Repeater {
                 model: CounterListModel
-                Item {
+                FlatSwitch {
                     readonly property int modelValue: model.value
                     height: Theme.itemSizeExtraSmall
                     width: Theme.itemSizeExtraSmall
-                    Switch {
-                        anchors.centerIn: parent
-                        automaticCheck: false
-                        checked: model.index === list.currentIndex
-                        highlighted: down || !model.favorite
-                        onClicked: {
-                            if (!checked) scrollAnimation.animateTo(index)
-                            considerShowingReorderHint()
-                        }
-                        onPressAndHold: {
-                            var newIndex = model.index
-                            if (list.currentIndex !== newIndex) {
-                                CounterListModel.moveCounter(list.currentIndex, newIndex)
-                                list.positionViewAtIndex(newIndex, ListView.Center)
-                                // And don't show any more hints:
-                                configReorderHintCount.value = Utils.maxReorderHintCount
-                            }
+                    automaticCheck: false
+                    checked: model.index === list.currentIndex
+                    highlighted: down || !model.favorite
+                    onClicked: {
+                        if (!checked) scrollAnimation.animateTo(index)
+                        considerShowingReorderHint()
+                    }
+                    onPressAndHold: {
+                        var newIndex = model.index
+                        if (list.currentIndex !== newIndex) {
+                            CounterListModel.moveCounter(list.currentIndex, newIndex)
+                            list.positionViewAtIndex(newIndex, ListView.Center)
+                            // And don't show any more hints:
+                            configReorderHintCount.value = Utils.maxReorderHintCount
                         }
                     }
                     // Cover action selects the corresponding counter in the list.
@@ -245,7 +242,7 @@ Page {
             x: Theme.paddingSmall
             y: Theme.paddingSmall
             width: parent.width - 2 * x
-            height: (switcher.visible ? switcher.y : Screen.height) - Theme.paddingSmall
+            height: switcher.visible ? switcher.y : (Screen.height - Theme.paddingSmall)
             orientation: ListView.Horizontal
             snapMode: ListView.SnapOneItem
             highlightRangeMode: ListView.StrictlyEnforceRange
