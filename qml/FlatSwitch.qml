@@ -19,29 +19,34 @@ MouseArea {
         }
     }
 
+    // It may sound slightly weird, but primaryColor is used for highlighting
+    // and highlightColor as the normal color
+
     HarbourHighlightIcon {
-        readonly property int size: Math.ceil(2*Math.min(parent.width, parent.height)/3)
+        readonly property int size: Math.ceil(Math.min(parent.width, parent.height) * 0.7)
         anchors.centerIn: parent
         width: size
         height: size
         sourceSize.width: size
         sourceSize.height: size
         source: "images/press.svg"
-        highlightColor: Theme.highlightBackgroundColor
+        highlightColor: circle.border.color
         opacity: down ? 1 : 0
         Behavior on opacity { FadeAnimation { duration: 64 } }
     }
 
     Rectangle {
-        readonly property int size: Math.ceil(Math.min(parent.width, parent.height)/3)
+        id: circle
+
+        readonly property int size: Math.ceil(Math.min(parent.width, parent.height) * 0.3)
         anchors.centerIn: parent
         width: size
         height: width
         radius: width/2
-        color: Theme.rgba(highlighted ? Theme.highlightColor : Theme.primaryColor,
+        color: Theme.rgba(highlighted ? Theme.primaryColor: Theme.highlightColor,
             checked ? HarbourTheme.opacityHigh : HarbourTheme.opacityFaint)
         border {
-            color: highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+            color: highlighted ? Theme.secondaryColor : Theme.secondaryHighlightColor
             width: 2
         }
     }

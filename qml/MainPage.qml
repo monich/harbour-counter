@@ -188,7 +188,7 @@ Page {
                     width: Theme.itemSizeExtraSmall
                     automaticCheck: false
                     checked: model.index === list.currentIndex
-                    highlighted: down || !model.favorite
+                    highlighted: model.favorite
                     onClicked: {
                         if (!checked) scrollAnimation.animateTo(index)
                         considerShowingReorderHint()
