@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   viewBox="0 0 32 32"
+   xml:space="preserve"
+   sodipodi:docname="minus.svg"
+   inkscape:version="0.92.4 (unknown)">
+  <g>
+    <rect
+        style="opacity:0;fill:#ffffff;"
+        width="32"
+        height="32"/>
+    
+  </g>
+  <path
+      style="fill:#ffffff;fill-opacity:1"
+      d="m 3.21,12.79 c -4.28,0 -4.28,6.418376 0,6.418376 H 28.79 c 4.28,0 4.28,-6.418376 0,-6.418376 z"
+      inkscape:connector-curvature="0"
+      sodipodi:nodetypes="ccccc"/>
+</svg>

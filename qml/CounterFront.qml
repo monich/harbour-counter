@@ -85,22 +85,19 @@ Item {
     RoundButton {
         id: plusButton
 
-        text: "+"
-        font: spinners.font
         anchors.centerIn: parent
-        preferredWidth: parent.width/2
+        buttonSize: parent.width/2
+        imageSource: "images/plus.svg"
         onClicked: plus(true)
     }
 
     RoundButton {
-        text: "-"
-        font: spinners.font
         readonly property real y1: plusButton.y + plusButton.height + Math.round(height/2)
         readonly property real y2: Math.round((plusButton.y + plusButton.height + parent.height - height)/2)
         y: Math.min(y1, y2)
-        preferredWidth: Math.round(panel.width/3)
-        textOffset: -Theme.paddingSmall
         anchors.horizontalCenter: parent.horizontalCenter
+        buttonSize: Math.round(panel.width/3)
+        imageSource: "images/minus.svg"
         onClicked: minus(true)
     }
 
