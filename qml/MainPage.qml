@@ -227,6 +227,7 @@ Page {
             function animateTo(index) {
                 from = list.contentX
                 to = list.originX + index * list.width
+                duration = Math.min(700, Math.max(350, 175*(Math.abs(to - from)/list.width)))
                 start()
             }
         }
