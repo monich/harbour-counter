@@ -10,3 +10,7 @@ Name[zh_CN]=计数器
 X-Nemo-Application-Type=silica-qt5
 Icon=harbour-counter
 Exec=harbour-counter
+
+[X-HarbourBackup]
+BackupPathList = .local/share/harbour-counter/
+BackupConfigList = /apps/harbour-counter/
