@@ -233,7 +233,7 @@ SilicaFlickable {
                 height: 1
             }
             Label {
-                text: changeTime ? timestamps.dateTimeString(changeTime) : " "
+                text: timestamps.dateTimeString(changeTime)
                 font.pixelSize: Theme.fontSizeExtraSmall
                 color: Theme.secondaryHighlightColor
             }
@@ -251,7 +251,7 @@ SilicaFlickable {
                 height: 1
             }
             Label {
-                text: resetTime ? timestamps.dateTimeString(resetTime) : " "
+                text: timestamps.dateTimeString(resetTime)
                 font.pixelSize: Theme.fontSizeExtraSmall
                 color: Theme.secondaryHighlightColor
             }
@@ -266,7 +266,7 @@ SilicaFlickable {
         }
 
         function dateTimeString(dateTime) {
-            return dateString(dateTime) + " " + timeString(dateTime)
+            return isNaN(dateTime) ? "" : (dateString(dateTime) + " " + timeString(dateTime))
         }
     }
 
