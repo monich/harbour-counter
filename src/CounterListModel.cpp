@@ -39,7 +39,13 @@
 #include "CounterListModel.h"
 
 #include "HarbourDebug.h"
-#include "HarbourJson.h"
+
+#include <QDir>
+#include <QFile>
+#include <QFileSystemWatcher>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QCryptographicHash>
 
 #define MODEL_ROLES_(first,role,last) \
     first(ModelId,modelId) \
@@ -203,9 +209,10 @@ class CounterListModel::Private : public QObject {
     Q_DISABLE_COPY(Private)
 
 public:
-    Private(QObject* aParent);
+    Private(CounterListModel* aParent);
     ~Private();
 
+    CounterListModel* parentModel();
     int rowCount() const;
     int indexOf(ModelData* aData) const;
     int favoriteCount() const;
@@ -213,7 +220,7 @@ public:
     QString newTitle() const;
     void setCount(int aCount);
     void setSaveFile(QString aFileName);
-    void save() const;
+    void save();
     void newCounter();
     int oneFavoriteOff(int aIndexToIgnore);
     int oneFavoriteOn(int aIndexToIgnore);
@@ -222,11 +229,15 @@ public:
     ModelData* dataAt(int aIndex) const;
 
 private:
-    void writeState() const;
+    void readState();
+    void applyState(const QVariantMap data);
+    void writeState();
 
 private Q_SLOTS:
     void flushChanges();
     void onSaveTimerExpired();
+    void onSaveFileChanged(QString aPath);
+    void onSaveDirectoryChanged(QString aPath);
 
 public:
     static const int MaxFavorites = 2;
@@ -238,22 +249,33 @@ public:
     int iCurrentIndex;
     int iSavingSuspended;
     int iUpdatingLinkedCounter;
+    int iIgnoreSaveFileChange;
+    QCryptographicHash::Algorithm iHashAlgorithm;
+    QFileSystemWatcher* iSaveFileWatcher;
+    QByteArray iSaveFileHash;
     QString iSaveFile;
     QString iSaveFilePath;
     QTimer* iSaveTimer;
     QTimer* iHoldoffTimer;
+    QDir iDataDir;
 };
 
 const QString CounterListModel::Private::COUNTERS("counters");
 const QString CounterListModel::Private::CURRENT_INDEX("currentIndex");
 
-CounterListModel::Private::Private(QObject* aParent) :
+CounterListModel::Private::Private(CounterListModel* aParent) :
     QObject(aParent),
     iCurrentIndex(0),
     iSavingSuspended(0),
     iUpdatingLinkedCounter(0),
+    iIgnoreSaveFileChange(0),
+    iHashAlgorithm(QCryptographicHash::Md5),
+    iSaveFileWatcher(new QFileSystemWatcher(this)),
     iSaveTimer(new QTimer(this)),
-    iHoldoffTimer(new QTimer(this))
+    iHoldoffTimer(new QTimer(this)),
+    iDataDir(QStandardPaths::writableLocation
+        (QStandardPaths::GenericDataLocation) +
+            QStringLiteral("/" APP_NAME "/"))
 {
     // There's always at least one counter
     newCounter();
@@ -265,12 +287,22 @@ CounterListModel::Private::Private(QObject* aParent) :
     iHoldoffTimer->setInterval(1000);
     iHoldoffTimer->setSingleShot(true);
     connect(iHoldoffTimer, SIGNAL(timeout()), SLOT(flushChanges()));
+    // Connect the watcher (will add the paths when file name is set)
+    connect(iSaveFileWatcher, SIGNAL(fileChanged(QString)),
+        SLOT(onSaveFileChanged(QString)));
+    connect(iSaveFileWatcher, SIGNAL(directoryChanged(QString)),
+        SLOT(onSaveDirectoryChanged(QString)));
 }
 
 CounterListModel::Private::~Private()
 {
     flushChanges();
     qDeleteAll(iData);
+}
+
+inline CounterListModel* CounterListModel::Private::parentModel()
+{
+    return qobject_cast<CounterListModel*>(parent());
 }
 
 inline int CounterListModel::Private::rowCount() const
@@ -399,68 +431,125 @@ void CounterListModel::Private::setSaveFile(QString aFileName)
 {
     flushChanges();
     iSaveFile = aFileName;
+    // Reset the watcher (normally there's nothing to reset)
+    const QStringList watchedFiles(iSaveFileWatcher->files());
+    if (!watchedFiles.isEmpty()) {
+        iSaveFileWatcher->removePaths(watchedFiles);
+    }
+    const QStringList watchedDirs(iSaveFileWatcher->directories());
+    if (!watchedDirs.isEmpty()) {
+        iSaveFileWatcher->removePaths(watchedDirs);
+    }
     if (aFileName.isEmpty()) {
+        // This shouldn't normally happen
         iSaveFilePath.clear();
         setCount(1);
         iCurrentIndex = 0;
+        iSaveFileHash = QByteArray();
     } else {
-        iSaveFilePath = QStandardPaths::writableLocation(
-            QStandardPaths::GenericDataLocation) +
-            QStringLiteral("/" APP_NAME "/") + aFileName;
-        QVariantMap data;
-        HDEBUG("Loading" << qPrintable(iSaveFilePath));
-        if (HarbourJson::load(iSaveFilePath, data)) {
-            QVariantList counters = data.value(COUNTERS).toList();
-            const int n = counters.count();
-            if (n > 0) {
-                int i;
-                const int k = qMin(n, iData.count());
-                QHash<ModelData*,QString> linkMap;
-                for (i = 0; i < k; i++) {
-                    const QVariantMap entry(counters.at(i).toMap());
-                    const QString link(entry.value(ModelData::KEY_LINK).toString());
-                    ModelData* data = iData.at(i);
-                    data->set(entry);
-                    if (!link.isEmpty()) linkMap.insert(data, link);
-                }
-                while (i < n) {
-                    const QVariantMap entry(counters.at(i++).toMap());
-                    const QString link(entry.value(ModelData::KEY_LINK).toString());
-                    ModelData* data = new ModelData(entry);
-                    iData.append(data);
-                    if (!link.isEmpty()) linkMap.insert(data, link);
-                }
-                setCount(n);
-                // Restore links
-                for (i = 0; i < n; i++) {
-                    ModelData* data = iData.at(i);
-                    if (!data->iLink) {
-                        const QString link(linkMap.value(data));
-                        const int linked = findId(link);
-                        if (linked >= 0 && linked != i) {
-                            data->iLink = iData.at(linked);
-                            data->iLink->iLink = data;
-                            HDEBUG("link" << link << "<=>" << data->iId);
-                        }
-                    }
-                }
-            } else {
-                setCount(1);
-            }
-            bool ok = false;
-            const int currentIndex = data.value(CURRENT_INDEX).toInt(&ok);
-            if (ok && currentIndex >= 0 && currentIndex < iData.count() &&
-                iCurrentIndex != currentIndex) {
-                iCurrentIndex = currentIndex;
-                HDEBUG("currentIndex" << currentIndex);
-            } else if (iCurrentIndex < 0 || iCurrentIndex >= iData.count()) {
-                iCurrentIndex = 0;
-            }
+        // But this should
+        iDataDir.mkpath(QStringLiteral("."));
+        iSaveFileWatcher->addPath(iDataDir.absolutePath());
+        iSaveFilePath = iDataDir.absoluteFilePath(aFileName);
+        readState();
+    }
+}
+
+void CounterListModel::Private::readState()
+{
+    QFile f(iSaveFilePath);
+    if (f.open(QIODevice::ReadOnly)) {
+        QByteArray fileData(f.readAll());
+        QByteArray hash(QCryptographicHash::hash(fileData, iHashAlgorithm));
+        if (iSaveFileHash != hash) {
+            HDEBUG("Loading" << qPrintable(iSaveFilePath));
+            iSaveFileWatcher->addPath(iSaveFilePath);
+            iSaveFileHash = hash;
+            QJsonDocument doc(QJsonDocument::fromJson(fileData).object());
+            applyState(doc.toVariant().toMap());
+        } else {
+            HDEBUG(qPrintable(iSaveFilePath) << "is unchanged");
         }
     }
 }
 
-void CounterListModel::Private::save() const
+void CounterListModel::Private::applyState(const QVariantMap aData)
+{
+    iSavingSuspended++; // Suspend saves
+    CounterListModel* model = parentModel();
+    model->beginResetModel();
+
+    QVariantList counters = aData.value(COUNTERS).toList();
+    const int n = counters.count();
+    if (n > 0) {
+        int i;
+        const int k = qMin(n, iData.count());
+        QHash<ModelData*,QString> linkMap;
+        for (i = 0; i < k; i++) {
+            const QVariantMap entry(counters.at(i).toMap());
+            const QString link(entry.value(ModelData::KEY_LINK).toString());
+            ModelData* data = iData.at(i);
+            data->set(entry);
+            if (!link.isEmpty()) linkMap.insert(data, link);
+        }
+        while (i < n) {
+            const QVariantMap entry(counters.at(i++).toMap());
+            const QString link(entry.value(ModelData::KEY_LINK).toString());
+            ModelData* data = new ModelData(entry);
+            iData.append(data);
+            if (!link.isEmpty()) linkMap.insert(data, link);
+        }
+        setCount(n);
+        // Restore links
+        for (i = 0; i < n; i++) {
+            ModelData* data = iData.at(i);
+            if (!data->iLink) {
+                const QString link(linkMap.value(data));
+                const int linked = findId(link);
+                if (linked >= 0 && linked != i) {
+                    data->iLink = iData.at(linked);
+                    data->iLink->iLink = data;
+                    HDEBUG("link" << link << "<=>" << data->iId);
+                }
+            }
+        }
+    } else {
+        setCount(1);
+    }
+    bool ok = false;
+    const int currentIndex = aData.value(CURRENT_INDEX).toInt(&ok);
+    if (ok && currentIndex >= 0 && currentIndex < iData.count() &&
+        iCurrentIndex != currentIndex) {
+        iCurrentIndex = currentIndex;
+        HDEBUG("currentIndex" << currentIndex);
+    } else if (iCurrentIndex < 0 || iCurrentIndex >= iData.count()) {
+        iCurrentIndex = 0;
+    }
+
+    const int loadedIndex = iCurrentIndex;
+    model->endResetModel(); // This may change the current index
+    iSavingSuspended--; // Resume saves
+
+    if (!favoriteCount()) {
+        // At least one favorite is required
+        const int on = oneFavoriteOn(-1);
+        if (on >= 0) {
+            HDEBUG(on << "favorite true");
+            QVector<int> roles;
+            roles.append(ModelData::FavoriteRole);
+            const QModelIndex idx(model->index(on));
+            Q_EMIT model->dataChanged(idx, idx, roles);
+        }
+    }
+    if (iCurrentIndex != loadedIndex) {
+        // Fix the damage caused by model reset
+        iCurrentIndex = loadedIndex;
+        Q_EMIT model->currentIndexChanged();
+    }
+    Q_EMIT model->stateLoaded();
+}
+
+void CounterListModel::Private::save()
 {
     if (!iSaveFilePath.isEmpty() && !iSavingSuspended) {
         if (!iHoldoffTimer->isActive()) {
@@ -493,7 +582,7 @@ void CounterListModel::Private::onSaveTimerExpired()
     writeState();
 }
 
-void CounterListModel::Private::writeState() const
+void CounterListModel::Private::writeState()
 {
     HDEBUG("Writing" << qPrintable(iSaveFilePath));
     QVariantList counters;
@@ -504,7 +593,48 @@ void CounterListModel::Private::writeState() const
     QVariantMap data;
     data.insert(COUNTERS, counters);
     data.insert(CURRENT_INDEX, iCurrentIndex);
-    HarbourJson::save(iSaveFilePath, data);
+
+    // Write the file and update the hash
+    QFileInfo file(iSaveFilePath);
+    QDir dir(file.dir());
+    if (dir.mkpath(dir.absolutePath())) {
+        QFile f(file.absoluteFilePath());
+        if (f.open(QIODevice::WriteOnly)) {
+            QByteArray fileData(QJsonDocument::fromVariant(data).toJson());
+            if (f.write(fileData) == fileData.size()) {
+                iSaveFileHash = QCryptographicHash::hash(fileData, iHashAlgorithm);
+                iIgnoreSaveFileChange++;
+            } else {
+                HWARN("Error writing" << iSaveFilePath << f.errorString());
+            }
+        } else {
+            HWARN("Error opening" << iSaveFilePath << f.errorString());
+        }
+    } else {
+        HWARN("Failed to create" << dir.absolutePath());
+    }
+}
+
+void CounterListModel::Private::onSaveDirectoryChanged(QString aPath)
+{
+    HDEBUG(qPrintable(aPath));
+    if (QFile::exists(iSaveFilePath)) {
+        if (!iSaveFileWatcher->files().contains(iSaveFilePath)) {
+            HDEBUG("Watching" << qPrintable(iSaveFilePath));
+            iSaveFileWatcher->addPath(iSaveFilePath);
+        }
+    }
+}
+
+void CounterListModel::Private::onSaveFileChanged(QString aPath)
+{
+    if (iIgnoreSaveFileChange) {
+        iIgnoreSaveFileChange--;
+        HDEBUG("Ignoring" << qPrintable(aPath));
+    } else {
+        HDEBUG(qPrintable(aPath));
+        readState();
+    }
 }
 
 // ==========================================================================
@@ -544,30 +674,8 @@ void CounterListModel::setSaveFile(QString aFileName)
 {
     if (iPrivate->iSaveFile != aFileName) {
         HDEBUG(qPrintable(aFileName));
-        iPrivate->iSavingSuspended++; // Suspend saves
-        beginResetModel();
         iPrivate->setSaveFile(aFileName);
-        const int currentIndex = iPrivate->iCurrentIndex;
-        endResetModel(); // This may change the current index
-        iPrivate->iSavingSuspended--; // Resume saves
-        if (!iPrivate->favoriteCount()) {
-            // At least one favorite is required
-            const int on = iPrivate->oneFavoriteOn(-1);
-            if (on >= 0) {
-                HDEBUG(on << "favorite true");
-                QVector<int> roles;
-                roles.append(ModelData::FavoriteRole);
-                const QModelIndex idx(index(on));
-                Q_EMIT dataChanged(idx, idx, roles);
-            }
-        }
-        if (iPrivate->iCurrentIndex != currentIndex) {
-            // Fix the damage caused by model reset
-            iPrivate->iCurrentIndex = currentIndex;
-            Q_EMIT currentIndexChanged();
-        }
         Q_EMIT saveFileChanged();
-        Q_EMIT stateLoaded();
     }
 }
 

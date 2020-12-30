@@ -67,7 +67,6 @@ INCLUDEPATH += \
 
 HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourJson.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourMediaPlugin.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourPluginLoader.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourPolicyPlugin.h \
@@ -76,7 +75,6 @@ HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
 
 SOURCES += \
-    $${HARBOUR_LIB_SRC}/HarbourJson.cpp \
     $${HARBOUR_LIB_SRC}/HarbourMediaPlugin.cpp \
     $${HARBOUR_LIB_SRC}/HarbourPluginLoader.cpp \
     $${HARBOUR_LIB_SRC}/HarbourPolicyPlugin.cpp \
