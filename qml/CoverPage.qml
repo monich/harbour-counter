@@ -92,8 +92,12 @@ CoverBackground {
                     radius: width/2
                     y: Math.round((row.height - height)/2)
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: Theme.rgba(Theme.primaryColor, HarbourTheme.opacityHigh)
-                    readonly property color color1: Theme.rgba(Theme.primaryColor, HarbourTheme.opacityFaint)
+                    border {
+                        color: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityHigh)
+                        width: 1
+                    }
+                    color: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityLow)
+                    readonly property color color1: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityFaint)
                     gradient: Gradient {
                         GradientStop { position: 0.0; color: HarbourTheme.lightOnDark ? background.color : background.color1 }
                         GradientStop { position: 1.0; color: HarbourTheme.lightOnDark ? background.color1 : background.color }
@@ -106,7 +110,7 @@ CoverBackground {
                     number: model.value
                     interactive: false
                     hasBackground: false
-                    color: HarbourTheme.invertedColor(Theme.primaryColor)
+                    color: Theme.primaryColor
                     horizontalMargins: 0
                     count: valueString.length
                 }
