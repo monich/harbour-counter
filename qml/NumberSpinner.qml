@@ -20,11 +20,11 @@ Item {
     property alias backgroundColor: background.color
     property alias cornerRadius: background.radius
     property alias interactive: view.interactive
-    property alias color: sample.color
-    property alias font: sample.font
+    property color color: HarbourTheme.invertedColor(background.color)
+    property font font
 
-    readonly property real digitWidth: Math.ceil(sample.paintedWidth)
-    readonly property real digitHeight: Math.ceil(sample.paintedHeight)
+    property real digitWidth: Math.ceil(sample.paintedWidth)
+    property real digitHeight: Math.ceil(sample.paintedHeight)
     readonly property int number: view.actualNumber
 
     function setNumber(n) {
@@ -44,18 +44,6 @@ Item {
         }
     }
 
-    Text {
-        id: sample
-
-        font {
-            family: Theme.fontFamilyHeading
-            pixelSize: Theme.fontSizeHuge
-            bold: true
-        }
-        visible: false
-        color: HarbourTheme.invertedColor(spinner.backgroundColor)
-        text: "0"
-    }
     Rectangle {
         id: background
 
@@ -68,6 +56,7 @@ Item {
             GradientStop { position: 1.0; color: HarbourTheme.lightOnDark ? background.color1 : background.color }
         }
     }
+
     PathView {
         id: view
 
@@ -97,8 +86,10 @@ Item {
             height: digitHeight
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font: sample.font
-            color: sample.color
+            font: spinner.font
+            color: spinner.color
+            minimumPixelSize: Theme.fontSizeExtraSmall
+            fontSizeMode: Text.Fit
             text: modelData
         }
         onCurrentIndexChanged: {

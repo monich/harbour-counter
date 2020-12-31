@@ -83,7 +83,6 @@ SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
 
 HARBOUR_QML_COMPONENTS = \
-    $${HARBOUR_LIB_QML}/HarbourFitLabel.qml \
     $${HARBOUR_LIB_QML}/HarbourHighlightIcon.qml
 
 OTHER_FILES += $${HARBOUR_QML_COMPONENTS}

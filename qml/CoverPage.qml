@@ -5,7 +5,6 @@ import org.nemomobile.configuration 1.0
 import harbour.counter 1.0
 
 import "../js/Utils.js" as Utils
-import "harbour"
 
 CoverBackground {
     id: cover
@@ -58,7 +57,6 @@ CoverBackground {
         x: (repeater.visibleCount === 1) ? Math.round((parent.width - width)/2) : Theme.paddingMedium
         height: parent.height
         spacing: Theme.paddingMedium
-        anchors.verticalCenter: parent.verticalCenter
 
         Repeater {
             id: repeater
@@ -69,11 +67,10 @@ CoverBackground {
                 id: counterDelegate
 
                 height: row.height
-                width: (repeater.visibleCount === 1) ?
-                    Math.max(numberLabel.implicitWidth + 2 * Theme.paddingMedium, Math.round(cover.width*0.6)) :
-                    maxWidth
+                width: (repeater.visibleCount === 1) ? Math.round(cover.width - 4 * Theme.paddingLarge) : maxWidth
 
                 readonly property real maxWidth: Math.floor((cover.width - 2 * Theme.paddingMedium - (repeater.visibleCount - 1) * row.spacing)/repeater.visibleCount)
+                readonly property string valueString: model.value
 
                 Label {
                     anchors {
@@ -90,10 +87,11 @@ CoverBackground {
                 Rectangle {
                     id: background
 
-                    anchors.centerIn: parent
                     width: counterDelegate.width
                     height: width
                     radius: width/2
+                    y: Math.round((row.height - height)/2)
+                    anchors.horizontalCenter: parent.horizontalCenter
                     color: Theme.rgba(Theme.primaryColor, HarbourTheme.opacityHigh)
                     readonly property color color1: Theme.rgba(Theme.primaryColor, HarbourTheme.opacityFaint)
                     gradient: Gradient {
@@ -101,29 +99,16 @@ CoverBackground {
                         GradientStop { position: 1.0; color: HarbourTheme.lightOnDark ? background.color1 : background.color }
                     }
                 }
-                HarbourFitLabel {
-                    id: numberLabel
-
-                    opacity: 0
-                    width: counterDelegate.maxWidth - 2 * Theme.paddingLarge
-                    height: counterDelegate.height - 2 * Theme.paddingLarge
-                    anchors.centerIn: parent
-                    maxFontSize: Theme.fontSizeHuge
-                    text: model.value
-                    font {
-                        family: Theme.fontFamilyHeading
-                        bold: true
-                    }
-                }
                 NumberPanel {
-                    anchors.centerIn: parent
+                    anchors.centerIn: background
+                    width: background.width * 0.7
+                    height: width/2
                     number: model.value
                     interactive: false
                     hasBackground: false
                     color: HarbourTheme.invertedColor(Theme.primaryColor)
                     horizontalMargins: 0
-                    count: numberLabel.text.length
-                    font: numberLabel.font
+                    count: valueString.length
                 }
                 function inc() {
                     model.value++

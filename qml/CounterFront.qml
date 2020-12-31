@@ -55,7 +55,7 @@ Item {
         font {
             pixelSize: spinners.font.pixelSize
             family: spinners.font.family
-            bold: spinners.font.bold
+            bold: spinners.font.weight
             letterSpacing: spinners.font.letterSpacing + Theme.paddingMedium
         }
         text: value
@@ -70,7 +70,11 @@ Item {
 
         y: Math.max(titleLabel.y + titleLabel.height + Theme.paddingLarge, Math.floor((plusButton.y - height)/2))
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 2 * Theme.fontSizeHuge
+        font {
+            family: Theme.fontFamilyHeading
+            pixelSize: 2 * Theme.fontSizeHuge
+            weight: Font.Bold
+        }
         horizontalMargins: Theme.paddingLarge
         spacing: Theme.paddingMedium
         sounds: panel.sounds
