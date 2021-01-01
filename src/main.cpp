@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Jolla Ltd.
- * Copyright (C) 2020 Slava Monich <slava@monich.com>
+ * Copyright (C) 2020-2021 Jolla Ltd.
+ * Copyright (C) 2020-2021 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of the BSD license as follows:
  *
@@ -45,6 +45,7 @@
 #include "CounterFavoritesModel.h"
 #include "CounterLinkModel.h"
 #include "CounterListModel.h"
+#include "CounterSampleModel.h"
 
 #include <sailfishapp.h>
 
@@ -55,13 +56,19 @@
 #define APP_QML_IMPORT_V1 1
 #define APP_QML_IMPORT_V2 0
 
+#define REGISTER_SINGLETON(class,uri,v1,v2) \
+    qmlRegisterSingletonType<class>(uri, v1, v2, #class, class::createSingleton)
+#define REGISTER_TYPE(class,uri,v1,v2) \
+    qmlRegisterType<class>(uri, v1, v2, #class)
+
 static void register_types(const char* uri, int v1, int v2)
 {
-    qmlRegisterSingletonType<HarbourTheme>(uri, v1, v2, "HarbourTheme", HarbourTheme::createSingleton);
-    qmlRegisterSingletonType<HarbourSystemTime>(uri, v1, v2, "HarbourSystemTime", HarbourSystemTime::createSingleton);
-    qmlRegisterSingletonType<CounterListModel>(uri, v1, v2, "CounterListModel", CounterListModel::createSingleton);
-    qmlRegisterType<CounterFavoritesModel>(uri, v1, v2, "CounterFavoritesModel");
-    qmlRegisterType<CounterLinkModel>(uri, v1, v2, "CounterLinkModel");
+    REGISTER_SINGLETON(HarbourTheme, uri, v1, v2);
+    REGISTER_SINGLETON(HarbourSystemTime, uri, v1, v2);
+    REGISTER_SINGLETON(CounterListModel, uri, v1, v2);
+    REGISTER_TYPE(CounterFavoritesModel, uri, v1, v2);
+    REGISTER_TYPE(CounterSampleModel, uri, v1, v2);
+    REGISTER_TYPE(CounterLinkModel, uri, v1, v2);
 }
 
 static void register_plugins(QQmlEngine* aEngine, const char* uri, int v1, int v2)

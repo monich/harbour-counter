@@ -9,8 +9,51 @@ import "../js/Utils.js" as Utils
 CoverBackground {
     id: cover
 
-    readonly property string plusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
-    readonly property string minusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
+    readonly property url plusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
+    readonly property url minusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
+    readonly property url coverItemUrl: Qt.resolvedUrl((configCover.value >= 0 && configCover.value < Utils.coverItems.length) ?
+        Utils.coverItems[configCover.value] : Utils.coverItems[Utils.configDefaultCoverType])
+    property alias coverItem: coverItemLoader.item
+
+    Loader {
+        id: coverItemLoader
+
+        anchors.fill: cover
+        source: coverItemUrl
+    }
+
+    Binding {
+        target: coverItem
+        property: "model"
+        value: coverModel
+    }
+
+    function inc(pos) {
+        coverItem.inc(pos);
+        if (plusSound.item) {
+            plusSound.item.play()
+        }
+        if (buzz.item) {
+            buzz.item.play()
+        }
+    }
+
+    function dec(pos) {
+        if (coverItem.dec(pos)) {
+            if (minusSound.item) {
+                minusSound.item.play()
+            }
+            if (buzz.item) {
+                buzz.item.play()
+            }
+        }
+    }
+
+    CounterFavoritesModel {
+        id: coverModel
+
+        sourceModel: CounterListModel
+    }
 
     ConfigurationValue {
         id: configSounds
@@ -24,6 +67,13 @@ CoverBackground {
 
         key: Utils.configKeyVibra
         defaultValue: Utils.configDefaultVibra
+    }
+
+    ConfigurationValue {
+        id: configCover
+
+        key: Utils.configKeyCoverType
+        defaultValue: Utils.configDefaultCoverType
     }
 
     Loader {
@@ -51,117 +101,27 @@ CoverBackground {
         }
     }
 
-    Row {
-        id: row
-
-        x: (repeater.visibleCount === 1) ? Math.round((parent.width - width)/2) : Theme.paddingMedium
-        height: parent.height - Theme.itemSizeSmall
-        spacing: Theme.paddingMedium
-
-        Repeater {
-            id: repeater
-
-            readonly property int visibleCount: Math.min(repeater.count,2)
-            model: CounterFavoritesModel { sourceModel: CounterListModel }
-            delegate: Item {
-                id: counterDelegate
-
-                height: row.height
-                width: (repeater.visibleCount === 1) ? Math.round(cover.width - 4 * Theme.paddingLarge) : maxWidth
-
-                readonly property real maxWidth: Math.floor((cover.width - 2 * Theme.paddingMedium - (repeater.visibleCount - 1) * row.spacing)/repeater.visibleCount)
-                readonly property string valueString: model.value
-
-                Label {
-                    id: label
-
-                    anchors {
-                        top: parent.top
-                        topMargin: Theme.paddingLarge
-                        horizontalCenter: parent.horizontalCenter
-                    }
-                    text: model.title
-                    width: Math.min(implicitWidth, parent.width)
-                    truncationMode: TruncationMode.Fade
-                    horizontalAlignment: Text.AlignLeft
-                    textFormat: Text.PlainText
-                }
-
-                Item {
-                    width: parent.width
-                    anchors {
-                        top: label.bottom
-                        bottom: counterDelegate.bottom
-                    }
-
-                    Rectangle {
-                        width: counterDelegate.width
-                        height: Theme.fontSizeHuge * 2
-                        radius: Theme.paddingLarge
-                        anchors.centerIn: parent
-                        color: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityLow)
-
-                        NumberPanel {
-                            anchors {
-                                fill: parent
-                                margins: (repeater.visibleCount === 1) ? Theme.paddingLarge : Theme.paddingMedium
-                            }
-                            number: model.value
-                            interactive: false
-                            hasBackground: false
-                            color: Theme.primaryColor
-                            horizontalMargins: 0
-                            count: valueString.length
-                        }
-                    }
-                }
-
-                function inc() {
-                    model.value++
-                    if (plusSound.item) {
-                        plusSound.item.play()
-                    }
-                    if (buzz.item) {
-                        buzz.item.play()
-                    }
-                }
-
-                function dec() {
-                    if (model.value > 0) {
-                        model.value--
-                        if (minusSound.item) {
-                            minusSound.item.play()
-                        }
-                        if (buzz.item) {
-                            buzz.item.play()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     CoverActionList {
-        enabled: repeater.count === 1
+        enabled: coverItem && coverItem.count === 1
         CoverAction {
             iconSource: cover.minusIconSource
-            onTriggered: repeater.itemAt(0).dec()
+            onTriggered: cover.dec(0)
         }
         CoverAction {
             iconSource: cover.plusIconSource
-            onTriggered: repeater.itemAt(0).inc()
+            onTriggered: cover.inc(0)
         }
     }
 
     CoverActionList {
-        enabled: repeater.count > 1
+        enabled: coverItem && coverItem.count > 1
         CoverAction {
             iconSource: cover.plusIconSource
-            onTriggered: repeater.itemAt(0).inc()
+            onTriggered: cover.inc(0)
         }
         CoverAction {
             iconSource: cover.plusIconSource
-            onTriggered: repeater.itemAt(1).inc()
+            onTriggered: cover.inc(1)
         }
     }
 }

@@ -86,5 +86,33 @@ Page {
                 defaultValue: Utils.configDefaultUseVolumeKeys
             }
         }
+
+        SectionHeader {
+            //: Settings section header
+            //% "Cover style"
+            text: qsTrId("counter-section-cover_style")
+        }
+
+        Row {
+            x: Theme.horizontalPageMargin
+            spacing: Theme.paddingLarge
+
+            ConfigurationValue {
+                id: configCoverType
+
+                key: Utils.configKeyCoverType
+                defaultValue: Utils.configDefaultCoverType
+            }
+
+            Repeater {
+                model: Utils.coverItems
+                delegate: CoverPreview {
+                    selected: (configCoverType.value === model.index)
+                    source: modelData
+                    value: model.index + 1
+                    onClicked: configCoverType.value = model.index
+                }
+            }
+        }
     }
 }

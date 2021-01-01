@@ -11,6 +11,10 @@ var configDefaultVibra = true
 var configKeyUseVolumeKeys = configRoot + "useVolumeKeys"
 var configDefaultUseVolumeKeys = true
 
+var configKeyCoverType = configRoot + "coverType"
+var configDefaultCoverType = 1
+var coverItems = ["CoverItem1.qml", "CoverItem2.qml"]
+
 var configKeyReorderHintCount = configRoot + "reorderHintCount"
 var maxReorderHintCount = 4
 

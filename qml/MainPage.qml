@@ -134,7 +134,7 @@ Page {
                 //: Pulley menu item
                 //% "Settings"
                 text: qsTrId("counter-menu-settings")
-                onClicked: pageStack.push("../settings/SettingsPage.qml", { "title" : text })
+                onClicked: pageStack.push("SettingsPage.qml", { "title" : text })
             }
             MenuItem {
                 id: removeCounterMenuItem

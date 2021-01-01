@@ -11,13 +11,7 @@ QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-psabi
 QMAKE_CFLAGS += -Wno-unused-parameter
 
 TARGET_DATA_DIR = /usr/share/$${TARGET}
-
-app_settings {
-    # This path is hardcoded in jolla-settings
-    TRANSLATIONS_PATH = /usr/share/translations
-} else {
-    TRANSLATIONS_PATH = $${TARGET_DATA_DIR}/translations
-}
+TRANSLATIONS_PATH = $${TARGET_DATA_DIR}/translations
 
 CONFIG(debug, debug|release) {
     DEFINES += DEBUG HARBOUR_DEBUG
@@ -34,7 +28,6 @@ OTHER_FILES += \
     rpm/*.spec \
     *.desktop \
     js/*.js \
-    settings/*.qml \
     qml/*.qml \
     qml/images/*.svg \
     qml/sounds/*.wav \
@@ -83,7 +76,8 @@ SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
 
 HARBOUR_QML_COMPONENTS = \
-    $${HARBOUR_LIB_QML}/HarbourHighlightIcon.qml
+    $${HARBOUR_LIB_QML}/HarbourHighlightIcon.qml \
+    $${HARBOUR_LIB_QML}/HarbourPressEffect.qml
 
 OTHER_FILES += $${HARBOUR_QML_COMPONENTS}
 
@@ -97,7 +91,8 @@ HEADERS += \
     src/CounterDefs.h \
     src/CounterFavoritesModel.h \
     src/CounterLinkModel.h \
-    src/CounterListModel.h
+    src/CounterListModel.h \
+    src/CounterSampleModel.h
 
 SOURCES += \
     src/main.cpp \
@@ -108,12 +103,6 @@ SOURCES += \
 app_js.files = js/*.js
 app_js.path = /usr/share/$${TARGET}/js/
 INSTALLS += app_js
-
-# Settings
-
-settings_qml.files = settings/*.qml
-settings_qml.path = /usr/share/$${TARGET}/settings/
-INSTALLS += settings_qml
 
 # Icons
 
@@ -129,7 +118,6 @@ for(s, ICON_SIZES) {
 # Translations
 TRANSLATION_SOURCES = \
   $${_PRO_FILE_PWD_}/qml \
-  $${_PRO_FILE_PWD_}/settings \
   $${_PRO_FILE_PWD_}/src
 
 defineTest(addTrFile) {

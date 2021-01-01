@@ -88,6 +88,11 @@
         <extracomment>Text switch label</extracomment>
         <translation>Use volume keys</translation>
     </message>
+    <message id="counter-section-cover_style">
+        <source>Cover style</source>
+        <extracomment>Settings section header</extracomment>
+        <translation>Cover style</translation>
+    </message>
     <message id="counter-button-reset">
         <source>Reset</source>
         <extracomment>Button label (resets counter to zero)</extracomment>

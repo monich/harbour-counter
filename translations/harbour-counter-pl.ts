@@ -88,6 +88,11 @@
         <extracomment>Text switch label</extracomment>
         <translation>Użyj klawiszy głośności</translation>
     </message>
+    <message id="counter-section-cover_style">
+        <source>Cover style</source>
+        <extracomment>Settings section header</extracomment>
+        <translation type="unfinished">Styl okładki</translation>
+    </message>
     <message id="counter-button-reset">
         <source>Reset</source>
         <extracomment>Button label (resets counter to zero)</extracomment>

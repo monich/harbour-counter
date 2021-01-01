@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Jolla Ltd.
- * Copyright (C) 2020 Slava Monich <slava@monich.com>
+ * Copyright (C) 2020-2021 Jolla Ltd.
+ * Copyright (C) 2020-2021 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of the BSD license as follows:
  *
@@ -53,8 +53,7 @@ class CounterListModel : public QAbstractListModel {
     class ModelData;
 
 public:
-
-    CounterListModel(QObject* aParent = NULL);
+    CounterListModel(QObject* aParent = Q_NULLPTR);
 
     static int favoriteRole();
     static int modelIdRole();
@@ -84,6 +83,10 @@ public:
     // Callback for qmlRegisterSingletonType<CounterListModel>
     static QObject* createSingleton(QQmlEngine* aEngine, QJSEngine* aScript);
 
+protected:
+    int getValueAt(int aRow);
+    void setValueAt(int aRow, int aValue);
+
 Q_SIGNALS:
     void saveFileChanged();
     void currentIndexChanged();
@@ -93,7 +96,5 @@ Q_SIGNALS:
 private:
     Private* iPrivate;
 };
-
-QML_DECLARE_TYPE(CounterListModel)
 
 #endif // COUNTER_LIST_MODEL_H
