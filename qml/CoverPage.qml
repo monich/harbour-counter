@@ -55,7 +55,7 @@ CoverBackground {
         id: row
 
         x: (repeater.visibleCount === 1) ? Math.round((parent.width - width)/2) : Theme.paddingMedium
-        height: parent.height
+        height: parent.height - Theme.itemSizeSmall
         spacing: Theme.paddingMedium
 
         Repeater {
@@ -73,6 +73,8 @@ CoverBackground {
                 readonly property string valueString: model.value
 
                 Label {
+                    id: label
+
                     anchors {
                         top: parent.top
                         topMargin: Theme.paddingLarge
@@ -84,36 +86,36 @@ CoverBackground {
                     horizontalAlignment: Text.AlignLeft
                     textFormat: Text.PlainText
                 }
-                Rectangle {
-                    id: background
 
-                    width: counterDelegate.width
-                    height: width
-                    radius: width/2
-                    y: Math.round((row.height - height)/2)
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    border {
-                        color: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityHigh)
-                        width: 1
+                Item {
+                    width: parent.width
+                    anchors {
+                        top: label.bottom
+                        bottom: counterDelegate.bottom
                     }
-                    color: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityLow)
-                    readonly property color color1: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityFaint)
-                    gradient: Gradient {
-                        GradientStop { position: 0.0; color: HarbourTheme.lightOnDark ? background.color : background.color1 }
-                        GradientStop { position: 1.0; color: HarbourTheme.lightOnDark ? background.color1 : background.color }
+
+                    Rectangle {
+                        width: counterDelegate.width
+                        height: Theme.fontSizeHuge * 2
+                        radius: Theme.paddingLarge
+                        anchors.centerIn: parent
+                        color: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityLow)
+
+                        NumberPanel {
+                            anchors {
+                                fill: parent
+                                margins: (repeater.visibleCount === 1) ? Theme.paddingLarge : Theme.paddingMedium
+                            }
+                            number: model.value
+                            interactive: false
+                            hasBackground: false
+                            color: Theme.primaryColor
+                            horizontalMargins: 0
+                            count: valueString.length
+                        }
                     }
                 }
-                NumberPanel {
-                    anchors.centerIn: background
-                    width: background.width * 0.7
-                    height: width/2
-                    number: model.value
-                    interactive: false
-                    hasBackground: false
-                    color: Theme.primaryColor
-                    horizontalMargins: 0
-                    count: valueString.length
-                }
+
                 function inc() {
                     model.value++
                     if (plusSound.item) {
@@ -123,6 +125,7 @@ CoverBackground {
                         buzz.item.play()
                     }
                 }
+
                 function dec() {
                     if (model.value > 0) {
                         model.value--
