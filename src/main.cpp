@@ -46,6 +46,7 @@
 #include "CounterLinkModel.h"
 #include "CounterListModel.h"
 #include "CounterSampleModel.h"
+#include "CounterSettings.h"
 
 #include <sailfishapp.h>
 
@@ -66,6 +67,7 @@ static void register_types(const char* uri, int v1, int v2)
     REGISTER_SINGLETON(HarbourTheme, uri, v1, v2);
     REGISTER_SINGLETON(HarbourSystemTime, uri, v1, v2);
     REGISTER_SINGLETON(CounterListModel, uri, v1, v2);
+    REGISTER_SINGLETON(CounterSettings, uri, v1, v2);
     REGISTER_TYPE(CounterFavoritesModel, uri, v1, v2);
     REGISTER_TYPE(CounterSampleModel, uri, v1, v2);
     REGISTER_TYPE(CounterLinkModel, uri, v1, v2);

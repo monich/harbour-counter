@@ -12,6 +12,7 @@ Requires:       qt5-qtsvg-plugin-imageformat-svg
 Requires:       qt5-qtfeedback
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(sailfishapp)
+BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(Qt5Qml)

@@ -3,7 +3,7 @@ PREFIX = harbour
 
 TARGET = $${PREFIX}-$${NAME}
 CONFIG += sailfishapp link_pkgconfig
-PKGCONFIG += sailfishapp glib-2.0 gobject-2.0
+PKGCONFIG += sailfishapp mlite5 glib-2.0 gobject-2.0
 QT += qml quick dbus
 LIBS += -ldl
 
@@ -27,7 +27,6 @@ OTHER_FILES += \
     README.md \
     rpm/*.spec \
     *.desktop \
-    js/*.js \
     qml/*.qml \
     qml/images/*.svg \
     qml/sounds/*.wav \
@@ -92,17 +91,15 @@ HEADERS += \
     src/CounterFavoritesModel.h \
     src/CounterLinkModel.h \
     src/CounterListModel.h \
-    src/CounterSampleModel.h
+    src/CounterSampleModel.h \
+    src/CounterSettings.h
 
 SOURCES += \
     src/main.cpp \
     src/CounterFavoritesModel.cpp \
     src/CounterLinkModel.cpp \
-    src/CounterListModel.cpp
-
-app_js.files = js/*.js
-app_js.path = /usr/share/$${TARGET}/js/
-INSTALLS += app_js
+    src/CounterListModel.cpp \
+    src/CounterSettings.cpp
 
 # Icons
 

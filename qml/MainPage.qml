@@ -1,9 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
-import org.nemomobile.configuration 1.0
-
-import "../js/Utils.js" as Utils
 
 Page {
     id: page
@@ -18,27 +15,6 @@ Page {
 
     readonly property int maxCounters: Math.floor(list.width/Theme.itemSizeExtraSmall)
     readonly property bool remorsePopupVisible: remorsePopup ? remorsePopup.visible : false
-
-    ConfigurationValue {
-        id: configSounds
-
-        key: Utils.configKeySounds
-        defaultValue: Utils.configDefaultSounds
-    }
-
-    ConfigurationValue {
-        id: configVibra
-
-        key: Utils.configKeyVibra
-        defaultValue: Utils.configDefaultVibra
-    }
-
-    ConfigurationValue {
-        id: configReorderHintCount
-
-        key: Utils.configKeyReorderHintCount
-        defaultValue: 0
-    }
 
     Component {
         id: buzzComponent
@@ -89,7 +65,7 @@ Page {
     }
 
     function considerShowingReorderHint() {
-        if (configReorderHintCount.value < Utils.maxReorderHintCount) {
+        if (CounterSettings.reorderHintCount < CounterSettings.maxReorderHintCount) {
             if (!reorderHint) {
                 reorderHint = hintComponent.createObject(list, {
                     //: Hint text
@@ -98,7 +74,7 @@ Page {
                 })
             }
             reorderHint.show()
-            configReorderHintCount.value++
+            CounterSettings.reorderHintCount++
         }
     }
 
@@ -199,7 +175,7 @@ Page {
                             CounterListModel.moveCounter(list.currentIndex, newIndex)
                             list.positionViewAtIndex(newIndex, ListView.Center)
                             // And don't show any more hints:
-                            configReorderHintCount.value = Utils.maxReorderHintCount
+                            CounterSettings.reorderHintCount = CounterSettings.maxReorderHintCount
                         }
                     }
                     // Cover action selects the corresponding counter in the list.
@@ -263,8 +239,8 @@ Page {
                 canChangeFavorite: list.count > 1
                 title: model.title
                 link: model.link
-                sounds: configSounds.value
-                vibra: configVibra.value
+                sounds: CounterSettings.soundsEnabled
+                vibra: CounterSettings.vibraEnabled
                 changeTime: model.changeTime
                 resetTime: model.resetTime
                 onFlip: page.flipped = !page.flipped

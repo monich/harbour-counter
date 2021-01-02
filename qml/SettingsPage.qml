@@ -1,9 +1,7 @@
 import QtQuick 2.0
 import QtFeedback 5.0
 import Sailfish.Silica 1.0
-import org.nemomobile.configuration 1.0
-
-import "../js/Utils.js" as Utils
+import harbour.counter 1.0
 
 Page {
     property alias title: pageHeader.title
@@ -26,15 +24,8 @@ Page {
             //% "Play sounds"
             text: qsTrId("counter-switch-sounds")
             automaticCheck: false
-            checked: configSounds.value
-            onClicked: configSounds.value = !configSounds.value
-
-            ConfigurationValue {
-                id: configSounds
-
-                key: Utils.configKeySounds
-                defaultValue: Utils.configDefaultSounds
-            }
+            checked: CounterSettings.soundsEnabled
+            onClicked: CounterSettings.soundsEnabled = !CounterSettings.soundsEnabled
         }
 
         TextSwitch {
@@ -44,25 +35,18 @@ Page {
             //% "Vibrate"
             text: qsTrId("counter-switch-vibra")
             automaticCheck: false
-            checked: configVibra.value
+            checked: CounterSettings.vibraEnabled
             onClicked: {
-                configVibra.value = !configVibra.value
+                CounterSettings.vibraEnabled = !CounterSettings.vibraEnabled
                 if (buzz.item) {
                     buzz.item.play()
                 }
             }
 
-            ConfigurationValue {
-                id: configVibra
-
-                key: Utils.configKeyVibra
-                defaultValue: Utils.configDefaultVibra
-            }
-
             Loader {
                 id: buzz
 
-                active: configVibra.value
+                active: CounterSettings.vibraEnabled
                 sourceComponent: Component {
                     ThemeEffect { effect: ThemeEffect.Press }
                 }
@@ -76,15 +60,8 @@ Page {
             //% "Use volume keys"
             text: qsTrId("counter-switch-use_volume_keys")
             automaticCheck: false
-            checked: configUseVolumeKeys.value
-            onClicked: configUseVolumeKeys.value = !configUseVolumeKeys.value
-
-            ConfigurationValue {
-                id: configUseVolumeKeys
-
-                key: Utils.configKeyUseVolumeKeys
-                defaultValue: Utils.configDefaultUseVolumeKeys
-            }
+            checked: CounterSettings.volumeKeysEnabled
+            onClicked: CounterSettings.volumeKeysEnabled = !CounterSettings.volumeKeysEnabled
         }
 
         SectionHeader {
@@ -97,20 +74,13 @@ Page {
             x: Theme.horizontalPageMargin
             spacing: Theme.paddingLarge
 
-            ConfigurationValue {
-                id: configCoverType
-
-                key: Utils.configKeyCoverType
-                defaultValue: Utils.configDefaultCoverType
-            }
-
             Repeater {
-                model: Utils.coverItems
+                model: CounterSettings.coverItems
                 delegate: CoverPreview {
-                    selected: (configCoverType.value === model.index)
+                    selected: (CounterSettings.coverStyle === model.index)
                     source: modelData
                     value: model.index + 1
-                    onClicked: configCoverType.value = model.index
+                    onClicked: CounterSettings.coverStyle = model.index
                 }
             }
         }

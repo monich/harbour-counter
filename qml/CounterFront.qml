@@ -1,10 +1,7 @@
 import QtQuick 2.0
 import QtMultimedia 5.0
 import Sailfish.Silica 1.0
-import org.nemomobile.configuration 1.0
 import harbour.counter 1.0
-
-import "../js/Utils.js" as Utils
 
 Item {
     id: panel
@@ -178,29 +175,22 @@ Item {
         source: "Buzz.qml"
     }
 
-    ConfigurationValue {
-        id: configUseVolumeKeys
-
-        key: Utils.configKeyUseVolumeKeys
-        defaultValue: Utils.configDefaultUseVolumeKeys
-    }
-
     MediaKey {
-        enabled: panel.active && configUseVolumeKeys.value
+        enabled: panel.active && CounterSettings.volumeKeysEnabled
         key: Qt.Key_VolumeUp
         onPressed: plus(false)
         onRepeat: plus(false)
     }
 
     MediaKey {
-        enabled: panel.active && configUseVolumeKeys.value
+        enabled: panel.active && CounterSettings.volumeKeysEnabled
         key: Qt.Key_VolumeDown
         onPressed: minus(false)
         onRepeat: minus(false)
     }
 
     Permissions {
-        enabled: panel.active && configUseVolumeKeys.value
+        enabled: panel.active && CounterSettings.volumeKeysEnabled
         autoRelease: true
         applicationClass: "camera"
 
