@@ -91,7 +91,7 @@
     <message id="counter-section-cover_style">
         <source>Cover style</source>
         <extracomment>Settings section header</extracomment>
-        <translation type="unfinished">Styl okładki</translation>
+        <translation>Styl okładki</translation>
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>
