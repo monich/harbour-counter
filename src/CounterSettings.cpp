@@ -85,6 +85,7 @@ CounterSettings::Private::Private(CounterSettings* aParent) :
 {
     iCoverItems.append(QStringLiteral("CoverItem1.qml"));
     iCoverItems.append(QStringLiteral("CoverItem2.qml"));
+    iCoverItems.append(QStringLiteral("CoverItem3.qml"));
     QObject::connect(iSounds, SIGNAL(valueChanged()),
         aParent, SIGNAL(soundsEnabledChanged()));
     QObject::connect(iVibra, SIGNAL(valueChanged()),
