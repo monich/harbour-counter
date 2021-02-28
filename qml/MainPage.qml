@@ -239,8 +239,6 @@ Page {
                 canChangeFavorite: list.count > 1
                 title: model.title
                 link: model.link
-                sounds: CounterSettings.soundsEnabled
-                vibra: CounterSettings.vibraEnabled
                 changeTime: model.changeTime
                 resetTime: model.resetTime
                 onFlip: page.flipped = !page.flipped

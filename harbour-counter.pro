@@ -118,32 +118,35 @@ TRANSLATION_SOURCES = \
   $${_PRO_FILE_PWD_}/src
 
 defineTest(addTrFile) {
-    in = $${_PRO_FILE_PWD_}/translations/harbour-$$1
+    rel = translations/harbour-$${1}
+    OTHER_FILES += $${rel}.ts
+    export(OTHER_FILES)
+
+    in = $${_PRO_FILE_PWD_}/$$rel
     out = $${OUT_PWD}/translations/$${PREFIX}-$$1
 
     s = $$replace(1,-,_)
     lupdate_target = lupdate_$$s
-    lrelease_target = lrelease_$$s
+    qm_target = qm_$$s
 
     $${lupdate_target}.commands = lupdate -noobsolete -locations none $${TRANSLATION_SOURCES} -ts \"$${in}.ts\" && \
         mkdir -p \"$${OUT_PWD}/translations\" &&  [ \"$${in}.ts\" != \"$${out}.ts\" ] && \
         cp -af \"$${in}.ts\" \"$${out}.ts\" || :
 
-    $${lrelease_target}.target = $${out}.qm
-    $${lrelease_target}.depends = $${lupdate_target}
-    $${lrelease_target}.commands = lrelease -idbased \"$${out}.ts\"
+    $${qm_target}.path = $$TRANSLATIONS_PATH
+    $${qm_target}.depends = $${lupdate_target}
+    $${qm_target}.commands = lrelease -idbased \"$${out}.ts\" && \
+        $(INSTALL_FILE) \"$${out}.qm\" $(INSTALL_ROOT)$${TRANSLATIONS_PATH}/
 
-    QMAKE_EXTRA_TARGETS += $${lrelease_target} $${lupdate_target}
-    PRE_TARGETDEPS += $${out}.qm
-    qm.files += $${out}.qm
+    QMAKE_EXTRA_TARGETS += $${lupdate_target} $${qm_target}
+    INSTALLS += $${qm_target}
 
     export($${lupdate_target}.commands)
-    export($${lrelease_target}.target)
-    export($${lrelease_target}.depends)
-    export($${lrelease_target}.commands)
+    export($${qm_target}.path)
+    export($${qm_target}.depends)
+    export($${qm_target}.commands)
     export(QMAKE_EXTRA_TARGETS)
-    export(PRE_TARGETDEPS)
-    export(qm.files)
+    export(INSTALLS)
 }
 
 LANGUAGES = fr hu pl ru sv zh_CN
@@ -152,9 +155,3 @@ addTrFile($${NAME})
 for(l, LANGUAGES) {
     addTrFile($${NAME}-$$l)
 }
-
-qm.path = $$TRANSLATIONS_PATH
-qm.CONFIG += no_check_exist
-INSTALLS += qm
-
-OTHER_FILES += LICENSE

@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
 
@@ -12,7 +11,6 @@ SilicaFlickable {
     property date resetTime
     property alias counterId: linkModel.sourceId
     property alias favorite: favoriteSwitch.checked
-    property alias sounds: resetSound.active
     property alias canChangeFavorite: favoriteSwitch.enabled
 
     signal flip()
@@ -195,19 +193,13 @@ SilicaFlickable {
         text: qsTrId("counter-button-reset")
         onClicked: {
             panel.reset()
-            if (resetSound.item) {
-                resetSound.item.play()
-            }
+            resetSound.play()
         }
         Behavior on opacity { FadeAnimation { } }
-        Loader {
+        Sound {
             id: resetSound
 
-            sourceComponent: Component {
-                SoundEffect {
-                    source: "sounds/reset.wav"
-                }
-            }
+            source: "sounds/reset.wav"
         }
     }
 

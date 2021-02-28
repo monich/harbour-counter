@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
 
@@ -25,9 +24,7 @@ CoverBackground {
 
     function inc(pos) {
         coverItem.inc(pos);
-        if (plusSound.item) {
-            plusSound.item.play()
-        }
+        plusSound.play()
         if (buzz.item) {
             buzz.item.play()
         }
@@ -35,9 +32,7 @@ CoverBackground {
 
     function dec(pos) {
         if (coverItem.dec(pos)) {
-            if (minusSound.item) {
-                minusSound.item.play()
-            }
+            minusSound.play()
             if (buzz.item) {
                 buzz.item.play()
             }
@@ -57,22 +52,16 @@ CoverBackground {
         source: "Buzz.qml"
     }
 
-    Loader {
+    Sound {
         id: plusSound
 
-        active: CounterSettings.soundsEnabled
-        sourceComponent: Component {
-            SoundEffect { source: "sounds/plus.wav" }
-        }
+        source: "sounds/plus.wav"
     }
 
-    Loader {
+    Sound {
         id: minusSound
 
-        active: CounterSettings.soundsEnabled
-        sourceComponent: Component {
-            SoundEffect { source: "sounds/minus.wav" }
-        }
+        source: "sounds/minus.wav"
     }
 
     CoverActionList {

@@ -16,7 +16,6 @@ Item {
     property color backgroundColor: Theme.primaryColor
     property bool hasBackground: true
     property bool interactive: true
-    property bool sounds
     property color color: HarbourTheme.invertedColor(backgroundColor)
     property bool completed
     property alias spacing: row.spacing
@@ -81,7 +80,6 @@ Item {
                 interactive: panel.interactive
                 hasBackground: panel.hasBackground
                 backgroundColor: panel.backgroundColor
-                sounds: panel.sounds
                 horizontalMargins: panel.horizontalMargins
                 Component.onCompleted: repeater.updateSpinners()
                 onNumberChanged:  {

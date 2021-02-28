@@ -18,15 +18,11 @@ MouseArea {
 
     implicitWidth: buttonSize
     implicitHeight: buttonSize
-
-    onPressedChanged: {
-        if (pressed) {
-            pressTimer.start()
-        }
-    }
-    onCanceled: pressTimer.stop()
-
     height: width
+
+    onPressed: pressTimer.restart()
+
+    onCanceled: pressTimer.stop()
 
     Rectangle {
         anchors.fill: parent

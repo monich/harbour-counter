@@ -13,8 +13,6 @@ Item {
     property alias flipped: flipable.flipped
     property string link
     property string title
-    property bool sounds
-    property bool vibra
     property bool flipping
     property bool currentItem
 
@@ -41,8 +39,6 @@ Item {
             anchors.fill: parent
             visible: rotation.angle < 90
             active: visible && Qt.application.active && currentItem
-            sounds: panel.sounds
-            vibra: panel.vibra
             title: panel.title
             hasLink: panel.link.length > 0
 
@@ -55,7 +51,6 @@ Item {
 
             anchors.fill: parent
             visible: rotation.angle >= 90
-            sounds: panel.sounds
             title: panel.title
             link: panel.link
 

@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
 
@@ -15,7 +14,6 @@ Item {
     property real horizontalMargins
     property bool animated: true
     property bool completed
-    property bool sounds
     property alias hasBackground: background.visible
     property alias backgroundColor: background.color
     property alias cornerRadius: background.radius
@@ -33,15 +31,10 @@ Item {
 
     Component.onCompleted: completed = true
 
-    Loader {
-        id: soundEffect
+    Sound {
+        id: tick
 
-        active: sounds
-        sourceComponent: Component {
-            SoundEffect {
-                source: "sounds/roll.wav"
-            }
-        }
+        source: "sounds/roll.wav"
     }
 
     Rectangle {
@@ -94,9 +87,7 @@ Item {
         }
         onCurrentIndexChanged: {
             if (moving) {
-                if (soundEffect.item) {
-                    soundEffect.item.play()
-                }
+                tick.play()
             } else {
                 updateActualNumber()
             }

@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
 
@@ -9,8 +8,6 @@ Item {
     property int value
     property alias title: titleLabel.text
     property alias hasLink: linkIcon.visible
-    property bool sounds
-    property bool vibra
     property bool active
 
     signal flip()
@@ -74,7 +71,6 @@ Item {
         }
         horizontalMargins: Theme.paddingLarge
         spacing: Theme.paddingMedium
-        sounds: panel.sounds
         // Disable animation if change is triggered by cover action:
         animated: Qt.application.active
         count: 3
@@ -146,32 +142,22 @@ Item {
         }
     }
 
-    Loader {
+    Sound {
         id: plusSound
 
-        active: panel.sounds
-        sourceComponent: Component {
-            SoundEffect {
-                source: "sounds/plus.wav"
-            }
-        }
+        source: "sounds/plus.wav"
     }
 
-    Loader {
+    Sound {
         id: minusSound
 
-        active: panel.sounds
-        sourceComponent: Component {
-            SoundEffect {
-                source: "sounds/minus.wav"
-            }
-        }
+        source: "sounds/minus.wav"
     }
 
     Loader {
         id: buzz
 
-        active: panel.vibra
+        active: CounterSettings.vibraEnabled
         source: "Buzz.qml"
     }
 
