@@ -2,6 +2,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
 
+import "constants.js" as Constants
 import "harbour"
 
 MouseArea {
@@ -47,7 +48,7 @@ MouseArea {
             checked ? HarbourTheme.opacityHigh : HarbourTheme.opacityFaint)
         border {
             color: highlighted ? Theme.secondaryColor : Theme.secondaryHighlightColor
-            width: 2
+            width: Constants.thinBorder
         }
     }
 }

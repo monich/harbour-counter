@@ -2,6 +2,8 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.counter 1.0
 
+import "constants.js" as Constants
+
 Item {
     id: panel
 
@@ -21,7 +23,7 @@ Item {
         color: Theme.rgba(Theme.highlightBackgroundColor, 0.1)
         border {
             color: Theme.rgba(Theme.highlightColor, HarbourTheme.opacityLow)
-            width: 2
+            width: Constants.thinBorder
         }
         radius: Theme.paddingMedium
     }
