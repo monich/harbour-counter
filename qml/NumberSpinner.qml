@@ -20,9 +20,9 @@ Item {
     property alias interactive: view.interactive
     property color color: HarbourTheme.invertedColor(background.color)
     property font font
+    property real digitWidth
+    property real digitHeight
 
-    property real digitWidth: Math.ceil(sample.paintedWidth)
-    property real digitHeight: Math.ceil(sample.paintedHeight)
     readonly property int number: view.actualNumber
 
     function setNumber(n) {
@@ -54,7 +54,7 @@ Item {
         id: view
 
         clip: true
-        width: digitWidth
+        width: parent.width
         height: digitHeight
         anchors.centerIn: parent
         snapMode: PathView.SnapOneItem
@@ -75,7 +75,7 @@ Item {
             }
         }
         delegate: Text {
-            width: digitWidth
+            width: view.width
             height: digitHeight
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
