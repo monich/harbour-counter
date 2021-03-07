@@ -14,7 +14,7 @@ Item {
     }
 
     function dec(pos) {
-        repeater.itemAt(pos).dec()
+        return repeater.itemAt(pos).dec()
     }
 
     Row {
