@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020-2021 Jolla Ltd.
- * Copyright (C) 2020-2021 Slava Monich <slava@monich.com>
+ * Copyright (C) 2020-2022 Jolla Ltd.
+ * Copyright (C) 2020-2022 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of the BSD license as follows:
  *
@@ -164,8 +164,8 @@ QVariant CounterListModel::ModelData::get(Role aRole) const
     case ModelIdRole: return iId;
     case LinkRole: return iLink ? iLink->iId : QString();
     case TitleRole: return iTitle;
-    case ResetTimeRole: return iResetTime;
-    case ChangeTimeRole: return iChangeTime;
+    case ResetTimeRole: return iResetTime.toLocalTime();
+    case ChangeTimeRole: return iChangeTime.toLocalTime();
     }
     return QVariant();
 }
