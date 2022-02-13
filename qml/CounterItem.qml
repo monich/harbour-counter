@@ -24,6 +24,21 @@ Item {
     signal updateCounter(var value)
     signal updateTitle(var value)
 
+    property real _targetAngle
+
+    function completeFlip() {
+        flipping = false
+        if (!flipped) {
+            _targetAngle = 0
+        }
+    }
+
+    onFlippedChanged: {
+        if (!flipped) {
+            _targetAngle = 360
+        }
+    }
+
     Flipable {
         id: flipable
 
@@ -33,11 +48,12 @@ Item {
         }
 
         property bool flipped
+
         front: CounterFront {
             id: frontPanel
 
             anchors.fill: parent
-            visible: rotation.angle < 90
+            visible: rotation.angle < 90 || rotation.angle > 270
             active: visible && Qt.application.active && currentItem
             title: panel.title
             hasLink: panel.link.length > 0
@@ -50,7 +66,7 @@ Item {
             id: backPanel
 
             anchors.fill: parent
-            visible: rotation.angle >= 90
+            visible: !frontPanel.visible
             title: panel.title
             link: panel.link
 
@@ -66,33 +82,43 @@ Item {
         transform: Rotation {
             id: rotation
 
-            origin.x: flipable.width/2
-            origin.y: flipable.height/2
+            origin {
+                x: flipable.width/2
+                y: flipable.height/2
+            }
             axis {
                 x: 0
                 y: 1
                 z: 0
             }
         }
-        states: State {
-            name: "back"
-            PropertyChanges {
-                target: rotation
-                angle: 180
+        states: [
+            State {
+                name: "front"
+                when: !flipable.flipped
+                PropertyChanges {
+                    target: rotation
+                    angle: _targetAngle
+                }
+            },
+            State {
+                name: "back"
+                when: flipable.flipped
+                PropertyChanges {
+                    target: rotation
+                    angle: 180
+                }
             }
-            when: flipable.flipped
-        }
+        ]
         transitions: Transition {
             SequentialAnimation {
                 ScriptAction { script: flipping = true; }
                 NumberAnimation {
-                    id: flipAnimation
-
                     target: rotation
                     property: "angle"
                     duration: currentItem ? 500 : 0
                 }
-                ScriptAction { script: flipping = false; }
+                ScriptAction { script: panel.completeFlip() }
             }
         }
     }
