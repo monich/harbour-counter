@@ -13,7 +13,6 @@ Item {
     property real verticalMargins
     property real horizontalMargins
     property bool animated: true
-    property bool completed
     property alias hasBackground: background.visible
     property alias backgroundColor: background.color
     property alias cornerRadius: background.radius
@@ -28,8 +27,6 @@ Item {
     function setNumber(n) {
         view.currentIndex = (n + 5) % 10
     }
-
-    Component.onCompleted: completed = true
 
     Sound {
         id: tick

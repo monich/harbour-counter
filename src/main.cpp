@@ -40,6 +40,7 @@
 
 #include "Counter.h"
 #include "CounterDefs.h"
+#include "CounterDigitsModel.h"
 #include "CounterFavoritesModel.h"
 #include "CounterLinkModel.h"
 #include "CounterListModel.h"
@@ -66,6 +67,7 @@ static void register_types(const char* uri, int v1, int v2)
     REGISTER_SINGLETON(CounterListModel, uri, v1, v2);
     REGISTER_SINGLETON(CounterSettings, uri, v1, v2);
     REGISTER_SINGLETON(Counter, uri, v1, v2);
+    REGISTER_TYPE(CounterDigitsModel, uri, v1, v2);
     REGISTER_TYPE(CounterFavoritesModel, uri, v1, v2);
     REGISTER_TYPE(CounterSampleModel, uri, v1, v2);
     REGISTER_TYPE(CounterLinkModel, uri, v1, v2);

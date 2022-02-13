@@ -82,6 +82,7 @@ INSTALLS += qml_components
 HEADERS += \
     src/Counter.h \
     src/CounterDefs.h \
+    src/CounterDigitsModel.h \
     src/CounterFavoritesModel.h \
     src/CounterLinkModel.h \
     src/CounterListModel.h \
@@ -90,6 +91,7 @@ HEADERS += \
 
 SOURCES += \
     src/Counter.cpp \
+    src/CounterDigitsModel.cpp \
     src/CounterFavoritesModel.cpp \
     src/CounterLinkModel.cpp \
     src/CounterListModel.cpp \

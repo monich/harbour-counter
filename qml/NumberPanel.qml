@@ -17,14 +17,19 @@ Item {
     property bool hasBackground: true
     property bool interactive: true
     property color color: Counter.invertedColor(backgroundColor)
-    property bool completed
     property alias spacing: row.spacing
     property alias font: sample.font
 
     signal updateNumber(var newValue)
 
-    Component.onCompleted: completed = true
-    onNumberChanged: repeater.updateSpinners()
+    property bool _completed
+
+    Component.onCompleted: {
+        digitsModel.number = panel.number
+        _completed = true
+    }
+
+    onNumberChanged: digitsModel.number = panel.number
 
     Text {
         id: sample
@@ -49,52 +54,30 @@ Item {
         Repeater {
             id: repeater
 
-            model: panel.count
+            model: CounterDigitsModel {
+                id: digitsModel
 
-            property int updatingSpinners
-
-            Component.onCompleted: updateSpinners()
-            onCountChanged: updateSpinners()
-
-            function updateSpinners() {
-                // Update all items
-                repeater.updatingSpinners++
-                var k = 1
-                for (var i = count - 1; i >= 0; i--) {
-                    var item = itemAt(i)
-                    if (item && item.completed) {
-                        item.setNumber(Math.floor((number % (k * 10))/k))
-                    }
-                    k *= 10
-                }
-                repeater.updatingSpinners--
+                count: panel.count
+                onNumberChanged: panel.updateNumber(number)
             }
 
-            NumberSpinner {
-                anchors.verticalCenter: parent.verticalCenter
+            property int spinnerCount
+
+            delegate: NumberSpinner {
+                readonly property int digit: model.digit
+                anchors.verticalCenter: parent ? parent.verticalCenter : undefined
                 digitWidth: Math.ceil(sample.paintedWidth)
                 digitHeight: Math.ceil(sample.paintedHeight)
                 font: panel.font
                 color: panel.color
-                animated: panel.animated && panel.completed
+                animated: panel.animated && panel._completed
                 interactive: panel.interactive
                 hasBackground: panel.hasBackground
                 backgroundColor: panel.backgroundColor
                 horizontalMargins: panel.horizontalMargins
-                Component.onCompleted: repeater.updateSpinners()
-                onNumberChanged:  {
-                    if (!repeater.updatingSpinners) {
-                        var n = 0
-                        var k = 1
-                        for (var i = count - 1; i >= 0; i--) {
-                            n += repeater.itemAt(i).number * k
-                            k *= 10
-                        }
-                        if (panel.number != n) {
-                            panel.updateNumber(n)
-                        }
-                    }
-                }
+                Component.onCompleted: setNumber(digit)
+                onDigitChanged: setNumber(digit)
+                onNumberChanged: model.digit = number
             }
         }
     }
