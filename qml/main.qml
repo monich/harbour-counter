@@ -9,8 +9,12 @@ ApplicationWindow {
 
     Component.onCompleted: CounterListModel.saveFile = "counters.json"
 
-    initialPage: Component { MainPage { } }
-    cover: Component { CoverPage { } }
+    initialPage: MainPage { id: mainPage }
+    cover: Component {
+        CoverPage {
+            onSelectCounter: mainPage.selectCounter(modelId)
+        }
+    }
 
     Connections {
         target: HarbourSystemTime

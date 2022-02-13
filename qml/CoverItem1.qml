@@ -9,6 +9,8 @@ Item {
     property alias model: repeater.model
     property alias count: repeater.count
 
+    signal selectCounter(var modelId)
+
     function inc(pos) {
         repeater.itemAt(pos).inc()
     }
@@ -77,10 +79,12 @@ Item {
                 }
 
                 function inc() {
+                    root.selectCounter(model.modelId)
                     model.value++
                 }
 
                 function dec() {
+                    root.selectCounter(model.modelId)
                     if (model.value > 0) {
                         model.value--
                         return true

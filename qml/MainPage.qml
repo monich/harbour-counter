@@ -16,6 +16,10 @@ Page {
     readonly property int maxCounters: Math.floor(list.width/Theme.itemSizeExtraSmall)
     readonly property bool remorsePopupVisible: remorsePopup ? remorsePopup.visible : false
 
+    function selectCounter(modelId) {
+        list.positionViewAtIndex(CounterListModel.findCounter(modelId), ListView.Center)
+    }
+
     Component {
         id: buzzComponent
 
@@ -176,15 +180,6 @@ Page {
                             list.positionViewAtIndex(newIndex, ListView.Center)
                             // And don't show any more hints:
                             CounterSettings.reorderHintCount = CounterSettings.maxReorderHintCount
-                        }
-                    }
-                    // Cover action selects the corresponding counter in the list.
-                    // Note that these switches always exist, while list delegates
-                    // may be destroyed and re-created on demand. That's why the
-                    // value is tracked here rather than in the list.
-                    onModelValueChanged: {
-                        if (!CounterListModel.updatingLinkedCounter) {
-                            list.positionViewAtIndex(model.index, ListView.Center)
                         }
                     }
                 }

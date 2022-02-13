@@ -12,6 +12,8 @@ Item {
     property color counterBackgroundColor: Theme.rgba(Theme.highlightDimmerColor, Counter.opacityLow)
     property color counterBackgroundBorderColor: Theme.rgba(Theme.primaryColor, Counter.opacityLow)
 
+    signal selectCounter(var modelId)
+
     function inc(pos) {
         repeater.itemAt(pos).inc()
     }
@@ -89,10 +91,12 @@ Item {
                 }
 
                 function inc() {
+                    root.selectCounter(model.modelId)
                     model.value++
                 }
 
                 function dec() {
+                    root.selectCounter(model.modelId)
                     if (model.value > 0) {
                         model.value--
                         return true

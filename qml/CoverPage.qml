@@ -9,11 +9,18 @@ CoverBackground {
     readonly property url minusIconSource: Qt.resolvedUrl("images/" + (Counter.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
     property alias coverItem: coverItemLoader.item
 
+    signal selectCounter(var modelId)
+
     Loader {
         id: coverItemLoader
 
         anchors.fill: cover
         source: Qt.resolvedUrl(CounterSettings.coverItem)
+    }
+
+    Connections {
+        target: coverItem
+        onSelectCounter: cover.selectCounter(modelId)
     }
 
     Binding {
