@@ -57,11 +57,11 @@ Item {
                     radius: width/2
                     y: Math.round((row.height - height)/2)
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: Theme.rgba(Theme.primaryColor, HarbourTheme.opacityHigh)
-                    readonly property color color1: Theme.rgba(Theme.primaryColor, HarbourTheme.opacityFaint)
+                    color: Theme.rgba(Theme.primaryColor, Counter.opacityHigh)
+                    readonly property color color1: Theme.rgba(Theme.primaryColor, Counter.opacityFaint)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: HarbourTheme.lightOnDark ? background.color : background.color1 }
-                        GradientStop { position: 1.0; color: HarbourTheme.lightOnDark ? background.color1 : background.color }
+                        GradientStop { position: 0.0; color: Counter.darkOnLight ? background.color1 : background.color }
+                        GradientStop { position: 1.0; color: Counter.darkOnLight ? background.color : background.color1 }
                     }
                 }
                 NumberPanel {
@@ -71,7 +71,7 @@ Item {
                     number: model.value
                     interactive: false
                     hasBackground: false
-                    color: HarbourTheme.invertedColor(Theme.primaryColor)
+                    color: Counter.invertedColor(Theme.primaryColor)
                     horizontalMargins: 0
                     count: valueString.length
                 }

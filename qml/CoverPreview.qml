@@ -10,15 +10,15 @@ Rectangle {
     property bool selected
     property string source
     property alias value: sampleModel.value
-    readonly property url plusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
-    readonly property url minusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
+    readonly property url plusIconSource: Qt.resolvedUrl("images/" + (Counter.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
+    readonly property url minusIconSource: Qt.resolvedUrl("images/" + (Counter.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
 
     signal clicked()
 
     width: Theme.coverSizeSmall.width
     height: Theme.coverSizeSmall.height
     color: Theme.rgba(Theme.highlightBackgroundColor, mouseArea.pressed ?
-        Theme.highlightBackgroundOpacity : HarbourTheme.opacityFaint)
+        Theme.highlightBackgroundOpacity : Counter.opacityFaint)
     radius: Theme.paddingSmall
     border {
         color: Theme.highlightColor

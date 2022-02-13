@@ -7,7 +7,7 @@ PKGCONFIG += sailfishapp mlite5 glib-2.0 gobject-2.0
 QT += qml quick dbus
 LIBS += -ldl
 
-QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-psabi
+QMAKE_CXXFLAGS += -Wno-unused-parameter
 QMAKE_CFLAGS += -Wno-unused-parameter
 
 TARGET_DATA_DIR = /usr/share/$${TARGET}
@@ -59,21 +59,13 @@ INCLUDEPATH += \
     $${HARBOUR_LIB_INCLUDE}
 
 HEADERS += \
+    $${HARBOUR_LIB_INCLUDE}/HarbourBase45.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourMediaPlugin.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourPluginLoader.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourPolicyPlugin.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourSystem.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourSystemTime.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
+    $${HARBOUR_LIB_INCLUDE}/HarbourSystemTime.h
 
 SOURCES += \
-    $${HARBOUR_LIB_SRC}/HarbourMediaPlugin.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourPluginLoader.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourPolicyPlugin.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourSystemTime.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourSystem.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
+    $${HARBOUR_LIB_SRC}/HarbourBase45.cpp \
+    $${HARBOUR_LIB_SRC}/HarbourSystemTime.cpp
 
 HARBOUR_QML_COMPONENTS = \
     $${HARBOUR_LIB_QML}/HarbourHighlightIcon.qml \
@@ -88,6 +80,7 @@ INSTALLS += qml_components
 # App
 
 HEADERS += \
+    src/Counter.h \
     src/CounterDefs.h \
     src/CounterFavoritesModel.h \
     src/CounterLinkModel.h \
@@ -96,11 +89,12 @@ HEADERS += \
     src/CounterSettings.h
 
 SOURCES += \
-    src/main.cpp \
+    src/Counter.cpp \
     src/CounterFavoritesModel.cpp \
     src/CounterLinkModel.cpp \
     src/CounterListModel.cpp \
-    src/CounterSettings.cpp
+    src/CounterSettings.cpp \
+    src/main.cpp
 
 # Icons
 

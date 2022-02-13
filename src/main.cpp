@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020-2021 Jolla Ltd.
- * Copyright (C) 2020-2021 Slava Monich <slava@monich.com>
+ * Copyright (C) 2020-2022 Jolla Ltd.
+ * Copyright (C) 2020-2022 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of the BSD license as follows:
  *
@@ -37,10 +37,8 @@
 
 #include "HarbourDebug.h"
 #include "HarbourSystemTime.h"
-#include "HarbourMediaPlugin.h"
-#include "HarbourPolicyPlugin.h"
-#include "HarbourTheme.h"
 
+#include "Counter.h"
 #include "CounterDefs.h"
 #include "CounterFavoritesModel.h"
 #include "CounterLinkModel.h"
@@ -64,19 +62,13 @@
 
 static void register_types(const char* uri, int v1, int v2)
 {
-    REGISTER_SINGLETON(HarbourTheme, uri, v1, v2);
     REGISTER_SINGLETON(HarbourSystemTime, uri, v1, v2);
     REGISTER_SINGLETON(CounterListModel, uri, v1, v2);
     REGISTER_SINGLETON(CounterSettings, uri, v1, v2);
+    REGISTER_SINGLETON(Counter, uri, v1, v2);
     REGISTER_TYPE(CounterFavoritesModel, uri, v1, v2);
     REGISTER_TYPE(CounterSampleModel, uri, v1, v2);
     REGISTER_TYPE(CounterLinkModel, uri, v1, v2);
-}
-
-static void register_plugins(QQmlEngine* aEngine, const char* uri, int v1, int v2)
-{
-    HarbourMediaPlugin::registerTypes(aEngine, uri, v1, v2);
-    HarbourPolicyPlugin::registerTypes(aEngine, uri, v1, v2);
 }
 
 int main(int argc, char *argv[])
@@ -106,11 +98,6 @@ int main(int argc, char *argv[])
 
     // Create the view
     QQuickView* view = SailfishApp::createView();
-    QQmlContext* root = view->rootContext();
-    QQmlEngine* engine = root->engine();
-
-    // Register plugins with QML engine
-    register_plugins(engine, APP_QML_IMPORT, APP_QML_IMPORT_V1, APP_QML_IMPORT_V2);
 
     // Initialize the view and show it
     //: Application title

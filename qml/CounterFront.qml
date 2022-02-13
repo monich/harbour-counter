@@ -16,13 +16,38 @@ Item {
     signal updateCounter(var value)
     signal switchToLinked()
 
+    readonly property bool mediaKeysActive: active && CounterSettings.volumeKeysEnabled
+    readonly property var permissions: Qt.createQmlObject(Counter.permissionsQml, panel, "Permissions")
+    readonly property var volumeUp: Qt.createQmlObject(Counter.mediaKeyQml, panel, "VolumeKey")
+    readonly property var volumeDown: Qt.createQmlObject(Counter.mediaKeyQml, panel, "VolumeKey")
+
+    Binding { target: permissions; property: "enabled"; value: mediaKeysActive }
+    Binding { target: volumeUp; property: "enabled"; value: mediaKeysActive }
+    Binding { target: volumeUp;  property: "key"; value: Qt.Key_VolumeUp }
+    Binding { target: volumeDown; property: "enabled"; value: mediaKeysActive }
+    Binding { target: volumeDown;  property: "key"; value: Qt.Key_VolumeDown }
+
+    Connections {
+        target: volumeUp
+        ignoreUnknownSignals: true
+        onPressed: plus(false)
+        onRepeat: plus(false)
+    }
+
+    Connections {
+        target: volumeDown
+        ignoreUnknownSignals: true
+        onPressed: minus(false)
+        onRepeat: minus(false)
+    }
+
     Rectangle {
         id: panelBorder
 
         anchors.fill: parent
         color: Theme.rgba(Theme.highlightBackgroundColor, 0.1)
         border {
-            color: Theme.rgba(Theme.highlightColor, HarbourTheme.opacityLow)
+            color: Theme.rgba(Theme.highlightColor, Counter.opacityLow)
             width: Constants.thinBorder
         }
         radius: Theme.paddingMedium
@@ -161,31 +186,5 @@ Item {
 
         active: CounterSettings.vibraEnabled
         source: "Buzz.qml"
-    }
-
-    MediaKey {
-        enabled: panel.active && CounterSettings.volumeKeysEnabled
-        key: Qt.Key_VolumeUp
-        onPressed: plus(false)
-        onRepeat: plus(false)
-    }
-
-    MediaKey {
-        enabled: panel.active && CounterSettings.volumeKeysEnabled
-        key: Qt.Key_VolumeDown
-        onPressed: minus(false)
-        onRepeat: minus(false)
-    }
-
-    Permissions {
-        enabled: panel.active && CounterSettings.volumeKeysEnabled
-        autoRelease: true
-        applicationClass: "camera"
-
-        Resource {
-            id: volumeKeysResource
-            type: Resource.ScaleButton
-            optional: true
-        }
     }
 }

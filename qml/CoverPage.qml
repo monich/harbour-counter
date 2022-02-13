@@ -5,8 +5,8 @@ import harbour.counter 1.0
 CoverBackground {
     id: cover
 
-    readonly property url plusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
-    readonly property url minusIconSource: Qt.resolvedUrl("images/" + (HarbourTheme.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
+    readonly property url plusIconSource: Qt.resolvedUrl("images/" + (Counter.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
+    readonly property url minusIconSource: Qt.resolvedUrl("images/" + (Counter.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
     property alias coverItem: coverItemLoader.item
 
     Loader {

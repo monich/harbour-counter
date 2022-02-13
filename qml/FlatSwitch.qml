@@ -45,7 +45,7 @@ MouseArea {
         height: width
         radius: width/2
         color: Theme.rgba(highlighted ? Theme.primaryColor: Theme.highlightColor,
-            checked ? HarbourTheme.opacityHigh : HarbourTheme.opacityFaint)
+            checked ? Counter.opacityHigh : Counter.opacityFaint)
         border {
             color: highlighted ? Theme.secondaryColor : Theme.secondaryHighlightColor
             width: Constants.thinBorder

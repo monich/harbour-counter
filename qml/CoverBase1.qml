@@ -9,8 +9,8 @@ Item {
     property alias model: repeater.model
     property alias count: repeater.count
     property int borderWidth
-    property color counterBackgroundColor: Theme.rgba(Theme.highlightDimmerColor, HarbourTheme.opacityLow)
-    property color counterBackgroundBorderColor: Theme.rgba(Theme.primaryColor, HarbourTheme.opacityLow)
+    property color counterBackgroundColor: Theme.rgba(Theme.highlightDimmerColor, Counter.opacityLow)
+    property color counterBackgroundBorderColor: Theme.rgba(Theme.primaryColor, Counter.opacityLow)
 
     function inc(pos) {
         repeater.itemAt(pos).inc()

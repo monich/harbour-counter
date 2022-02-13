@@ -28,10 +28,10 @@ MouseArea {
         anchors.fill: parent
         radius: width / 2
         color: _showPress ?
-                   Theme.rgba(button.highlightBackgroundColor, Theme.highlightBackgroundOpacity) :
-                   Theme.rgba(button.color, HarbourTheme.opacityFaint)
+            Theme.rgba(button.highlightBackgroundColor, Theme.highlightBackgroundOpacity) :
+            Theme.rgba(button.color, Counter.opacityFaint)
 
-        opacity: button.enabled ? 1.0 : HarbourTheme.opacityLow
+        opacity: button.enabled ? 1.0 : Counter.opacityLow
 
         HarbourHighlightIcon {
             id: image

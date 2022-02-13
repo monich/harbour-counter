@@ -17,4 +17,10 @@ ApplicationWindow {
         onPreNotify: Date.timeZoneUpdated()
         onNotify: CounterListModel.timeChanged()
     }
+
+    Binding {
+        target: Counter
+        property: "darkOnLight"
+        value: "colorScheme" in Theme && Theme.colorScheme === Theme.DarkOnLight
+    }
 }

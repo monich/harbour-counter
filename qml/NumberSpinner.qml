@@ -18,7 +18,7 @@ Item {
     property alias backgroundColor: background.color
     property alias cornerRadius: background.radius
     property alias interactive: view.interactive
-    property color color: HarbourTheme.invertedColor(background.color)
+    property color color: Counter.invertedColor(background.color)
     property font font
     property real digitWidth
     property real digitHeight
@@ -43,10 +43,10 @@ Item {
         anchors.fill: parent
         radius: horizontalMargins/2
         color: Theme.primaryColor
-        readonly property color color1: Theme.rgba(color, HarbourTheme.opacityFaint)
+        readonly property color color1: Theme.rgba(color, Counter.opacityFaint)
         gradient: Gradient {
-            GradientStop { position: 0.0; color: HarbourTheme.lightOnDark ? background.color : background.color1 }
-            GradientStop { position: 1.0; color: HarbourTheme.lightOnDark ? background.color1 : background.color }
+            GradientStop { position: 0.0; color: Counter.darkOnLight ? background.color1 : background.color }
+            GradientStop { position: 1.0; color: Counter.darkOnLight ? background.color : background.color1 }
         }
     }
 

@@ -50,7 +50,7 @@ SilicaFlickable {
         anchors.fill: parent
         color: Theme.rgba(Theme.highlightBackgroundColor, 0.1)
         border {
-            color: Theme.rgba(Theme.highlightColor, HarbourTheme.opacityLow)
+            color: Theme.rgba(Theme.highlightColor, Counter.opacityLow)
             width: Constants.thinBorder
         }
         radius: Theme.paddingMedium
