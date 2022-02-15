@@ -145,7 +145,7 @@ bool CounterDigitsModel::setData(const QModelIndex& aIndex, const QVariant& aVal
                 const QString prevNumberString(iPrivate->iNumberString);
 
                 iPrivate->iNumberString[row] = c;
-                HDEBUG(prevNumberString << "=>" << iPrivate->iNumberString);
+                HDEBUG(row << c << prevNumberString << "=>" << iPrivate->iNumberString);
                 iPrivate->iNumber = iPrivate->iNumberString.toUInt();
                 iPrivate->iSignificantDigits = iPrivate->calculateSignificantDigits();
 
@@ -180,8 +180,10 @@ void CounterDigitsModel::setNumber(uint aValue)
         HDEBUG(prevNumberString << "=>" << newNumberString);
 
         const QVector<int> roles(1, Qt::DisplayRole);
+        const uint newOff = newNumberString.length() - iPrivate->iCount;
+        const uint prevOff = prevNumberString.length() - iPrivate->iCount;
         for (uint i = 0; i < iPrivate->iCount; i++) {
-            if (newNumberString.at(i) != prevNumberString.at(i)) {
+            if (newNumberString.at(newOff + i) != prevNumberString.at(prevOff + i)) {
                 const QModelIndex modelIndex(index(i));
                 Q_EMIT dataChanged(modelIndex, modelIndex, roles);
             }
@@ -203,10 +205,15 @@ void CounterDigitsModel::setCount(uint aCount)
 {
     if (aCount != iPrivate->iCount) {
         if (aCount > iPrivate->iCount) {
-            beginInsertRows(QModelIndex(), 0, aCount - iPrivate->iCount - 1);
+            const uint prevCount = iPrivate->iCount;
+            beginInsertRows(QModelIndex(), 0, aCount - prevCount - 1);
             iPrivate->iNumberString = iPrivate->iNumberString.rightJustified(aCount, '0');
             iPrivate->iCount = aCount;
             endInsertRows();
+            // Make sure other delegates get updated. It doesn't seem to
+            // be necessary but without they keep showing old values
+            Q_EMIT dataChanged(index(aCount - prevCount), index(aCount - 1),
+                QVector<int>(1, Qt::DisplayRole));
         } else {
             const uint prevSignificantDigits = iPrivate->iSignificantDigits;
             const uint prevNumber = iPrivate->iNumber;
