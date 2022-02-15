@@ -61,10 +61,10 @@ Item {
                 onNumberChanged: panel.updateNumber(number)
             }
 
-            property int spinnerCount
-
             delegate: NumberSpinner {
+                property bool _completed
                 readonly property int digit: model.digit
+
                 anchors.verticalCenter: parent ? parent.verticalCenter : undefined
                 digitWidth: Math.ceil(sample.paintedWidth)
                 digitHeight: Math.ceil(sample.paintedHeight)
@@ -75,9 +75,20 @@ Item {
                 hasBackground: panel.hasBackground
                 backgroundColor: panel.backgroundColor
                 horizontalMargins: panel.horizontalMargins
-                Component.onCompleted: setNumber(digit)
-                onDigitChanged: setNumber(digit)
-                onNumberChanged: model.digit = number
+                Component.onCompleted: {
+                    setNumber(digit)
+                    _completed = true
+                }
+                onDigitChanged: {
+                    if (_completed) {
+                        setNumber(digit)
+                    }
+                }
+                onNumberChanged: {
+                    if (panel._completed) {
+                        model.digit = number
+                    }
+                }
             }
         }
     }
