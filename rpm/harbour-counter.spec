@@ -28,12 +28,9 @@ BuildRequires:  qt5-qttools-linguist
 Application for counting whatever.
 
 %if "%{?vendor}" == "chum"
-PackageName: Counter
-Type: desktop-application
-DeveloperName: Slava Monich
-Custom:
-  Repo: https://github.com/monich/harbour-counter
-Icon: https://github.com/monich/harbour-counter/blob/master/icons/harbour-counter.svg
+Categories:
+ - Utility
+Icon: https://raw.githubusercontent.com/monich/harbour-counter/master/icons/harbour-counter.svg
 Screenshots:
 - https://home.monich.net/chum/harbour-counter/screenshots/screenshot-001.png
 - https://home.monich.net/chum/harbour-counter/screenshots/screenshot-002.png
@@ -47,7 +44,6 @@ Screenshots:
 - https://home.monich.net/chum/harbour-counter/screenshots/screenshot-010.png
 Url:
   Homepage: https://openrepos.net/content/slava/counter
-  Bugtracker: https://github.com/monich/harbour-counter/issues
 %endif
 
 %prep
