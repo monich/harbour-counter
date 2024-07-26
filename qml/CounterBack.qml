@@ -180,7 +180,7 @@ SilicaFlickable {
                 ignoreCurrentItemChange--
             }
 
-            Behavior on opacity { FadeAnimation { } }
+            FadeAnimation on opacity {}
         }
     }
 
@@ -193,27 +193,28 @@ SilicaFlickable {
         //: Button label (resets counter to zero)
         //% "Reset"
         text: qsTrId("counter-button-reset")
+
         onClicked: {
             panel.reset()
             resetSound.play()
         }
-        Behavior on opacity { FadeAnimation { } }
+
         Sound {
             id: resetSound
 
             source: "sounds/reset.wav"
         }
+
+        FadeAnimation on opacity {}
     }
 
     Grid {
         id: timestamps
 
         rows: 2
-        anchors {
-            left: parent.left
-            margins: Theme.paddingLarge
-            verticalCenter: okButton.verticalCenter
-        }
+        x: Theme.paddingLarge
+        anchors.verticalCenter: okButton.verticalCenter
+
         Label {
             //: Label text (time and date of the last change)
             //% "Last change:"
@@ -221,17 +222,14 @@ SilicaFlickable {
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
         }
-        Row {
-            Item {
-                width: Theme.paddingMedium
-                height: 1
-            }
-            Label {
-                text: timestamps.dateTimeString(changeTime)
-                font.pixelSize: Theme.fontSizeExtraSmall
-                color: Theme.secondaryHighlightColor
-            }
+
+        Label {
+            text: timestamps.dateTimeString(changeTime)
+            font.pixelSize: Theme.fontSizeExtraSmall
+            leftPadding: Theme.paddingMedium
+            color: Theme.secondaryHighlightColor
         }
+
         Label {
             //: Label text (time and date of the last reset)
             //% "Reset:"
@@ -239,16 +237,12 @@ SilicaFlickable {
             font.pixelSize: Theme.fontSizeExtraSmall
             color: Theme.secondaryColor
         }
-        Row {
-            Item {
-                width: Theme.paddingMedium
-                height: 1
-            }
-            Label {
-                text: timestamps.dateTimeString(resetTime)
-                font.pixelSize: Theme.fontSizeExtraSmall
-                color: Theme.secondaryHighlightColor
-            }
+
+        Label {
+            leftPadding: Theme.paddingMedium
+            text: timestamps.dateTimeString(resetTime)
+            font.pixelSize: Theme.fontSizeExtraSmall
+            color: Theme.secondaryHighlightColor
         }
 
         function dateString(date) {
