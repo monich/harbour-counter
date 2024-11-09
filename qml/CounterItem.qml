@@ -4,12 +4,12 @@ import Sailfish.Silica 1.0
 Item {
     id: panel
 
-    property alias value: frontPanel.value
-    property alias favorite: backPanel.favorite
-    property alias canChangeFavorite: backPanel.canChangeFavorite
-    property alias changeTime: backPanel.changeTime
-    property alias resetTime: backPanel.resetTime
-    property alias counterId: backPanel.counterId
+    property int value
+    property bool favorite
+    property bool canChangeFavorite
+    property date changeTime
+    property date resetTime
+    property string counterId
     property alias flipped: flipable.flipped
     property string link
     property string title
@@ -49,34 +49,46 @@ Item {
 
         property bool flipped
 
-        front: CounterFront {
-            id: frontPanel
+        front: Loader {
+            id: frontPanelLoader
 
+            active: rotation.angle != 180
             anchors.fill: parent
-            visible: rotation.angle < 90 || rotation.angle > 270
-            active: visible && Qt.application.active && currentItem
-            title: panel.title
-            hasLink: panel.link.length > 0
+            sourceComponent: Component {
+                CounterFront {
 
-            onFlip: panel.flip()
-            onUpdateCounter: panel.updateCounter(value)
-            onSwitchToLinked: panel.switchToLinked()
+                    active: Qt.application.active && currentItem
+                    value: panel.value
+                    title: panel.title
+                    hasLink: panel.link.length > 0
+
+                    onFlip: panel.flip()
+                    onUpdateCounter: panel.updateCounter(value)
+                    onSwitchToLinked: panel.switchToLinked()
+                }
+            }
         }
-        back: CounterBack {
-            id: backPanel
-
+        back: Loader {
+            active: rotation.angle != 0 && rotation.angle != 360
             anchors.fill: parent
-            visible: !frontPanel.visible
-            title: panel.title
-            link: panel.link
-
-            onFlip: panel.flip()
-            onUpdateTitle: panel.updateTitle(value)
-            onClearLink: panel.clearLink()
-            onToggleFavorite: panel.toggleFavorite()
-            onReset: {
-                panel.flip()
-                panel.resetCounter()
+            sourceComponent: Component {
+                CounterBack {
+                    title: panel.title
+                    link: panel.link
+                    changeTime: panel.changeTime
+                    resetTime: panel.resetTime
+                    counterId: panel.counterId
+                    favorite: panel.favorite
+                    canChangeFavorite: panel.canChangeFavorite
+                    onFlip: panel.flip()
+                    onUpdateTitle: panel.updateTitle(value)
+                    onClearLink: panel.clearLink()
+                    onToggleFavorite: panel.toggleFavorite()
+                    onReset: {
+                        panel.flip()
+                        panel.resetCounter()
+                    }
+                }
             }
         }
         transform: Rotation {
