@@ -16,7 +16,7 @@ Item {
     property color backgroundColor: Theme.primaryColor
     property bool hasBackground: true
     property bool interactive: true
-    property color color: Counter.invertedColor(backgroundColor)
+    property color color: HarbourUtil.invertedColor(backgroundColor)
     property alias spacing: row.spacing
     property alias font: sample.font
 

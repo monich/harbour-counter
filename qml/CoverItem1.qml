@@ -73,7 +73,7 @@ Item {
                     number: model.value
                     interactive: false
                     hasBackground: false
-                    color: Counter.invertedColor(Theme.primaryColor)
+                    color: HarbourUtil.invertedColor(Theme.primaryColor)
                     horizontalMargins: 0
                     count: valueString.length
                 }

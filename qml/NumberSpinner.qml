@@ -17,7 +17,7 @@ Item {
     property alias backgroundColor: background.color
     property alias cornerRadius: background.radius
     property alias interactive: view.interactive
-    property color color: Counter.invertedColor(background.color)
+    property color color: HarbourUtil.invertedColor(background.color)
     property font font
     property real digitWidth
     property real digitHeight
