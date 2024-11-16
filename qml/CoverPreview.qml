@@ -9,6 +9,7 @@ Rectangle {
 
     property bool selected
     property string source
+    property string digitItem
     property alias value: sampleModel.value
     readonly property url plusIconSource: Qt.resolvedUrl("images/" + (Counter.darkOnLight ? "cover-plus-dark.svg" :  "cover-plus.svg"))
     readonly property url minusIconSource: Qt.resolvedUrl("images/" + (Counter.darkOnLight ? "cover-minus-dark.svg" :  "cover-minus.svg"))
@@ -47,6 +48,12 @@ Rectangle {
         target: coverItemLoader.item
         property: "model"
         value: sampleModel
+    }
+
+    Binding {
+        target: coverItemLoader.item
+        property: "digitItem"
+        value: digitItem
     }
 
     Grid {

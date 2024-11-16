@@ -8,13 +8,13 @@ Page {
     backNavigation: false
     showNavigationIndicator: false
 
-    property bool flipped
-    property var remorsePopup
-    property var buzz
-    property Item reorderHint
+    property bool _flipped
+    property var _remorsePopup
+    property var _buzz
+    property Item _reorderHint
 
-    readonly property int maxCounters: Math.floor(list.width/Theme.itemSizeExtraSmall)
-    readonly property bool remorsePopupVisible: remorsePopup ? remorsePopup.visible : false
+    readonly property int _maxCounters: Math.floor(list.width/Theme.itemSizeExtraSmall)
+    readonly property bool _remorsePopupVisible: _remorsePopup ? _remorsePopup.visible : false
 
     function selectCounter(modelId) {
         list.positionViewAtIndex(CounterListModel.findCounter(modelId), ListView.Center)
@@ -70,14 +70,14 @@ Page {
 
     function considerShowingReorderHint() {
         if (CounterSettings.reorderHintCount < CounterSettings.maxReorderHintCount) {
-            if (!reorderHint) {
-                reorderHint = hintComponent.createObject(list, {
+            if (!_reorderHint) {
+                _reorderHint = hintComponent.createObject(list, {
                     //: Hint text
                     //% "To move this counter to a different position in the list, press and hold the desired position in the switcher below"
                     text: qsTrId("counter-hint-how_to_reorder")
                 })
             }
-            reorderHint.show()
+            _reorderHint.show()
             CounterSettings.reorderHintCount++
         }
     }
@@ -85,8 +85,8 @@ Page {
     Connections {
         target: CounterListModel
         onRowsMoved: {
-            if (!buzz) buzz = buzzComponent.createObject(page)
-            buzz.play()
+            if (!_buzz) _buzz = buzzComponent.createObject(page)
+            _buzz.play()
         }
         onRowsInserted: considerShowingReorderHint()
     }
@@ -98,7 +98,7 @@ Page {
             id: menu
 
             visible: opacity > 0
-            opacity: (flipped && !remorsePopupVisible) ? 1 : 0
+            opacity: (_flipped && !_remorsePopupVisible) ? 1 : 0
 
             Behavior on opacity { FadeAnimation { duration: 500 } }
 
@@ -126,10 +126,10 @@ Page {
                 onEnabledChanged: if (!menu.active) visible = enabled
                 onClicked: {
                     var index = list.currentIndex
-                    if (!remorsePopup) remorsePopup = remorsePopupComponent.createObject(page)
+                    if (!_remorsePopup) _remorsePopup = remorsePopupComponent.createObject(page)
                     //: Remorse popup text
                     //% "Deleting this counter"
-                    remorsePopup.execute(qsTrId("counter-remorse-delete_counter"),
+                    _remorsePopup.execute(qsTrId("counter-remorse-delete_counter"),
                         function() { CounterListModel.deleteCounter(index) })
                 }
             }
@@ -139,7 +139,7 @@ Page {
                 //: Pulley menu item
                 //% "New counter"
                 text: qsTrId("counter-menu-new_counter")
-                enabled: (list.count + 1) <= maxCounters
+                enabled: (list.count + 1) <= _maxCounters
                 onEnabledChanged: if (!menu.active) visible = enabled
                 onClicked: scrollAnimation.animateTo(CounterListModel.addCounter())
             }
@@ -221,12 +221,13 @@ Page {
             flickDeceleration: maximumFlickVelocity
             interactive: !scrollAnimation.running
             quickScrollEnabled: false
+            cacheBuffer: Math.max(0, width * count)
             clip: !currentItem || !currentItem.flipping
             model: CounterListModel
             delegate: CounterItem {
                 width: list.width
                 height: list.height
-                flipped: page.flipped
+                flipped: page._flipped
                 counterId: model.modelId
                 value: model.value
                 favorite: model.favorite
@@ -236,7 +237,7 @@ Page {
                 link: model.link
                 changeTime: model.changeTime
                 resetTime: model.resetTime
-                onFlip: page.flipped = !page.flipped
+                onFlip: page._flipped = !page._flipped
                 onUpdateCounter: model.value = value
                 onUpdateTitle: model.title = value
                 onClearLink: model.link = ""
@@ -251,7 +252,7 @@ Page {
             }
             onCurrentIndexChanged: {
                 model.currentIndex = currentIndex
-                if (remorsePopupVisible) remorsePopup.cancel()
+                if (_remorsePopupVisible) _remorsePopup.cancel()
             }
         }
     }

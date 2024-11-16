@@ -9,6 +9,7 @@ Item {
     property alias model: repeater.model
     property alias count: repeater.count
     property int borderWidth
+    property string digitItem: CounterSettings.digitItem
     property color counterBackgroundColor: Theme.rgba(Theme.highlightDimmerColor, Counter.opacityLow)
     property color counterBackgroundBorderColor: Theme.rgba(Theme.primaryColor, Counter.opacityLow)
 
@@ -76,16 +77,14 @@ Item {
                         }
 
                         NumberPanel {
-                            anchors {
-                                fill: parent
-                                margins: (repeater.visibleCount === 1) ? Theme.paddingLarge : Theme.paddingMedium
-                            }
+                            anchors.centerIn: parent
+                            height: parent.height - 2 * Theme.paddingLarge
+                            width: parent.width - 2 * ((repeater.visibleCount === 1 && count <= 4) ? Theme.paddingLarge : Theme.paddingMedium)
                             number: model.value
                             interactive: false
                             hasBackground: false
+                            digitItem: root.digitItem
                             color: Theme.primaryColor
-                            horizontalMargins: 0
-                            count: valueString.length
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2022-2024 Slava Monich <slava@monich.com>
  * Copyright (C) 2022 Jolla Ltd.
- * Copyright (C) 2022 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of the BSD license as follows:
  *
@@ -8,21 +8,23 @@
  * modification, are permitted provided that the following conditions
  * are met:
  *
- *   1. Redistributions of source code must retain the above copyright
- *      notice, this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
- *   3. Neither the names of the copyright holders nor the names of its
- *      contributors may be used to endorse or promote products derived
- *      from this software without specific prior written permission.
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer
+ *     in the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *  3. Neither the names of the copyright holders nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
@@ -43,118 +45,55 @@
 // CounterDigitsModel::Private
 // ==========================================================================
 
-class CounterDigitsModel::Private {
+class CounterDigitsModel::Private
+{
 public:
-    enum { MAX_SIGNIFICANT_DIGITS = 10 };
-
     Private();
 
-    int calculateSignificantDigits();
-    void removeExtraLeadingZeros(int aCount);
+    bool setDigit(CounterDigitsModel*, const QModelIndex&, const QVariant&);
+    void setNumber(CounterDigitsModel*, uint);
+    void setMinCount(CounterDigitsModel*, uint);
+    void updateModel(CounterDigitsModel*);
 
 public:
     uint iNumber;
-    uint iSignificantDigits;
-    uint iCount;
+    uint iMinCount;
     QString iNumberString;
 };
 
 CounterDigitsModel::Private::Private() :
     iNumber(0),
-    iSignificantDigits(1),
-    iCount(1),
+    iMinCount(1),
     iNumberString("0")
+{}
+
+bool
+CounterDigitsModel::Private::setDigit(
+    CounterDigitsModel* aModel,
+    const QModelIndex& aIndex,
+    const QVariant& aValue)
 {
-}
+    const int row = aIndex.row();
 
-int CounterDigitsModel::Private::calculateSignificantDigits()
-{
-    int z = 0;
-    const int len = iNumberString.length();
-
-    while (z + 1 < len && iNumberString.at(z) == QChar('0')) z++;
-    return len - z;
-}
-
-void CounterDigitsModel::Private::removeExtraLeadingZeros(int aCount)
-{
-    while (iNumberString.length() > aCount && iNumberString.at(0) == QChar('0')) {
-        iNumberString = iNumberString.right(iNumberString.length() - 1);
-    }
-}
-
-// ==========================================================================
-// CounterDigitsModel
-// ==========================================================================
-
-#define SUPER QAbstractListModel
-
-CounterDigitsModel::CounterDigitsModel(QObject* aParent) :
-    SUPER(aParent),
-    iPrivate(new Private)
-{
-}
-
-CounterDigitsModel::~CounterDigitsModel()
-{
-    delete iPrivate;
-}
-
-Qt::ItemFlags CounterDigitsModel::flags(const QModelIndex& aIndex) const
-{
-    return SUPER::flags(aIndex) | Qt::ItemIsEditable;
-}
-
-QHash<int,QByteArray> CounterDigitsModel::roleNames() const
-{
-    QHash<int,QByteArray> roles;
-
-    roles.insert(Qt::DisplayRole, "digit");
-    return roles;
-}
-
-int CounterDigitsModel::rowCount(const QModelIndex& aParent) const
-{
-    return iPrivate->iCount;
-}
-
-QVariant CounterDigitsModel::data(const QModelIndex& aIndex, int aRole) const
-{
-    const uint row = aIndex.row();
-
-    if (row < iPrivate->iCount && aRole == Qt::DisplayRole) {
-        return QVariant((uint)(iPrivate->iNumberString.at(row).unicode() - '0'));
-    }
-    return QVariant();
-}
-
-bool CounterDigitsModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole)
-{
-    const uint row = aIndex.row();
-
-    if (row < iPrivate->iCount &&
-        row < Private::MAX_SIGNIFICANT_DIGITS &&
-        aRole == Qt::DisplayRole) {
+    if (row < iNumberString.length()) {
         bool ok;
         uint digit = aValue.toUInt(&ok);
 
         if (ok && digit < 10) {
             const QChar c('0' + digit);
-            if (iPrivate->iNumberString.at(row) != c) {
-                const uint prevSignificantDigits = iPrivate->iSignificantDigits;
-                const QString prevNumberString(iPrivate->iNumberString);
 
-                iPrivate->iNumberString[row] = c;
-                HDEBUG(row << c << prevNumberString << "=>" << iPrivate->iNumberString);
-                iPrivate->iNumber = iPrivate->iNumberString.toUInt();
-                iPrivate->iSignificantDigits = iPrivate->calculateSignificantDigits();
+            if (iNumberString.at(row) != c) {
+                QString str(iNumberString);
 
-                const QVector<int> roles(1, Qt::DisplayRole);
-                Q_EMIT dataChanged(aIndex, aIndex, roles);
-                Q_EMIT numberChanged();
-                if (iPrivate->iSignificantDigits != prevSignificantDigits) {
-                    Q_EMIT significantDigitsChanged();
+                str[row] = c;
+                // Remove extra leading zeros
+                while (str.length() > 1 && str.at(0) == QChar('0')) {
+                    str = str.right(str.length() - 1);
                 }
+                HDEBUG(row << c << iNumber << "=>" << str.toUInt());
+                iNumber = str.toUInt();
+                updateModel(aModel);
+                Q_EMIT aModel->numberChanged();
             }
             return true;
         }
@@ -162,82 +101,173 @@ bool CounterDigitsModel::setData(const QModelIndex& aIndex, const QVariant& aVal
     return false;
 }
 
-uint CounterDigitsModel::getNumber() const
+void
+CounterDigitsModel::Private::setNumber(
+    CounterDigitsModel* aModel,
+    uint aValue)
+{
+    if (iNumber != aValue) {
+        HDEBUG(iNumber << "=>" << aValue);
+        iNumber = aValue;
+        updateModel(aModel);
+        Q_EMIT aModel->numberChanged();
+    }
+}
+
+void
+CounterDigitsModel::Private::setMinCount(
+    CounterDigitsModel* aModel,
+    uint aMinCount)
+{
+    if (aMinCount != iMinCount) {
+        HDEBUG(aMinCount);
+        iMinCount = aMinCount;
+        updateModel(aModel);
+        Q_EMIT aModel->minCountChanged();
+    }
+}
+
+void
+CounterDigitsModel::Private::updateModel(
+    CounterDigitsModel* aModel)
+{
+    const QString newString(QString::number(iNumber).rightJustified(iMinCount, '0'));
+
+    if (iNumberString != newString) {
+        const QString prevString(iNumberString);
+        const QVector<int> roles(1, Qt::DisplayRole);
+        const uint prevCount = prevString.length();
+        const uint newCount = newString.length();
+
+        HDEBUG(iMinCount << iNumberString << "=>" << newString);
+        if (newCount > prevCount) {
+            const QVector<int> roles(1, Qt::DisplayRole);
+            const uint off = newCount - prevCount;
+
+            aModel->beginInsertRows(QModelIndex(), 0, off - 1);
+            iNumberString = newString;
+            aModel->endInsertRows();
+
+            for (uint i = 0; i < prevCount; i++) {
+                if (newString.at(off + i) != prevString.at(i)) {
+                    const QModelIndex modelIndex(aModel->index(off + i));
+                    Q_EMIT aModel->dataChanged(modelIndex, modelIndex, roles);
+                }
+            }
+
+            Q_EMIT aModel->countChanged();
+        } else if (newCount < prevCount) {
+            const QVector<int> roles(1, Qt::DisplayRole);
+            const uint off = prevCount - newCount;
+
+            aModel->beginRemoveRows(QModelIndex(), 0, off - 1);
+            iNumberString = newString;
+            aModel->endRemoveRows();
+
+            for (uint i = 0; i < newCount; i++) {
+                if (newString.at(i) != prevString.at(off + i)) {
+                    const QModelIndex modelIndex(aModel->index(i));
+                    Q_EMIT aModel->dataChanged(modelIndex, modelIndex, roles);
+                }
+            }
+
+            Q_EMIT aModel->countChanged();
+        } else {
+            iNumberString = newString;
+            for (uint i = 0; i < newCount; i++) {
+                if (newString.at(i) != prevString.at(i)) {
+                    const QModelIndex modelIndex(aModel->index(i));
+                    Q_EMIT aModel->dataChanged(modelIndex, modelIndex, roles);
+                }
+            }
+        }
+    }
+}
+
+// ==========================================================================
+// CounterDigitsModel
+// ==========================================================================
+
+CounterDigitsModel::CounterDigitsModel(
+    QObject* aParent) :
+    QAbstractListModel(aParent),
+    iPrivate(new Private)
+{}
+
+CounterDigitsModel::~CounterDigitsModel()
+{
+    delete iPrivate;
+}
+
+Qt::ItemFlags
+CounterDigitsModel::flags(
+    const QModelIndex& aIndex) const
+{
+    return QAbstractListModel::flags(aIndex) | Qt::ItemIsEditable;
+}
+
+QHash<int,QByteArray>
+CounterDigitsModel::roleNames() const
+{
+    QHash<int,QByteArray> roles;
+
+    roles.insert(Qt::DisplayRole, "digit");
+    return roles;
+}
+
+int
+CounterDigitsModel::rowCount(
+    const QModelIndex&) const
+{
+    return iPrivate->iNumberString.length();
+}
+
+QVariant
+CounterDigitsModel::data(
+    const QModelIndex& aIndex,
+    int aRole) const
+{
+    const uint row = aIndex.row();
+    const uint count = iPrivate->iNumberString.length();
+
+    if (row < count && aRole == Qt::DisplayRole) {
+        return QVariant((uint)(iPrivate->iNumberString.at(row).unicode() - '0'));
+    }
+    return QVariant();
+}
+
+bool
+CounterDigitsModel::setData(
+    const QModelIndex& aIndex,
+    const QVariant& aValue,
+    int aRole)
+{
+    return aRole == Qt::DisplayRole &&
+        iPrivate->setDigit(this, aIndex, aValue);
+}
+
+uint
+CounterDigitsModel::getNumber() const
 {
     return iPrivate->iNumber;
 }
 
-void CounterDigitsModel::setNumber(uint aValue)
+void
+CounterDigitsModel::setNumber(
+    uint aValue)
 {
-    if (iPrivate->iNumber != aValue) {
-        const uint prevSignificantDigits = iPrivate->iSignificantDigits;
-        const QString prevNumberString(iPrivate->iNumberString);
-        const QString newNumberString(QString::number(aValue).rightJustified(iPrivate->iCount, '0'));
-
-        iPrivate->iNumber = aValue;
-        iPrivate->iNumberString = newNumberString;
-        iPrivate->iSignificantDigits = iPrivate->calculateSignificantDigits();
-        HDEBUG(prevNumberString << "=>" << newNumberString);
-
-        const QVector<int> roles(1, Qt::DisplayRole);
-        const uint newOff = newNumberString.length() - iPrivate->iCount;
-        const uint prevOff = prevNumberString.length() - iPrivate->iCount;
-        for (uint i = 0; i < iPrivate->iCount; i++) {
-            if (newNumberString.at(newOff + i) != prevNumberString.at(prevOff + i)) {
-                const QModelIndex modelIndex(index(i));
-                Q_EMIT dataChanged(modelIndex, modelIndex, roles);
-            }
-        }
-
-        Q_EMIT numberChanged();
-        if (iPrivate->iSignificantDigits != prevSignificantDigits) {
-            Q_EMIT significantDigitsChanged();
-        }
-    }
+    iPrivate->setNumber(this, aValue);
 }
 
-uint CounterDigitsModel::getCount() const
+uint
+CounterDigitsModel::getMinCount() const
 {
-    return iPrivate->iCount;
+    return iPrivate->iMinCount;
 }
 
-void CounterDigitsModel::setCount(uint aCount)
+void
+CounterDigitsModel::setMinCount(
+    uint aMinCount)
 {
-    if (aCount != iPrivate->iCount) {
-        if (aCount > iPrivate->iCount) {
-            const uint prevCount = iPrivate->iCount;
-            beginInsertRows(QModelIndex(), 0, aCount - prevCount - 1);
-            iPrivate->iNumberString = iPrivate->iNumberString.rightJustified(aCount, '0');
-            iPrivate->iCount = aCount;
-            endInsertRows();
-            // Make sure other delegates get updated. It doesn't seem to
-            // be necessary but without they keep showing old values
-            Q_EMIT dataChanged(index(aCount - prevCount), index(aCount - 1),
-                QVector<int>(1, Qt::DisplayRole));
-        } else {
-            const uint prevSignificantDigits = iPrivate->iSignificantDigits;
-            const uint prevNumber = iPrivate->iNumber;
-
-            beginRemoveRows(QModelIndex(), 0, iPrivate->iCount - aCount - 1);
-            iPrivate->iCount = aCount;
-            iPrivate->removeExtraLeadingZeros(aCount);
-            iPrivate->iNumber = iPrivate->iNumberString.toUInt();
-            iPrivate->iSignificantDigits = iPrivate->calculateSignificantDigits();
-            endRemoveRows();
-
-            if (iPrivate->iNumber != prevNumber) {
-                Q_EMIT numberChanged();
-            }
-            if (iPrivate->iSignificantDigits != prevSignificantDigits) {
-                Q_EMIT significantDigitsChanged();
-            }
-        }
-        HDEBUG(aCount << iPrivate->iNumberString);
-        Q_EMIT countChanged();
-    }
-}
-
-uint CounterDigitsModel::getSignificantDigits() const
-{
-    return iPrivate->iSignificantDigits;
+    iPrivate->setMinCount(this, aMinCount);
 }

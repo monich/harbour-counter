@@ -5,24 +5,19 @@ import harbour.counter 1.0
 Item {
     id: spinner
 
-    implicitWidth: digitWidth + 2 * horizontalMargins
-    implicitHeight: digitHeight + 2 * verticalMargins
-    width: implicitWidth
-    height: implicitHeight
-
-    property real verticalMargins
-    property real horizontalMargins
     property bool animated: true
     property alias hasBackground: background.visible
     property alias backgroundColor: background.color
     property alias cornerRadius: background.radius
     property alias interactive: view.interactive
     property color color: HarbourUtil.invertedColor(background.color)
-    property font font
-    property real digitWidth
-    property real digitHeight
+    property string digitItem
 
     readonly property int number: view.actualNumber
+
+    readonly property int _defaultWidth: Math.ceil(height * 3 / 5)
+
+    implicitWidth: (hasBackground || !view.currentItem || !view.currentItem.item) ? _defaultWidth :  view.currentItem.item.implicitWidth
 
     function setNumber(n) {
         view.currentIndex = (n + 5) % 10
@@ -38,7 +33,7 @@ Item {
         id: background
 
         anchors.fill: parent
-        radius: horizontalMargins/2
+        radius: Theme.paddingMedium
         color: Theme.primaryColor
         readonly property color color1: Theme.rgba(color, Counter.opacityFaint)
         gradient: Gradient {
@@ -51,9 +46,7 @@ Item {
         id: view
 
         clip: true
-        width: parent.width
-        height: digitHeight
-        anchors.centerIn: parent
+        anchors.fill: parent
         snapMode: PathView.SnapOneItem
         maximumFlickVelocity: Theme.maximumFlickVelocity
         highlightMoveDuration: animated ? 250 : 0
@@ -71,16 +64,29 @@ Item {
                 y: path.startY + view.pathItemCount * view.height
             }
         }
-        delegate: Text {
-            width: view.width
-            height: digitHeight
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            font: spinner.font
-            color: spinner.color
-            minimumPixelSize: Theme.fontSizeExtraSmall
-            fontSizeMode: Text.Fit
-            text: modelData
+        delegate: Loader {
+            id: numberLoader
+
+            Binding {
+                target: numberLoader.item
+                property: "tight"
+                value: !hasBackground
+            }
+
+            Binding {
+                target: numberLoader.item
+                property: "text"
+                value: modelData
+            }
+
+            Binding {
+                target: numberLoader.item
+                property: "color"
+                value: spinner.color
+            }
+
+            height: parent.height
+            source: digitItem
         }
         onCurrentIndexChanged: {
             if (moving) {

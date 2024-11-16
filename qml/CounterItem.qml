@@ -49,46 +49,33 @@ Item {
 
         property bool flipped
 
-        front: Loader {
-            id: frontPanelLoader
-
-            active: rotation.angle != 180
+        front: CounterFront {
             anchors.fill: parent
-            sourceComponent: Component {
-                CounterFront {
+            active: Qt.application.active && currentItem
+            value: panel.value
+            title: panel.title
+            hasLink: panel.link.length > 0
 
-                    active: Qt.application.active && currentItem
-                    value: panel.value
-                    title: panel.title
-                    hasLink: panel.link.length > 0
-
-                    onFlip: panel.flip()
-                    onUpdateCounter: panel.updateCounter(value)
-                    onSwitchToLinked: panel.switchToLinked()
-                }
-            }
+            onFlip: panel.flip()
+            onUpdateCounter: panel.updateCounter(value)
+            onSwitchToLinked: panel.switchToLinked()
         }
-        back: Loader {
-            active: rotation.angle != 0 && rotation.angle != 360
+        back: CounterBack {
             anchors.fill: parent
-            sourceComponent: Component {
-                CounterBack {
-                    title: panel.title
-                    link: panel.link
-                    changeTime: panel.changeTime
-                    resetTime: panel.resetTime
-                    counterId: panel.counterId
-                    favorite: panel.favorite
-                    canChangeFavorite: panel.canChangeFavorite
-                    onFlip: panel.flip()
-                    onUpdateTitle: panel.updateTitle(value)
-                    onClearLink: panel.clearLink()
-                    onToggleFavorite: panel.toggleFavorite()
-                    onReset: {
-                        panel.flip()
-                        panel.resetCounter()
-                    }
-                }
+            title: panel.title
+            link: panel.link
+            changeTime: panel.changeTime
+            resetTime: panel.resetTime
+            counterId: panel.counterId
+            favorite: panel.favorite
+            canChangeFavorite: panel.canChangeFavorite
+            onFlip: panel.flip()
+            onUpdateTitle: panel.updateTitle(value)
+            onClearLink: panel.clearLink()
+            onToggleFavorite: panel.toggleFavorite()
+            onReset: {
+                panel.flip()
+                panel.resetCounter()
             }
         }
         transform: Rotation {

@@ -8,6 +8,7 @@ Item {
 
     property alias model: repeater.model
     property alias count: repeater.count
+    property string digitItem: CounterSettings.digitItem
 
     signal selectCounter(var modelId)
 
@@ -68,14 +69,13 @@ Item {
                 }
                 NumberPanel {
                     anchors.centerIn: background
-                    width: background.width * 0.7
-                    height: width/2
+                    width: background.width * (0.6 + (count <= 2 ? 0 : count >= 7 ? 0.3 : (0.3 * (count - 2) / 5)))
+                    height: width
                     number: model.value
                     interactive: false
                     hasBackground: false
+                    digitItem: root.digitItem
                     color: HarbourUtil.invertedColor(Theme.primaryColor)
-                    horizontalMargins: 0
-                    count: valueString.length
                 }
 
                 function inc() {

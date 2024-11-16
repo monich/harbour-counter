@@ -30,6 +30,7 @@ OTHER_FILES += \
     qml/*.js \
     qml/*.qml \
     qml/images/*.svg \
+    qml/images/digit/*.svg \
     qml/sounds/*.wav \
     icons/*.svg \
     translations/*.ts

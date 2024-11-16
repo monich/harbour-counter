@@ -68,40 +68,16 @@ Item {
         textFormat: Text.PlainText
     }
 
-    Text {
-        width: parent.width
-        anchors.centerIn: spinners
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        font {
-            pixelSize: spinners.font.pixelSize
-            family: spinners.font.family
-            bold: spinners.font.weight
-            letterSpacing: spinners.font.letterSpacing + Theme.paddingMedium
-        }
-        text: value
-        color: Theme.primaryColor
-        visible: opacity > 0
-        opacity: spinners.enabled ? 0 : 1
-        Behavior on opacity { FadeAnimation { } }
-    }
-
     NumberPanel {
         id: spinners
 
+        x: Theme.paddingLarge
         y: Math.max(titleLabel.y + titleLabel.height + Theme.paddingLarge, Math.floor((plusButton.y - height)/2))
-        anchors.horizontalCenter: parent.horizontalCenter
-        font {
-            family: Theme.fontFamilyHeading
-            pixelSize: 2 * Theme.fontSizeHuge
-            weight: Font.Bold
-        }
-        horizontalMargins: Theme.paddingLarge
+        width: parent.width - 2 * x
         spacing: Theme.paddingMedium
         // Disable animation if change is triggered by cover action:
         animated: Qt.application.active
-        count: 3
-        enabled: value < 1000
+        minCount: 3
         number: value
         onUpdateNumber: panel.updateCounter(newValue)
     }
