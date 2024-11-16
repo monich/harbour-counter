@@ -88,10 +88,10 @@
         <extracomment>Text switch label</extracomment>
         <translation type="unfinished">Használja a hangerőszabályzó gombokat</translation>
     </message>
-    <message id="counter-section-cover_style">
-        <source>Cover style</source>
+    <message id="counter-section-style">
+        <source>Style</source>
         <extracomment>Settings section header</extracomment>
-        <translation type="unfinished">Borító stílusa</translation>
+        <translation type="unfinished">Stílus</translation>
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>

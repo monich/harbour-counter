@@ -88,10 +88,10 @@
         <extracomment>Text switch label</extracomment>
         <translation type="unfinished">Använd volymknapparna</translation>
     </message>
-    <message id="counter-section-cover_style">
-        <source>Cover style</source>
+    <message id="counter-section-style">
+        <source>Style</source>
         <extracomment>Settings section header</extracomment>
-        <translation type="unfinished">Omslagsbild stil</translation>
+        <translation type="unfinished">Stil</translation>
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>

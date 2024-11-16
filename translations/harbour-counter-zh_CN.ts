@@ -88,10 +88,10 @@
         <extracomment>Text switch label</extracomment>
         <translation>使用音量键控制</translation>
     </message>
-    <message id="counter-section-cover_style">
-        <source>Cover style</source>
+    <message id="counter-section-style">
+        <source>Style</source>
         <extracomment>Settings section header</extracomment>
-        <translation type="unfinished">封面样式</translation>
+        <translation type="unfinished">风格</translation>
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>

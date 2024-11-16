@@ -88,10 +88,10 @@
         <extracomment>Text switch label</extracomment>
         <translation type="unfinished">Utiliser les touches de volume</translation>
     </message>
-    <message id="counter-section-cover_style">
-        <source>Cover style</source>
+    <message id="counter-section-style">
+        <source>Style</source>
         <extracomment>Settings section header</extracomment>
-        <translation type="unfinished">Style de couverture</translation>
+        <translation type="unfinished">Style</translation>
     </message>
     <message id="counter-button-reset">
         <source>Reset</source>

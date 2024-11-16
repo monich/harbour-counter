@@ -66,21 +66,37 @@ Page {
 
         SectionHeader {
             //: Settings section header
-            //% "Cover style"
-            text: qsTrId("counter-section-cover_style")
+            //% "Style"
+            text: qsTrId("counter-section-style")
         }
 
-        Row {
-            x: Theme.horizontalPageMargin
+        Column {
             spacing: Theme.paddingLarge
+            x: Theme.horizontalPageMargin
+            width: parent.width - x
 
             Repeater {
-                model: CounterSettings.coverItems
-                delegate: CoverPreview {
-                    selected: (CounterSettings.coverStyle === model.index)
-                    source: modelData
-                    value: model.index + 1
-                    onClicked: CounterSettings.coverStyle = model.index
+                model: CounterSettings.digitItems
+                delegate: Row {
+                    id: row
+
+                    spacing: Theme.paddingLarge
+                    readonly property string _digitItem: modelData
+                    readonly property int _digitStyle: model.index
+
+                    Repeater {
+                        model: CounterSettings.coverItems
+                        delegate: CoverPreview {
+                            selected: (CounterSettings.coverStyle === model.index && CounterSettings.digitStyle === row._digitStyle)
+                            source: modelData
+                            digitItem: row._digitItem
+                            value: model.index + 1
+                            onClicked: {
+                                CounterSettings.coverStyle = model.index
+                                CounterSettings.digitStyle = row._digitStyle
+                            }
+                        }
+                    }
                 }
             }
         }
