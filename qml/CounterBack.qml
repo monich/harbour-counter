@@ -193,17 +193,7 @@ SilicaFlickable {
         //: Button label (resets counter to zero)
         //% "Reset"
         text: qsTrId("counter-button-reset")
-
-        onClicked: {
-            panel.reset()
-            resetSound.play()
-        }
-
-        Sound {
-            id: resetSound
-
-            source: "sounds/reset.wav"
-        }
+        onClicked: panel.reset()
 
         FadeAnimation on opacity {}
     }

@@ -68,6 +68,24 @@ Page {
         }
     }
 
+    Sound {
+        id: plusSound
+
+        source: "sounds/plus.wav"
+    }
+
+    Sound {
+        id: minusSound
+
+        source: "sounds/minus.wav"
+    }
+
+    Sound {
+        id: resetSound
+
+        source: "sounds/reset.wav"
+    }
+
     function considerShowingReorderHint() {
         if (CounterSettings.reorderHintCount < CounterSettings.maxReorderHintCount) {
             if (!_reorderHint) {
@@ -82,12 +100,22 @@ Page {
         }
     }
 
+    function playPlusSound() {
+        plusSound.play()
+    }
+
+    function playMinusSound() {
+        minusSound.play()
+    }
+
+    function hapticFeedback() {
+        if (!_buzz) _buzz = buzzComponent.createObject(page)
+        _buzz.play()
+    }
+
     Connections {
         target: CounterListModel
-        onRowsMoved: {
-            if (!_buzz) _buzz = buzzComponent.createObject(page)
-            _buzz.play()
-        }
+        onRowsMoved: hapticFeedback()
         onRowsInserted: considerShowingReorderHint()
     }
 
@@ -242,7 +270,13 @@ Page {
                 onUpdateTitle: model.title = value
                 onClearLink: model.link = ""
                 onToggleFavorite: model.favorite = !model.favorite
-                onResetCounter: CounterListModel.resetCounter(model.index)
+                onHapticFeedback: page.hapticFeedback()
+                onPlayPlusSound: page.playPlusSound()
+                onPlayMinusSound: page.playMinusSound()
+                onResetCounter: {
+                    resetSound.play()
+                    CounterListModel.resetCounter(model.index)
+                }
                 onSwitchToLinked: {
                     var index = CounterListModel.findCounter(model.link)
                     if (index >= 0) {

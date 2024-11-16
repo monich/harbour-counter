@@ -13,6 +13,9 @@ Item {
     property bool active
 
     signal flip()
+    signal hapticFeedback()
+    signal playPlusSound()
+    signal playMinusSound()
     signal updateCounter(var value)
     signal switchToLinked()
 
@@ -76,7 +79,7 @@ Item {
         width: parent.width - 2 * x
         spacing: Theme.paddingMedium
         // Disable animation if change is triggered by cover action:
-        animated: Qt.application.active
+        animated: active && Qt.application.active
         minCount: 3
         number: value
         onUpdateNumber: panel.updateCounter(newValue)
@@ -88,7 +91,7 @@ Item {
         anchors.centerIn: parent
         buttonSize: parent.width/2
         imageSource: "images/plus.svg"
-        onClicked: plus(true)
+        onClicked: plus(CounterSettings.vibraEnabled)
     }
 
     RoundButton {
@@ -98,7 +101,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         buttonSize: Math.round(panel.width/3)
         imageSource: "images/minus.svg"
-        onClicked: minus(true)
+        onClicked: minus(CounterSettings.vibraEnabled)
     }
 
     IconButton {
@@ -125,42 +128,19 @@ Item {
 
     function plus(feedback) {
         panel.updateCounter(value + 1)
-        if (plusSound.item) {
-            plusSound.item.play()
-        }
-        if (feedback && buzz.item) {
-            buzz.item.play()
+        panel.playPlusSound()
+        if (feedback) {
+            panel.hapticFeedback()
         }
     }
 
     function minus(feedback) {
         if (value > 0) {
             panel.updateCounter(value - 1)
-            if (minusSound.item) {
-                minusSound.item.play()
-            }
-            if (feedback && buzz.item) {
-                buzz.item.play()
+            panel.playMinusSound()
+            if (feedback) {
+                panel.hapticFeedback()
             }
         }
-    }
-
-    Sound {
-        id: plusSound
-
-        source: "sounds/plus.wav"
-    }
-
-    Sound {
-        id: minusSound
-
-        source: "sounds/minus.wav"
-    }
-
-    Loader {
-        id: buzz
-
-        active: CounterSettings.vibraEnabled
-        source: "Buzz.qml"
     }
 }

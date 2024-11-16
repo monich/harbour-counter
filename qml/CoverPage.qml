@@ -10,6 +10,8 @@ CoverBackground {
     property alias coverItem: coverItemLoader.item
 
     signal selectCounter(var modelId)
+    signal playPlusSound()
+    signal playMinusSound()
 
     Loader {
         id: coverItemLoader
@@ -31,7 +33,7 @@ CoverBackground {
 
     function inc(pos) {
         coverItem.inc(pos);
-        plusSound.play()
+        cover.playPlusSound()
         if (buzz.item) {
             buzz.item.play()
         }
@@ -39,7 +41,7 @@ CoverBackground {
 
     function dec(pos) {
         if (coverItem.dec(pos)) {
-            minusSound.play()
+            cover.playMinusSound()
             if (buzz.item) {
                 buzz.item.play()
             }
@@ -57,18 +59,6 @@ CoverBackground {
 
         active: CounterSettings.vibraEnabled
         source: "Buzz.qml"
-    }
-
-    Sound {
-        id: plusSound
-
-        source: "sounds/plus.wav"
-    }
-
-    Sound {
-        id: minusSound
-
-        source: "sounds/minus.wav"
     }
 
     CoverActionList {

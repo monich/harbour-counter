@@ -13,6 +13,8 @@ ApplicationWindow {
     cover: Component {
         CoverPage {
             onSelectCounter: mainPage.selectCounter(modelId)
+            onPlayPlusSound: mainPage.playPlusSound()
+            onPlayMinusSound: mainPage.playMinusSound()
         }
     }
 

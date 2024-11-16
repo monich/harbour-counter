@@ -17,6 +17,9 @@ Item {
     property bool currentItem
 
     signal flip()
+    signal hapticFeedback()
+    signal playPlusSound()
+    signal playMinusSound()
     signal clearLink()
     signal resetCounter()
     signal toggleFavorite()
@@ -51,12 +54,15 @@ Item {
 
         front: CounterFront {
             anchors.fill: parent
-            active: Qt.application.active && currentItem
+            active: Qt.application.active && currentItem && !(rotation.angle % 360)
             value: panel.value
             title: panel.title
             hasLink: panel.link.length > 0
 
             onFlip: panel.flip()
+            onHapticFeedback: panel.hapticFeedback()
+            onPlayPlusSound: panel.playPlusSound()
+            onPlayMinusSound: panel.playMinusSound()
             onUpdateCounter: panel.updateCounter(value)
             onSwitchToLinked: panel.switchToLinked()
         }
@@ -69,6 +75,7 @@ Item {
             counterId: panel.counterId
             favorite: panel.favorite
             canChangeFavorite: panel.canChangeFavorite
+
             onFlip: panel.flip()
             onUpdateTitle: panel.updateTitle(value)
             onClearLink: panel.clearLink()
