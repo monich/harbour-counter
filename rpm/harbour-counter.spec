@@ -1,7 +1,7 @@
 Name:           harbour-counter
 
 Summary:        Counter
-Version:        1.0.23
+Version:        1.0.24
 Release:        1
 License:        BSD
 Group:          Applications/Productivity
@@ -10,7 +10,6 @@ Source0:        %{name}-%{version}.tar.gz
 
 Requires:       sailfishsilica-qt5
 Requires:       qt5-qtsvg-plugin-imageformat-svg
-Requires:       qt5-qtfeedback
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(sailfishapp)
 BuildRequires:  pkgconfig(mlite5)
