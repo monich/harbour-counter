@@ -53,7 +53,7 @@ SilicaFlickable {
             color: Theme.rgba(Theme.highlightColor, Counter.opacityLow)
             width: Constants.thinBorder
         }
-        radius: Theme.paddingMedium
+        radius: Constants.cornerRadius
     }
 
     Column {
@@ -202,7 +202,7 @@ SilicaFlickable {
         id: timestamps
 
         rows: 2
-        x: Theme.paddingLarge
+        x: Math.max(Constants.cornerRadius, Theme.paddingLarge)
         anchors.verticalCenter: okButton.verticalCenter
 
         Label {

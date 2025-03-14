@@ -53,7 +53,7 @@ Item {
             color: Theme.rgba(Theme.highlightColor, Counter.opacityLow)
             width: Constants.thinBorder
         }
-        radius: Theme.paddingMedium
+        radius: Constants.cornerRadius
     }
 
     Label {
