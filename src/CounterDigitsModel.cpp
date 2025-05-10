@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Slava Monich <slava@monich.com>
+ * Copyright (C) 2022-2025 Slava Monich <slava@monich.com>
  * Copyright (C) 2022 Jolla Ltd.
  *
  * You may use this file under the terms of the BSD license as follows:
@@ -141,7 +141,6 @@ CounterDigitsModel::Private::updateModel(
 
         HDEBUG(iMinCount << iNumberString << "=>" << newString);
         if (newCount > prevCount) {
-            const QVector<int> roles(1, Qt::DisplayRole);
             const uint off = newCount - prevCount;
 
             aModel->beginInsertRows(QModelIndex(), 0, off - 1);
@@ -157,7 +156,6 @@ CounterDigitsModel::Private::updateModel(
 
             Q_EMIT aModel->countChanged();
         } else if (newCount < prevCount) {
-            const QVector<int> roles(1, Qt::DisplayRole);
             const uint off = prevCount - newCount;
 
             aModel->beginRemoveRows(QModelIndex(), 0, off - 1);
