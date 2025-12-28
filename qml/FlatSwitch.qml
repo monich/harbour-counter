@@ -7,12 +7,18 @@ import "harbour"
 
 MouseArea {
     property bool checked
-    property bool highlighted: down
+    property bool highlighted: _down
     property bool automaticCheck: true
-    readonly property bool down: pressed && containsMouse
+
+    readonly property bool _down: pressed && containsMouse
+    readonly property bool _showPress: _down || pressTimer.running
 
     width: Theme.itemSizeMedium
     height: Theme.itemSizeMedium
+
+    onPressed: pressTimer.restart()
+
+    onCanceled: pressTimer.stop()
 
     onClicked: {
         if (automaticCheck) {
@@ -20,28 +26,33 @@ MouseArea {
         }
     }
 
-    // It may sound slightly weird, but primaryColor is used for highlighting
-    // and highlightColor as the normal color
-
     HarbourHighlightIcon {
-        readonly property int size: Math.ceil(Math.min(parent.width, parent.height) * 0.7)
+        readonly property int _size: Math.ceil(Math.min(parent.width, parent.height) * 0.7)
+
         anchors.centerIn: parent
-        width: size
-        height: size
-        sourceSize.width: size
-        sourceSize.height: size
+        width: _size
+        height: _size
+        sourceSize: Qt.size(_size, _size)
         source: "images/press.svg"
         highlightColor: circle.border.color
-        opacity: down ? 1 : 0
-        Behavior on opacity { FadeAnimation { duration: 64 } }
+        visible: opacity > 0
+        opacity: _showPress ? 1 : 0
+        Behavior on opacity {
+            enabled: !pressTimer.running
+            FadeAnimation { }
+        }
     }
+
+    // It may sound slightly weird, but primaryColor is used for highlighting
+    // and highlightColor as the normal color
 
     Rectangle {
         id: circle
 
-        readonly property int size: Math.ceil(Math.min(parent.width, parent.height) * 0.3)
+        readonly property int _size: Math.ceil(Math.min(parent.width, parent.height) * 0.3)
+
         anchors.centerIn: parent
-        width: size
+        width: _size
         height: width
         radius: width/2
         color: Theme.rgba(highlighted ? Theme.primaryColor: Theme.highlightColor,
@@ -50,5 +61,10 @@ MouseArea {
             color: highlighted ? Theme.secondaryColor : Theme.secondaryHighlightColor
             width: Constants.thinBorder
         }
+    }
+
+    Timer {
+        id: pressTimer
+        interval: 64
     }
 }
