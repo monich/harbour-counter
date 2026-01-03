@@ -1,7 +1,7 @@
 Name:           harbour-counter
 
 Summary:        Counter
-Version:        1.0.24
+Version:        1.0.25
 Release:        1
 License:        BSD
 Group:          Applications/Productivity
@@ -21,7 +21,6 @@ BuildRequires:  qt5-qttools-linguist
 
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
-%{?qtc_builddir:%define _builddir %qtc_builddir}
 
 %description
 Application for counting whatever.
