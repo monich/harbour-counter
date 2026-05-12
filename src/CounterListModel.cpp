@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2020-2026 Slava Monich <slava@monich.com>
  * Copyright (C) 2020-2022 Jolla Ltd.
- * Copyright (C) 2020-2022 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of the BSD license as follows:
  *
@@ -8,15 +8,17 @@
  * modification, are permitted provided that the following conditions
  * are met:
  *
- *   1. Redistributions of source code must retain the above copyright
- *      notice, this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer
- *      in the documentation and/or other materials provided with the
- *      distribution.
- *   3. Neither the names of the copyright holders nor the names of its
- *      contributors may be used to endorse or promote products derived
- *      from this software without specific prior written permission.
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer
+ *     in the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *  3. Neither the names of the copyright holders nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -40,12 +42,15 @@
 
 #include "HarbourDebug.h"
 
-#include <QDir>
-#include <QFile>
-#include <QFileSystemWatcher>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QCryptographicHash>
+#include <QtCore/QCryptographicHash>
+#include <QtCore/QDateTime>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
+#include <QtCore/QFileSystemWatcher>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QStandardPaths>
+#include <QtCore/QTimer>
 
 #define MODEL_ROLES_(first,role,last) \
     first(ModelId,modelId) \
@@ -63,32 +68,37 @@
 // CounterListModel::ModelData
 // ==========================================================================
 
-class CounterListModel::ModelData {
+class CounterListModel::ModelData
+{
 public:
     enum Role {
-#define FIRST(X,x) FirstRole = Qt::UserRole, X##Role = FirstRole,
-#define ROLE(X,x) X##Role,
-#define LAST(X,x) X##Role, LastRole = X##Role
+        #define FIRST(X,x) FirstRole = Qt::UserRole, X##Role = FirstRole,
+        #define ROLE(X,x) X##Role,
+        #define LAST(X,x) X##Role, LastRole = X##Role
         MODEL_ROLES_(FIRST,ROLE,LAST)
-#undef FIRST
-#undef ROLE
-#undef LAST
+        #undef FIRST
+        #undef ROLE
+        #undef LAST
     };
+
+    // QtCreator syntax highlighter gets confused by the above macro magic.
+    // Somehow this stupid enum unconfuses it :/
+    enum { _ };
 
     typedef QList<ModelData*> List;
 
 public:
-    ModelData(QVariantMap aData);
-    ModelData(QString aId, QString aTitle, bool aFavorite);
+    ModelData(const QVariantMap&);
+    ModelData(const QString&, const QString&, bool);
     ~ModelData();
 
     void clearLink();
-    void set(QVariantMap aData);
-    QVariant get(Role aRole) const;
+    void set(const QVariantMap&);
+    QVariant get(Role) const;
     QVariantMap toVariantMap() const;
 
-    static QDateTime dateTimeValue(QVariantMap aData, QString aKey);
-    static QString toString(const QDateTime& aTime);
+    static QDateTime dateTimeValue(const QVariantMap&, const QString&);
+    static QString toString(const QDateTime&);
 
 public:
     static const QString KEY_ID;
@@ -117,27 +127,40 @@ const QString CounterListModel::ModelData::KEY_TITLE("title");
 const QString CounterListModel::ModelData::KEY_RESET_TIME("resetTime");
 const QString CounterListModel::ModelData::KEY_CHANGE_TIME("changeTime");
 
-inline QDateTime CounterListModel::ModelData::dateTimeValue(QVariantMap aData, QString aKey)
+/* static */
+inline
+QDateTime
+CounterListModel::ModelData::dateTimeValue(
+    const QVariantMap& aData,
+    const QString& aKey)
 {
-    const QString str = aData.value(aKey).toString();
+    const QString str(aData.value(aKey).toString());
+
     return str.isEmpty() ? QDateTime() : QDateTime::fromString(str, Qt::ISODate);
 }
 
-inline QString CounterListModel::ModelData::toString(const QDateTime& aTime)
+/* static */
+inline
+QString
+CounterListModel::ModelData::toString(
+    const QDateTime& aTime)
 {
     return aTime.toUTC().toString(Qt::ISODate);
 }
 
-CounterListModel::ModelData::ModelData(QString aId, QString aTitle, bool aFavorite) :
+CounterListModel::ModelData::ModelData(
+    const QString& aId,
+    const QString& aTitle,
+    bool aFavorite) :
     iValue(0),
     iFavorite(aFavorite),
     iId(aId),
     iTitle(aTitle),
     iLink(Q_NULLPTR)
-{
-}
+{}
 
-CounterListModel::ModelData::ModelData(QVariantMap aData) :
+CounterListModel::ModelData::ModelData(
+    const QVariantMap& aData) :
     iLink(Q_NULLPTR)
 {
     set(aData);
@@ -148,7 +171,8 @@ CounterListModel::ModelData::~ModelData()
     clearLink();
 }
 
-void CounterListModel::ModelData::clearLink()
+void
+CounterListModel::ModelData::clearLink()
 {
     if (iLink) {
         iLink->iLink = Q_NULLPTR;
@@ -156,7 +180,9 @@ void CounterListModel::ModelData::clearLink()
     }
 }
 
-QVariant CounterListModel::ModelData::get(Role aRole) const
+QVariant
+CounterListModel::ModelData::get(
+    Role aRole) const
 {
     switch (aRole) {
     case ValueRole: return iValue;
@@ -170,9 +196,11 @@ QVariant CounterListModel::ModelData::get(Role aRole) const
     return QVariant();
 }
 
-QVariantMap CounterListModel::ModelData::toVariantMap() const
+QVariantMap
+CounterListModel::ModelData::toVariantMap() const
 {
     QVariantMap map;
+
     map.insert(KEY_VALUE, iValue);
     map.insert(KEY_FAVORITE, iFavorite);
     map.insert(KEY_ID, iId);
@@ -189,7 +217,9 @@ QVariantMap CounterListModel::ModelData::toVariantMap() const
     return map;
 }
 
-void CounterListModel::ModelData::set(QVariantMap aData)
+void
+CounterListModel::ModelData::set(
+    const QVariantMap& aData)
 {
     clearLink();
     iValue = aData.value(KEY_VALUE).toInt();
@@ -204,9 +234,10 @@ void CounterListModel::ModelData::set(QVariantMap aData)
 // CounterListModel::Private
 // ==========================================================================
 
-class CounterListModel::Private : public QObject {
+class CounterListModel::Private :
+    public QObject
+{
     Q_OBJECT
-    Q_DISABLE_COPY(Private)
 
 public:
     Private(CounterListModel* aParent);
@@ -214,30 +245,30 @@ public:
 
     CounterListModel* parentModel();
     int rowCount() const;
-    int indexOf(ModelData* aData) const;
+    int indexOf(ModelData*) const;
     int favoriteCount() const;
     QString newId() const;
     QString newTitle() const;
     void setCount(int aCount);
-    void setSaveFile(QString aFileName);
+    void setSaveFile(const QString&);
     void save();
     void newCounter();
-    int oneFavoriteOff(int aIndexToIgnore);
-    int oneFavoriteOn(int aIndexToIgnore);
-    int findId(QString aId) const;
-    ModelData* findTitle(QString aId) const;
-    ModelData* dataAt(int aIndex) const;
+    int oneFavoriteOff(int);
+    int oneFavoriteOn(int);
+    int findId(const QString&) const;
+    ModelData* findTitle(const QString&) const;
+    ModelData* dataAt(int) const;
 
 private:
     void readState();
-    void applyState(const QVariantMap data);
+    void applyState(const QVariantMap&);
     void writeState();
 
 private Q_SLOTS:
     void flushChanges();
     void onSaveTimerExpired();
-    void onSaveFileChanged(QString aPath);
-    void onSaveDirectoryChanged(QString aPath);
+    void onSaveFileChanged(const QString&);
+    void onSaveDirectoryChanged(const QString&);
 
 public:
     static const int MaxFavorites = 2;
@@ -263,7 +294,8 @@ public:
 const QString CounterListModel::Private::COUNTERS("counters");
 const QString CounterListModel::Private::CURRENT_INDEX("currentIndex");
 
-CounterListModel::Private::Private(CounterListModel* aParent) :
+CounterListModel::Private::Private(
+    CounterListModel* aParent) :
     QObject(aParent),
     iCurrentIndex(0),
     iSavingSuspended(0),
@@ -300,22 +332,30 @@ CounterListModel::Private::~Private()
     qDeleteAll(iData);
 }
 
-inline CounterListModel* CounterListModel::Private::parentModel()
+inline
+CounterListModel*
+CounterListModel::Private::parentModel()
 {
     return qobject_cast<CounterListModel*>(parent());
 }
 
-inline int CounterListModel::Private::rowCount() const
+inline
+int
+CounterListModel::Private::rowCount() const
 {
     return iData.count();
 }
 
-inline int CounterListModel::Private::indexOf(ModelData* aData) const
+inline
+int
+CounterListModel::Private::indexOf(
+    ModelData* aData) const
 {
     return iData.indexOf(aData);
 }
 
-int CounterListModel::Private::favoriteCount() const
+int
+CounterListModel::Private::favoriteCount() const
 {
     const int n = iData.count();
     int count = 0;
@@ -327,15 +367,18 @@ int CounterListModel::Private::favoriteCount() const
     return count;
 }
 
-QString CounterListModel::Private::newId() const
+QString
+CounterListModel::Private::newId() const
 {
     int i = 0;
     QString id;
+
     do { id.sprintf("%03d", i++); } while (findId(id) >= 0);
     return id;
 }
 
-QString CounterListModel::Private::newTitle() const
+QString
+CounterListModel::Private::newTitle() const
 {
     //: Default title for the first counter
     //% "Counter"
@@ -350,12 +393,16 @@ QString CounterListModel::Private::newTitle() const
     return title;
 }
 
-int CounterListModel::Private::findId(QString aId) const
+int
+CounterListModel::Private::findId(
+    const QString& aId) const
 {
     if (!aId.isEmpty()) {
         const int n = iData.count();
+
         for (int i = 0; i < n; i++) {
             const ModelData* data = iData.at(i);
+
             if (data->iId == aId) {
                 return i;
             }
@@ -364,24 +411,30 @@ int CounterListModel::Private::findId(QString aId) const
     return -1;
 }
 
-CounterListModel::ModelData* CounterListModel::Private::findTitle(QString aTitle) const
+CounterListModel::ModelData*
+CounterListModel::Private::findTitle(
+    const QString& aTitle) const
 {
     const int n = iData.count();
+
     for (int i = 0; i < n; i++) {
         ModelData* data = iData.at(i);
+
         if (data->iTitle == aTitle) {
             return data;
         }
     }
-    return NULL;
+    return Q_NULLPTR;
 }
 
-CounterListModel::ModelData* CounterListModel::Private::dataAt(int aIndex) const
+CounterListModel::ModelData*
+CounterListModel::Private::dataAt(
+    int aIndex) const
 {
     if (aIndex >= 0 && aIndex < iData.count()) {
         return iData.at(aIndex);
     } else {
-        return NULL;
+        return Q_NULLPTR;
     }
 }
 
@@ -419,7 +472,9 @@ int CounterListModel::Private::oneFavoriteOn(int aIndexToIgnore)
     return -1;
 }
 
-void CounterListModel::Private::setCount(int aCount)
+void
+CounterListModel::Private::setCount(
+    int aCount)
 {
     while (iData.count() > aCount) {
         delete iData.last();
@@ -427,19 +482,26 @@ void CounterListModel::Private::setCount(int aCount)
     }
 }
 
-void CounterListModel::Private::setSaveFile(QString aFileName)
+void
+CounterListModel::Private::setSaveFile(
+    const QString& aFileName)
 {
     flushChanges();
     iSaveFile = aFileName;
+
     // Reset the watcher (normally there's nothing to reset)
     const QStringList watchedFiles(iSaveFileWatcher->files());
+
     if (!watchedFiles.isEmpty()) {
         iSaveFileWatcher->removePaths(watchedFiles);
     }
+
     const QStringList watchedDirs(iSaveFileWatcher->directories());
+
     if (!watchedDirs.isEmpty()) {
         iSaveFileWatcher->removePaths(watchedDirs);
     }
+
     if (aFileName.isEmpty()) {
         // This shouldn't normally happen
         iSaveFilePath.clear();
@@ -455,12 +517,15 @@ void CounterListModel::Private::setSaveFile(QString aFileName)
     }
 }
 
-void CounterListModel::Private::readState()
+void
+CounterListModel::Private::readState()
 {
     QFile f(iSaveFilePath);
+
     if (f.open(QIODevice::ReadOnly)) {
-        QByteArray fileData(f.readAll());
-        QByteArray hash(QCryptographicHash::hash(fileData, iHashAlgorithm));
+        const QByteArray fileData(f.readAll());
+        const QByteArray hash(QCryptographicHash::hash(fileData, iHashAlgorithm));
+
         if (iSaveFileHash != hash) {
             HDEBUG("Loading" << qPrintable(iSaveFilePath));
             iSaveFileWatcher->addPath(iSaveFilePath);
@@ -473,10 +538,13 @@ void CounterListModel::Private::readState()
     }
 }
 
-void CounterListModel::Private::applyState(const QVariantMap aData)
+void
+CounterListModel::Private::applyState(
+    const QVariantMap& aData)
 {
-    iSavingSuspended++; // Suspend saves
     CounterListModel* model = parentModel();
+
+    iSavingSuspended++; // Suspend saves
     model->beginResetModel();
 
     QVariantList counters = aData.value(COUNTERS).toList();
@@ -485,27 +553,35 @@ void CounterListModel::Private::applyState(const QVariantMap aData)
         int i;
         const int k = qMin(n, iData.count());
         QHash<ModelData*,QString> linkMap;
+
         for (i = 0; i < k; i++) {
             const QVariantMap entry(counters.at(i).toMap());
             const QString link(entry.value(ModelData::KEY_LINK).toString());
             ModelData* data = iData.at(i);
+
             data->set(entry);
             if (!link.isEmpty()) linkMap.insert(data, link);
         }
+
         while (i < n) {
             const QVariantMap entry(counters.at(i++).toMap());
             const QString link(entry.value(ModelData::KEY_LINK).toString());
             ModelData* data = new ModelData(entry);
+
             iData.append(data);
             if (!link.isEmpty()) linkMap.insert(data, link);
         }
+
         setCount(n);
+
         // Restore links
         for (i = 0; i < n; i++) {
             ModelData* data = iData.at(i);
+
             if (!data->iLink) {
                 const QString link(linkMap.value(data));
                 const int linked = findId(link);
+
                 if (linked >= 0 && linked != i) {
                     data->iLink = iData.at(linked);
                     data->iLink->iLink = data;
@@ -516,8 +592,10 @@ void CounterListModel::Private::applyState(const QVariantMap aData)
     } else {
         setCount(1);
     }
+
     bool ok = false;
     const int currentIndex = aData.value(CURRENT_INDEX).toInt(&ok);
+
     if (ok && currentIndex >= 0 && currentIndex < iData.count() &&
         iCurrentIndex != currentIndex) {
         iCurrentIndex = currentIndex;
@@ -549,7 +627,8 @@ void CounterListModel::Private::applyState(const QVariantMap aData)
     Q_EMIT model->stateLoaded();
 }
 
-void CounterListModel::Private::save()
+void
+CounterListModel::Private::save()
 {
     if (!iSaveFilePath.isEmpty() && !iSavingSuspended) {
         if (!iHoldoffTimer->isActive()) {
@@ -568,7 +647,8 @@ void CounterListModel::Private::save()
     }
 }
 
-void CounterListModel::Private::flushChanges()
+void
+CounterListModel::Private::flushChanges()
 {
     if (iSaveTimer->isActive()) {
         iSaveTimer->stop();
@@ -576,31 +656,39 @@ void CounterListModel::Private::flushChanges()
     }
 }
 
-void CounterListModel::Private::onSaveTimerExpired()
+void
+CounterListModel::Private::onSaveTimerExpired()
 {
     iHoldoffTimer->start();
     writeState();
 }
 
-void CounterListModel::Private::writeState()
+void
+CounterListModel::Private::writeState()
 {
     HDEBUG("Writing" << qPrintable(iSaveFilePath));
     QVariantList counters;
     const int n = iData.count();
+
     for (int i = 0; i < n; i++) {
         counters.append(iData.at(i)->toVariantMap());
     }
+
     QVariantMap data;
+
     data.insert(COUNTERS, counters);
     data.insert(CURRENT_INDEX, iCurrentIndex);
 
     // Write the file and update the hash
     QFileInfo file(iSaveFilePath);
     QDir dir(file.dir());
+
     if (dir.mkpath(dir.absolutePath())) {
         QFile f(file.absoluteFilePath());
+
         if (f.open(QIODevice::WriteOnly)) {
-            QByteArray fileData(QJsonDocument::fromVariant(data).toJson());
+            const QByteArray fileData(QJsonDocument::fromVariant(data).toJson());
+
             if (f.write(fileData) == fileData.size()) {
                 iSaveFileHash = QCryptographicHash::hash(fileData, iHashAlgorithm);
                 iIgnoreSaveFileChange++;
@@ -615,7 +703,9 @@ void CounterListModel::Private::writeState()
     }
 }
 
-void CounterListModel::Private::onSaveDirectoryChanged(QString aPath)
+void
+CounterListModel::Private::onSaveDirectoryChanged(
+    const QString& aPath)
 {
     HDEBUG(qPrintable(aPath));
     if (QFile::exists(iSaveFilePath)) {
@@ -626,7 +716,9 @@ void CounterListModel::Private::onSaveDirectoryChanged(QString aPath)
     }
 }
 
-void CounterListModel::Private::onSaveFileChanged(QString aPath)
+void
+CounterListModel::Private::onSaveFileChanged(
+    const QString& aPath)
 {
     if (iIgnoreSaveFileChange) {
         iIgnoreSaveFileChange--;
@@ -641,36 +733,42 @@ void CounterListModel::Private::onSaveFileChanged(QString aPath)
 // CounterListModel
 // ==========================================================================
 
-#define SUPER QAbstractListModel
-
-CounterListModel::CounterListModel(QObject* aParent) :
-    SUPER(aParent),
+CounterListModel::CounterListModel(
+    QObject* aParent) :
+    QAbstractListModel(aParent),
     iPrivate(new Private(this))
-{
-}
+{}
 
 // Callback for qmlRegisterSingletonType<CounterListModel>
-QObject* CounterListModel::createSingleton(QQmlEngine* aEngine, QJSEngine* aScript)
+QObject*
+CounterListModel::createSingleton(
+    QQmlEngine*,
+    QJSEngine*)
 {
     return new CounterListModel;
 }
 
-int CounterListModel::favoriteRole()
+int
+CounterListModel::favoriteRole()
 {
     return ModelData::FavoriteRole;
 }
 
-int CounterListModel::modelIdRole()
+int
+CounterListModel::modelIdRole()
 {
     return ModelData::ModelIdRole;
 }
 
-QString CounterListModel::saveFile() const
+QString
+CounterListModel::saveFile() const
 {
     return iPrivate->iSaveFile;
 }
 
-void CounterListModel::setSaveFile(QString aFileName)
+void
+CounterListModel::setSaveFile(
+    QString aFileName)
 {
     if (iPrivate->iSaveFile != aFileName) {
         HDEBUG(qPrintable(aFileName));
@@ -679,12 +777,15 @@ void CounterListModel::setSaveFile(QString aFileName)
     }
 }
 
-int CounterListModel::currentIndex() const
+int
+CounterListModel::currentIndex() const
 {
     return iPrivate->iCurrentIndex;
 }
 
-void CounterListModel::setCurrentIndex(int aIndex)
+void
+CounterListModel::setCurrentIndex(
+    int aIndex)
 {
     if (iPrivate->iCurrentIndex != aIndex) {
         iPrivate->iCurrentIndex = aIndex;
@@ -694,15 +795,18 @@ void CounterListModel::setCurrentIndex(int aIndex)
     }
 }
 
-bool CounterListModel::updatingLinkedCounter() const
+bool
+CounterListModel::updatingLinkedCounter() const
 {
     HASSERT(iPrivate->iUpdatingLinkedCounter >= 0);
     return iPrivate->iUpdatingLinkedCounter > 0;
 }
 
-int CounterListModel::addCounter()
+int
+CounterListModel::addCounter()
 {
     const int pos = iPrivate->iData.count();
+
     beginInsertRows(QModelIndex(), pos, pos);
     iPrivate->newCounter();
     HDEBUG(pos << iPrivate->dataAt(pos)->iId);
@@ -711,11 +815,15 @@ int CounterListModel::addCounter()
     return pos;
 }
 
-void CounterListModel::resetCounter(int aRow)
+void
+CounterListModel::resetCounter(
+    int aRow)
 {
     ModelData* data = iPrivate->dataAt(aRow);
+
     if (data) {
         QVector<int> roles;
+
         HDEBUG(aRow);
         roles.reserve(3);
         roles.append(ModelData::ResetTimeRole);
@@ -728,13 +836,16 @@ void CounterListModel::resetCounter(int aRow)
             data->iValue = 0;
             roles.append(ModelData::ValueRole);
         }
+
         const QModelIndex modelIndex(index(aRow));
         Q_EMIT dataChanged(modelIndex, modelIndex, roles);
         iPrivate->save();
     }
 }
 
-void CounterListModel::deleteCounter(int aRow)
+void
+CounterListModel::deleteCounter(
+    int aRow)
 {
     if (iPrivate->rowCount() && aRow >= 0 && aRow <= iPrivate->rowCount()) {
         HDEBUG(aRow);
@@ -743,6 +854,7 @@ void CounterListModel::deleteCounter(int aRow)
         // Remove the row deom the model
         beginRemoveRows(QModelIndex(), aRow, aRow);
         ModelData* data = iPrivate->iData.takeAt(aRow);
+
         if (data->iLink) {
             HDEBUG("clearing link" << data->iLink->iId << "=>" << data->iId);
             unlinkIndex = index(iPrivate->indexOf(data->iLink));
@@ -775,19 +887,25 @@ void CounterListModel::deleteCounter(int aRow)
     }
 }
 
-int CounterListModel::findCounter(QString aLink)
+int
+CounterListModel::findCounter(
+    QString aLink)
 {
     return iPrivate->findId(aLink);
 }
 
-void CounterListModel::timeChanged()
+void
+CounterListModel::timeChanged()
 {
     const int n = iPrivate->rowCount();
+
     if (n > 0) {
         QVector<int> roles;
+
         roles.reserve(2);
         for (int i = 0; i < n; i++) {
             ModelData* data = iPrivate->dataAt(i);
+
             roles.resize(0);
             if (data->iResetTime.isValid()) {
                 roles.append(ModelData::ResetTimeRole);
@@ -804,62 +922,85 @@ void CounterListModel::timeChanged()
     }
 }
 
-Qt::ItemFlags CounterListModel::flags(const QModelIndex& aIndex) const
+Qt::ItemFlags
+CounterListModel::flags(
+    const QModelIndex& aIndex) const
 {
-    return SUPER::flags(aIndex) | Qt::ItemIsEditable;
+    return QAbstractListModel::flags(aIndex) | Qt::ItemIsEditable;
 }
 
-QHash<int,QByteArray> CounterListModel::roleNames() const
+QHash<int,QByteArray>
+CounterListModel::roleNames() const
 {
     QHash<int,QByteArray> roles;
-#define ROLE(X,x) roles.insert(ModelData::X##Role, #x);
-MODEL_ROLES(ROLE)
-#undef ROLE
+
+    #define ROLE(X,x) roles.insert(ModelData::X##Role, #x);
+    MODEL_ROLES(ROLE)
+    #undef ROLE
     return roles;
 }
 
-int CounterListModel::rowCount(const QModelIndex& aParent) const
+int
+CounterListModel::rowCount(
+    const QModelIndex&) const
 {
     return iPrivate->rowCount();
 }
 
-QVariant CounterListModel::data(const QModelIndex& aIndex, int aRole) const
+QVariant
+CounterListModel::data(
+    const QModelIndex& aIndex,
+    int aRole) const
 {
     ModelData* data = iPrivate->dataAt(aIndex.row());
+
     return data ? data->get((ModelData::Role)aRole) : QVariant();
 }
 
-bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue, int aRole)
+bool
+CounterListModel::setData(
+    const QModelIndex& aIndex,
+    const QVariant& aValue,
+    int aRole)
 {
     const int row = aIndex.row();
     ModelData* data = iPrivate->dataAt(row);
+
     if (data) {
         switch ((ModelData::Role)aRole) {
         case ModelData::ValueRole:
             {
                 bool ok;
                 const int value = aValue.toInt(&ok);
+
                 if (ok && value >= 0) {
                     setValueAt(row, value);
                     return true;
                 }
             }
             break;
+
         case ModelData::FavoriteRole:
             {
                 const bool favorite = aValue.toBool();
+
                 if (data->iFavorite != favorite) {
                     if (favorite || iPrivate->rowCount() > 1) {
                         HDEBUG(row << "favorite" << favorite);
                         data->iFavorite = favorite;
+
                         QVector<int> roles;
+
                         roles.append(aRole);
                         Q_EMIT dataChanged(aIndex, aIndex, roles);
+
                         const int nfavorites = iPrivate->favoriteCount();
+
                         if (favorite) {
                             if (nfavorites > Private::MaxFavorites) {
                                 // Too many favorites, need to turn one off
                                 const int off = iPrivate->oneFavoriteOff(row);
+
                                 if (off >= 0) {
                                     HDEBUG(off << "favorite false");
                                     const QModelIndex idx(index(off));
@@ -869,6 +1010,7 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
                         } else if (!nfavorites) {
                             // No favorites left, need to turn one on
                             const int on = iPrivate->oneFavoriteOn(row);
+
                             if (on >= 0) {
                                 HDEBUG(on << "favorite true");
                                 const QModelIndex idx(index(on));
@@ -882,12 +1024,16 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
                 }
             }
             return true;
+
         case ModelData::TitleRole:
             {
                 const QString title(aValue.toString());
+
                 if (data->iTitle != title) {
                     data->iTitle = title;
+
                     QVector<int> roles;
+
                     roles.append(aRole);
                     HDEBUG(row << "title" << title);
                     Q_EMIT dataChanged(aIndex, aIndex, roles);
@@ -895,17 +1041,22 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
                 }
             }
             return true;
+
         case ModelData::LinkRole:
             {
                 const QString link(aValue.toString());
+
                 if (link != data->iId) {
                     QVector<int> roles;
+
                     roles.append(aRole);
                     if (link.isEmpty()) {
                         // Clearing the link
                         if (data->iLink) {
                             HDEBUG(row << "clearing link" << data->iId << "=>" << link);
+
                             int unlinkPos = iPrivate->indexOf(data->iLink);
+
                             data->clearLink();
                             const QModelIndex unlinkIdx(index(unlinkPos));
                             Q_EMIT dataChanged(unlinkIdx, unlinkIdx, roles);
@@ -914,21 +1065,28 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
                         }
                     } else {
                         const int linkPos = iPrivate->findId(link);
+
                         if (linkPos >= 0) {
                             ModelData* linkData = iPrivate->dataAt(linkPos);
+
                             if (linkData != data->iLink) {
                                 // New (and valid) link
                                 ModelData* unlinkData = linkData->iLink;
+
                                 linkData->iLink = data;
                                 data->iLink = linkData;
                                 HDEBUG(row << "link" << data->iId << "<=>" << link);
                                 if (unlinkData) {
                                     unlinkData->iLink = Q_NULLPTR;
+
                                     int unlinkPos = iPrivate->indexOf(unlinkData);
                                     const QModelIndex unlinkIdx(index(unlinkPos));
+
                                     Q_EMIT dataChanged(unlinkIdx, unlinkIdx, roles);
                                 }
+
                                 const QModelIndex linkIdx(index(linkPos));
+
                                 Q_EMIT dataChanged(linkIdx, linkIdx, roles);
                                 Q_EMIT dataChanged(aIndex, aIndex, roles);
                                 iPrivate->save();
@@ -941,6 +1099,7 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
                 }
             }
             return true;
+
         // No default to make sure that we get "warning: enumeration value
         // not handled in switch" if we forget to handle a real role.
         case ModelData::ResetTimeRole:
@@ -953,9 +1112,13 @@ bool CounterListModel::setData(const QModelIndex& aIndex, const QVariant& aValue
     return false;
 }
 
-void CounterListModel::moveCounter(int aSrcRow, int aDestRow)
+void
+CounterListModel::moveCounter(
+    int aSrcRow,
+    int aDestRow)
 {
     const int size = iPrivate->rowCount();
+
     if (aSrcRow != aDestRow &&
         aSrcRow >= 0 && aSrcRow < size &&
         aDestRow >= 0 && aDestRow < size) {
@@ -968,31 +1131,44 @@ void CounterListModel::moveCounter(int aSrcRow, int aDestRow)
     }
 }
 
-int CounterListModel::getValueAt(int aRow)
+int
+CounterListModel::getValueAt(
+    int aRow)
 {
     ModelData* data = iPrivate->dataAt(aRow);
+
     return data ? data->iValue : 0;
 }
 
-void CounterListModel::setValueAt(int aRow, int aValue)
+void
+CounterListModel::setValueAt(
+    int aRow,
+    int aValue)
 {
     ModelData* data = iPrivate->dataAt(aRow);
+
     if (data && data->iValue != aValue) {
         const int change = aValue - data->iValue;
+
         HDEBUG(aRow << "value" << data->iValue << "->" << aValue);
         data->iValue = aValue;
         data->iChangeTime = QDateTime::currentDateTime();
+
         QVector<int> roles;
+
         roles.reserve(2);
         roles.append(ModelData::ValueRole);
         roles.append(ModelData::ChangeTimeRole);
 
         // Update the linked counter if there is one
         ModelData* data2 = data->iLink;
+
         if (data2) {
             const int value2 = qMax(data2->iValue + change, 0);
+
             if (data2->iValue != value2) {
                 const int row2 = iPrivate->findId(data2->iId);
+
                 HDEBUG(row2 << "value" << data2->iValue << "->" << value2);
                 if (!(iPrivate->iUpdatingLinkedCounter)++) {
                     Q_EMIT updatingLinkedCounterChanged();
