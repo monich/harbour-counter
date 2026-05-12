@@ -59,7 +59,7 @@ SilicaFlickable {
     Column {
         id: options
 
-        y: Theme.paddingMedium
+        y: Math.max(Theme.paddingLarge, Constants.topNotchHeight)
         width: parent.width
 
         TextField {

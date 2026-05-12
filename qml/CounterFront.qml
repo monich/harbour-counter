@@ -19,26 +19,26 @@ Item {
     signal updateCounter(var value)
     signal switchToLinked()
 
-    readonly property bool mediaKeysActive: active && CounterSettings.volumeKeysEnabled
-    readonly property var permissions: Qt.createQmlObject(Counter.permissionsQml, panel, "Permissions")
-    readonly property var volumeUp: Qt.createQmlObject(Counter.mediaKeyQml, panel, "VolumeKey")
-    readonly property var volumeDown: Qt.createQmlObject(Counter.mediaKeyQml, panel, "VolumeKey")
+    readonly property bool _mediaKeysActive: active && CounterSettings.volumeKeysEnabled
+    readonly property var _permissions: Qt.createQmlObject(Counter.permissionsQml, panel, "Permissions")
+    readonly property var _volumeUp: Qt.createQmlObject(Counter.mediaKeyQml, panel, "VolumeKey")
+    readonly property var _volumeDown: Qt.createQmlObject(Counter.mediaKeyQml, panel, "VolumeKey")
 
-    Binding { target: permissions; property: "enabled"; value: mediaKeysActive }
-    Binding { target: volumeUp; property: "enabled"; value: mediaKeysActive }
-    Binding { target: volumeUp;  property: "key"; value: Qt.Key_VolumeUp }
-    Binding { target: volumeDown; property: "enabled"; value: mediaKeysActive }
-    Binding { target: volumeDown;  property: "key"; value: Qt.Key_VolumeDown }
+    Binding { target: _permissions; property: "enabled"; value: _mediaKeysActive }
+    Binding { target: _volumeUp; property: "enabled"; value: _mediaKeysActive }
+    Binding { target: _volumeUp;  property: "key"; value: Qt.Key_VolumeUp }
+    Binding { target: _volumeDown; property: "enabled"; value: _mediaKeysActive }
+    Binding { target: _volumeDown;  property: "key"; value: Qt.Key_VolumeDown }
 
     Connections {
-        target: volumeUp
+        target: _volumeUp
         ignoreUnknownSignals: true
         onPressed: plus(false)
         onRepeat: plus(false)
     }
 
     Connections {
-        target: volumeDown
+        target: _volumeDown
         ignoreUnknownSignals: true
         onPressed: minus(false)
         onRepeat: minus(false)
@@ -61,7 +61,7 @@ Item {
 
         anchors {
             top: parent.top
-            margins: Theme.paddingLarge
+            topMargin: Math.max(Theme.paddingLarge, Constants.topNotchHeight)
             horizontalCenter: parent.horizontalCenter
         }
         width: Math.min(implicitWidth, parent.width - 2 * Theme.paddingLarge)
