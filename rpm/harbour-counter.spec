@@ -1,7 +1,7 @@
 Name:           harbour-counter
 
 Summary:        Counter
-Version:        1.0.25
+Version:        1.0.26
 Release:        1
 License:        BSD
 Group:          Applications/Productivity
