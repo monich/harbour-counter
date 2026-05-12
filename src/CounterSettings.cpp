@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2024 Slava Monich <slava@monich.com>
+ * Copyright (C) 2021-2026 Slava Monich <slava@monich.com>
  * Copyright (C) 2021 Jolla Ltd.
  *
  * You may use this file under the terms of the BSD license as follows:
@@ -56,7 +56,7 @@
 #define DEFAULT_VIBRA               true
 #define DEFAULT_USE_VOLUME_KEYS     true
 #define DEFAULT_COVER_STYLE         1
-#define DEFAULT_DIGIT_STYLE         0
+#define DEFAULT_DIGIT_STYLE         1
 #define DEFAULT_REORDER_HINT_COUNT  0
 #define MAX_REORDER_HINT_COUNT      4
 
